@@ -7,7 +7,7 @@
 #include "leveldb/slice.h"
 #include "util/hash.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 namespace {
 static uint32_t BloomHash(const Slice& key) {
@@ -92,4 +92,4 @@ DLLX const FilterPolicy* NewBloomFilterPolicy(int bits_per_key) {
   return new BloomFilterPolicy(bits_per_key);
 }
 
-}  // namespace leveldb
+}  // namespace LevelDB

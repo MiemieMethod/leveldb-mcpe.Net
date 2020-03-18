@@ -7,7 +7,7 @@
 #include "leveldb/env.h"
 #include "leveldb/status.h"
 
-namespace leveldb {
+namespace LevelDB {
 namespace {
 
 class StdoutPrinter : public WritableFile {
@@ -35,7 +35,7 @@ bool HandleDumpCommand(Env* env, char** files, int num) {
 }
 
 }  // namespace
-}  // namespace leveldb
+}  // namespace LevelDB
 
 static void Usage() {
   fprintf(

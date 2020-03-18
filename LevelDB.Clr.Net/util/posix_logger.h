@@ -14,7 +14,7 @@
 #include <time.h>
 #include "leveldb/env.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 class PosixLogger : public Logger {
  private:
@@ -93,6 +93,6 @@ class PosixLogger : public Logger {
   }
 };
 
-}  // namespace leveldb
+}  // namespace LevelDB
 
 #endif  // STORAGE_LEVELDB_UTIL_POSIX_LOGGER_H_

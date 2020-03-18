@@ -7,7 +7,7 @@
 #include "port/port.h"
 #include "util/testharness.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 static const int kDelayMicros = 100000;
 static const int kReadOnlyFileLimit = 4;
@@ -117,7 +117,7 @@ TEST(EnvTest, TestOpenNonExistentFile) {
   ASSERT_TRUE(status.IsNotFound());
 }
 
-}  // namespace leveldb
+}  // namespace LevelDB
 
 int main(int argc, char** argv) {
   return leveldb::test::RunAllTests();

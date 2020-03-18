@@ -27,7 +27,7 @@
 
 #define MAX_FILENAME 512
 
-namespace leveldb {
+namespace LevelDB {
 	namespace {
 
 		class NoOpLogger : public Logger {

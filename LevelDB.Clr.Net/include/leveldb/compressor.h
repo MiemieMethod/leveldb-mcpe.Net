@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <memory>
 
-namespace leveldb {
+namespace LevelDB {
 	class DLLX Slice;
 
 	class DLLX Compressor

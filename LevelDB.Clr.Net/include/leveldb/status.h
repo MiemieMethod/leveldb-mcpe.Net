@@ -16,7 +16,7 @@
 #include <string>
 #include "leveldb/slice.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 class DLLX Status {
  public:
@@ -108,6 +108,6 @@ inline void Status::operator=(const Status& s) {
   }
 }
 
-}  // namespace leveldb
+}  // namespace LevelDB
 
 #endif  // STORAGE_LEVELDB_INCLUDE_STATUS_H_

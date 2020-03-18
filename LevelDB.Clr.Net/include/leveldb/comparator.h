@@ -7,7 +7,7 @@
 
 #include <string>
 
-namespace leveldb {
+namespace LevelDB {
 
 class DLLX Slice;
 
@@ -58,6 +58,6 @@ class DLLX Comparator {
 // must not be deleted.
 extern const Comparator* BytewiseComparator();
 
-}  // namespace leveldb
+}  // namespace LevelDB
 
 #endif  // STORAGE_LEVELDB_INCLUDE_COMPARATOR_H_

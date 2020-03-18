@@ -36,7 +36,7 @@
 
 #define MAX_FILENAME 512
 
-namespace leveldb {
+namespace LevelDB {
 	namespace {
 
 		// returns the ID of the current process

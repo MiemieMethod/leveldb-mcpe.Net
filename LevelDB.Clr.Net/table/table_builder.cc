@@ -16,7 +16,7 @@
 #include "util/crc32c.h"
 #include "leveldb/compressor.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 struct TableBuilder::Rep {
   Options options;
@@ -266,4 +266,4 @@ uint64_t TableBuilder::FileSize() const {
   return rep_->offset;
 }
 
-}  // namespace leveldb
+}  // namespace LevelDB

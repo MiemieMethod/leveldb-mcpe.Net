@@ -4,7 +4,7 @@
 
 #include "leveldb/iterator.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 Iterator::Iterator() {
   cleanup_.function = NULL;
@@ -64,4 +64,4 @@ Iterator* NewErrorIterator(const Status& status) {
   return new EmptyIterator(status);
 }
 
-}  // namespace leveldb
+}  // namespace LevelDB

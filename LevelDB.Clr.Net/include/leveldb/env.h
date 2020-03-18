@@ -19,7 +19,7 @@
 #include <stdint.h>
 #include "leveldb/status.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 class DLLX FileLock;
 class DLLX Logger;
@@ -348,6 +348,6 @@ class DLLX EnvWrapper : public Env {
   Env* target_;
 };
 
-}  // namespace leveldb
+}  // namespace LevelDB
 
 #endif  // STORAGE_LEVELDB_INCLUDE_ENV_H_

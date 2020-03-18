@@ -4,7 +4,7 @@
 
 #include "util/coding.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 void EncodeFixed32(char* buf, uint32_t value) {
   if (port::kLittleEndian) {
@@ -200,4 +200,4 @@ bool GetLengthPrefixedSlice(Slice* input, Slice* result) {
   }
 }
 
-}  // namespace leveldb
+}  // namespace LevelDB

@@ -71,7 +71,7 @@
 #define fdatasync fsync
 #endif
 
-namespace leveldb {
+namespace LevelDB {
 namespace port {
 
 static const bool kLittleEndian = PLATFORM_IS_LITTLE_ENDIAN;
@@ -120,6 +120,6 @@ inline bool GetHeapProfile(void (*func)(void*, const char*, int), void* arg) {
 uint32_t AcceleratedCRC32C(uint32_t crc, const char* buf, size_t size);
 
 } // namespace port
-} // namespace leveldb
+} // namespace LevelDB
 
 #endif  // STORAGE_LEVELDB_PORT_PORT_POSIX_H_

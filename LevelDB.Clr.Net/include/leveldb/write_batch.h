@@ -25,7 +25,7 @@
 #include <memory>
 #include "leveldb/status.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 class DLLX Slice;
 
@@ -66,6 +66,6 @@ class DLLX WriteBatch {
   // Intentionally copyable
 };
 
-}  // namespace leveldb
+}  // namespace LevelDB
 
 #endif  // STORAGE_LEVELDB_INCLUDE_WRITE_BATCH_H_

@@ -8,7 +8,7 @@
 #include "util/testharness.h"
 #include "util/env_posix_test_helper.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 static const int kDelayMicros = 100000;
 static const int kReadOnlyFileLimit = 4;
@@ -56,7 +56,7 @@ TEST(EnvPosixTest, TestOpenOnRead) {
   ASSERT_OK(env_->DeleteFile(test_file));
 }
 
-}  // namespace leveldb
+}  // namespace LevelDB
 
 int main(int argc, char** argv) {
   // All tests currently run with the same read-only file limits.

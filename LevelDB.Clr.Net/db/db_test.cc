@@ -17,7 +17,7 @@
 #include "util/testharness.h"
 #include "util/testutil.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 static std::string RandomString(Random* rnd, int len) {
   std::string r;
@@ -2141,7 +2141,7 @@ void BM_LogAndApply(int iters, int num_base_files) {
           buf, iters, us, ((float)us) / iters);
 }
 
-}  // namespace leveldb
+}  // namespace LevelDB
 
 int main(int argc, char** argv) {
   if (argc > 1 && std::string(argv[1]) == "--benchmark") {

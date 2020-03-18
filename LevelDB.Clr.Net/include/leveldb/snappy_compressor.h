@@ -3,7 +3,7 @@
 #include "compressor.h"
 #ifdef SNAPPY
 
-namespace leveldb {
+namespace LevelDB {
 	class DLLX SnappyCompressor : public Compressor 
 	{
 	public:

@@ -5,7 +5,7 @@
 #include "util/hash.h"
 #include "util/testharness.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 class HASH { };
 
@@ -47,7 +47,7 @@ TEST(HASH, SignedUnsignedIssue) {
       0xf333dabb);
 }
 
-}  // namespace leveldb
+}  // namespace LevelDB
 
 int main(int argc, char** argv) {
   return leveldb::test::RunAllTests();

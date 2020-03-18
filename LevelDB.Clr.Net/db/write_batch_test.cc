@@ -10,7 +10,7 @@
 #include "util/logging.h"
 #include "util/testharness.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 static std::string PrintContents(WriteBatch* b) {
   InternalKeyComparator cmp(BytewiseComparator());
@@ -130,7 +130,7 @@ TEST(WriteBatchTest, ApproximateSize) {
   ASSERT_LT(two_keys_size, post_delete_size);
 }
 
-}  // namespace leveldb
+}  // namespace LevelDB
 
 int main(int argc, char** argv) {
   return leveldb::test::RunAllTests();

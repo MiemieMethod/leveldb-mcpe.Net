@@ -5,7 +5,7 @@
 
 #include <snappy/snappy.h>
 
-namespace leveldb {
+namespace LevelDB {
 	void SnappyCompressor::compressImpl(const char* input, size_t length, ::std::string& output) const
 	{
 		output.resize(snappy::MaxCompressedLength(length));

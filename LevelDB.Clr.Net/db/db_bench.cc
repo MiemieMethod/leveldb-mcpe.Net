@@ -114,7 +114,7 @@ static bool FLAGS_reuse_logs = false;
 // Use the db with the following name.
 static const char* FLAGS_db = NULL;
 
-namespace leveldb {
+namespace LevelDB {
 
 namespace {
 leveldb::Env* g_env = NULL;
@@ -951,7 +951,7 @@ class Benchmark {
   }
 };
 
-}  // namespace leveldb
+}  // namespace LevelDB
 
 int main(int argc, char** argv) {
   FLAGS_write_buffer_size = leveldb::Options().write_buffer_size;

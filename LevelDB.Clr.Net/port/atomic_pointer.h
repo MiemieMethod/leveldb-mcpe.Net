@@ -48,7 +48,7 @@
 #define ARCH_CPU_MIPS_FAMILY 1
 #endif
 
-namespace leveldb {
+namespace LevelDB {
 namespace port {
 
 // Define MemoryBarrier() if available
@@ -264,6 +264,6 @@ public:
 #undef ARCH_CPU_PPC_FAMILY
 
 }  // namespace port
-}  // namespace leveldb
+}  // namespace LevelDB
 
 #endif  // PORT_ATOMIC_POINTER_H_

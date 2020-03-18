@@ -3,7 +3,7 @@
 
 #include "leveldb/compressor.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 	class DLLX ZlibCompressorBase : public Compressor 
 	{

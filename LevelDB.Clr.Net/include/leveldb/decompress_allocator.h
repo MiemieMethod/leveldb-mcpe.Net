@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 
-namespace leveldb {
+namespace LevelDB {
 	class DLLX DecompressAllocator {
 	public:
 		virtual ~DecompressAllocator();

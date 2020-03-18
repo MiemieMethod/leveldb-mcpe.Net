@@ -15,7 +15,7 @@
 #include "table/two_level_iterator.h"
 #include "util/coding.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 struct Table::Rep {
   ~Rep() {
@@ -283,4 +283,4 @@ uint64_t Table::ApproximateOffsetOf(const Slice& key) const {
   return result;
 }
 
-}  // namespace leveldb
+}  // namespace LevelDB

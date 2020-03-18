@@ -10,7 +10,7 @@
 #include "leveldb/iterator.h"
 #include "leveldb/options.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 // Update Makefile if you change these
 static const int kMajorVersion = 1;
@@ -164,6 +164,6 @@ extern DLLX Status DestroyDB(const std::string& name, const Options& options);
 // on a database that contains important information.
 extern DLLX Status RepairDB(const std::string& dbname, const Options& options);
 
-}  // namespace leveldb
+}  // namespace LevelDB
 
 #endif  // STORAGE_LEVELDB_INCLUDE_DB_H_

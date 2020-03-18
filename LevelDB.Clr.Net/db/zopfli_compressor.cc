@@ -6,7 +6,7 @@
 #include <zlib.h>
 #include <zopfli/zopfli.h>
 #include <algorithm>
-namespace leveldb {
+namespace LevelDB {
 
 	void ZopfliCompressor::compressImpl(const char* input, size_t length, ::std::string& output) const
 	{

@@ -37,7 +37,7 @@
 #include <string>
 #include <mutex>
 
-namespace leveldb {
+namespace LevelDB {
 	namespace port {
 
 		// Windows is little endian (for now :p)

@@ -38,7 +38,7 @@
 #include "leveldb/db.h"
 #include "leveldb/env.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 namespace {
 
@@ -458,4 +458,4 @@ DLLX Status RepairDB(const std::string& dbname, const Options& options) {
   return repairer.Run();
 }
 
-}  // namespace leveldb
+}  // namespace LevelDB

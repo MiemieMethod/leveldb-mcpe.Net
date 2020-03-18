@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 
-namespace leveldb {
+namespace LevelDB {
 
 class MemEnvTest {
  public:
@@ -234,7 +234,7 @@ TEST(MemEnvTest, DBTest) {
   delete db;
 }
 
-}  // namespace leveldb
+}  // namespace LevelDB
 
 int main(int argc, char** argv) {
   return leveldb::test::RunAllTests();

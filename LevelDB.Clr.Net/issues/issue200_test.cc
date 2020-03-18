@@ -9,7 +9,7 @@
 #include "leveldb/db.h"
 #include "util/testharness.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 class Issue200 { };
 
@@ -52,7 +52,7 @@ TEST(Issue200, Test) {
   DestroyDB(dbpath, options);
 }
 
-}  // namespace leveldb
+}  // namespace LevelDB
 
 int main(int argc, char** argv) {
   return leveldb::test::RunAllTests();

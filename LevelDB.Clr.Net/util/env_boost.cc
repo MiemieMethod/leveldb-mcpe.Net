@@ -65,7 +65,7 @@
 #include <boost/interprocess/sync/file_lock.hpp>
 #include <boost/thread/condition_variable.hpp>
 
-namespace leveldb {
+namespace LevelDB {
 namespace {
 
 // returns the ID of the current process

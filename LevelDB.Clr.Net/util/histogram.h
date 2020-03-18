@@ -7,7 +7,7 @@
 
 #include <string>
 
-namespace leveldb {
+namespace LevelDB {
 
 class Histogram {
  public:
@@ -37,6 +37,6 @@ class Histogram {
   double StandardDeviation() const;
 };
 
-}  // namespace leveldb
+}  // namespace LevelDB
 
 #endif  // STORAGE_LEVELDB_UTIL_HISTOGRAM_H_

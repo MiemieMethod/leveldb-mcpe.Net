@@ -8,7 +8,7 @@
 #include <stdint.h>
 #include "leveldb/iterator.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 class DLLX Block;
 class DLLX BlockHandle;
@@ -80,6 +80,6 @@ class DLLX Table {
   void operator=(const Table&);
 };
 
-}  // namespace leveldb
+}  // namespace LevelDB
 
 #endif  // STORAGE_LEVELDB_INCLUDE_TABLE_H_

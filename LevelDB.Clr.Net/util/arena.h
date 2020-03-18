@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include "port/port.h"
 
-namespace leveldb {
+namespace LevelDB {
 
     class Arena {
     public:
@@ -63,6 +63,6 @@ namespace leveldb {
         return AllocateFallback(bytes);
     }
 
-}  // namespace leveldb
+}  // namespace LevelDB
 
 #endif  // STORAGE_LEVELDB_UTIL_ARENA_H_

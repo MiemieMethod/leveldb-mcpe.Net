@@ -6,7 +6,7 @@
 #include "util/logging.h"
 #include "util/testharness.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 static std::string IKey(const std::string& user_key,
                         uint64_t seq,
@@ -105,7 +105,7 @@ TEST(FormatTest, InternalKeyShortestSuccessor) {
             ShortSuccessor(IKey("\xff\xff", 100, kTypeValue)));
 }
 
-}  // namespace leveldb
+}  // namespace LevelDB
 
 int main(int argc, char** argv) {
   return leveldb::test::RunAllTests();

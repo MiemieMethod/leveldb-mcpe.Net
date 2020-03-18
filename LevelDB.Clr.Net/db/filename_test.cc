@@ -9,7 +9,7 @@
 #include "util/logging.h"
 #include "util/testharness.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 class FileNameTest { };
 
@@ -116,7 +116,7 @@ TEST(FileNameTest, Construction) {
   ASSERT_EQ(kTempFile, type);
 }
 
-}  // namespace leveldb
+}  // namespace LevelDB
 
 int main(int argc, char** argv) {
   return leveldb::test::RunAllTests();

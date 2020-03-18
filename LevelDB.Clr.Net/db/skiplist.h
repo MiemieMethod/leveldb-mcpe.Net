@@ -33,7 +33,7 @@
 #include "util/arena.h"
 #include "util/random.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 class Arena;
 
@@ -379,6 +379,6 @@ bool SkipList<Key,Comparator>::Contains(const Key& key) const {
   }
 }
 
-}  // namespace leveldb
+}  // namespace LevelDB
 
 #endif  // STORAGE_LEVELDB_DB_SKIPLIST_H_

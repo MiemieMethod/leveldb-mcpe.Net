@@ -10,7 +10,7 @@
 #include <stdint.h>
 #include "leveldb/slice.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 struct Options;
 
@@ -52,6 +52,6 @@ class BlockBuilder {
   void operator=(const BlockBuilder&);
 };
 
-}  // namespace leveldb
+}  // namespace LevelDB
 
 #endif  // STORAGE_LEVELDB_TABLE_BLOCK_BUILDER_H_

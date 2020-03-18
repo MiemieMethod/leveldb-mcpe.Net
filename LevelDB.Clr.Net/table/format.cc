@@ -13,7 +13,7 @@
 #include "leveldb/decompress_allocator.h"
 #include <map>
 
-namespace leveldb {
+namespace LevelDB {
 
 	DecompressAllocator::~DecompressAllocator() {}
 
@@ -191,4 +191,4 @@ Status Footer::DecodeFrom(Slice* input) {
 
 		return Status::OK();
 	}
-}  // namespace leveldb
+}  // namespace LevelDB

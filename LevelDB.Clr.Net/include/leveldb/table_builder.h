@@ -17,7 +17,7 @@
 #include "leveldb/options.h"
 #include "leveldb/status.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 class DLLX BlockBuilder;
 class DLLX BlockHandle;
@@ -87,6 +87,6 @@ class DLLX TableBuilder {
   void operator=(const TableBuilder&);
 };
 
-}  // namespace leveldb
+}  // namespace LevelDB
 
 #endif  // STORAGE_LEVELDB_INCLUDE_TABLE_BUILDER_H_

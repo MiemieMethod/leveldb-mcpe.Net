@@ -33,7 +33,7 @@
 #include "util/logging.h"
 #include "util/mutexlock.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 const int kNumNonTableCacheFiles = 10;
 
@@ -1641,4 +1641,4 @@ DLLX Status DestroyDB(const std::string& dbname, const Options& options) {
   return result;
 }
 
-}  // namespace leveldb
+}  // namespace LevelDB

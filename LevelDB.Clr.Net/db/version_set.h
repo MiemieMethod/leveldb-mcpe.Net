@@ -23,7 +23,7 @@
 #include "port/port.h"
 #include "port/thread_annotations.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 namespace log { class Writer; }
 
@@ -393,6 +393,6 @@ class Compaction {
   size_t level_ptrs_[config::kNumLevels];
 };
 
-}  // namespace leveldb
+}  // namespace LevelDB
 
 #endif  // STORAGE_LEVELDB_DB_VERSION_SET_H_

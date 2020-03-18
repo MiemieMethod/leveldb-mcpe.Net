@@ -12,7 +12,7 @@
 #include "leveldb/slice.h"
 #include "util/random.h"
 
-namespace leveldb {
+namespace LevelDB {
 namespace test {
 
 // Run some of the tests registered by the TEST() macro.  If the
@@ -133,6 +133,6 @@ extern bool RegisterTest(const char* base, const char* name, void (*func)());
 
 
 }  // namespace test
-}  // namespace leveldb
+}  // namespace LevelDB
 
 #endif  // STORAGE_LEVELDB_UTIL_TESTHARNESS_H_

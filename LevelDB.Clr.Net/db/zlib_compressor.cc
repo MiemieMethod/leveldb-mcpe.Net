@@ -5,7 +5,7 @@
 #include <zlib/zlib.h>
 #include <algorithm>
 
-namespace leveldb {
+namespace LevelDB {
 
 	void ZlibCompressorBase::compressImpl(const char* input, size_t length, ::std::string& buffer) const
 	{

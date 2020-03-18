@@ -40,7 +40,7 @@
 #include <cassert>
 #include <condition_variable>
 
-namespace leveldb {
+namespace LevelDB {
 	namespace port {
 
 		// Windows is little endian (for now :p)

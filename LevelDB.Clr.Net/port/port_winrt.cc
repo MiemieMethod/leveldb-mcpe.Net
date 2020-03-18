@@ -41,7 +41,7 @@
 #include "zlib/zlib.h"
 #endif
 
-namespace leveldb {
+namespace LevelDB {
 	namespace port {
 
 		CondVar::CondVar(Mutex* mu) :

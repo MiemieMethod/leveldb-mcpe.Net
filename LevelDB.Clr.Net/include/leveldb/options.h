@@ -10,7 +10,7 @@
 #include <memory>
 #include <unordered_map>
 
-namespace leveldb {
+namespace LevelDB {
 
 class DLLX Cache;
 class DLLX Comparator;
@@ -207,6 +207,6 @@ struct DLLX WriteOptions {
   }
 };
 
-}  // namespace leveldb
+}  // namespace LevelDB
 
 #endif  // STORAGE_LEVELDB_INCLUDE_OPTIONS_H_

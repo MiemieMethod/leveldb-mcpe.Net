@@ -9,7 +9,7 @@
 #include "leveldb/slice.h"
 #include "util/random.h"
 
-namespace leveldb {
+namespace LevelDB {
 namespace test {
 
 // Store in *dst a random string of length "len" and return a Slice that
@@ -58,6 +58,6 @@ class ErrorEnv : public EnvWrapper {
 };
 
 }  // namespace test
-}  // namespace leveldb
+}  // namespace LevelDB
 
 #endif  // STORAGE_LEVELDB_UTIL_TESTUTIL_H_

@@ -21,7 +21,7 @@
 #include <stdint.h>
 #include "leveldb/slice.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 class DLLX Cache;
 
@@ -105,6 +105,6 @@ class DLLX Cache {
   void operator=(const Cache&);
 };
 
-}  // namespace leveldb
+}  // namespace LevelDB
 
 #endif  // STORAGE_LEVELDB_INCLUDE_CACHE_H_

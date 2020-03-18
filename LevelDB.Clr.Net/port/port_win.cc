@@ -43,7 +43,7 @@
 	#include <zlib/zlib.h>
 #endif
 
-namespace leveldb {
+namespace LevelDB {
 namespace port {
 
 AtomicPointer::AtomicPointer(void* v) {

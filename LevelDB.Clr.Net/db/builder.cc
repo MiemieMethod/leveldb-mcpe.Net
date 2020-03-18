@@ -12,7 +12,7 @@
 #include "leveldb/env.h"
 #include "leveldb/iterator.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 Status BuildTable(const std::string& dbname,
                   Env* env,
@@ -85,4 +85,4 @@ Status BuildTable(const std::string& dbname,
   return s;
 }
 
-}  // namespace leveldb
+}  // namespace LevelDB

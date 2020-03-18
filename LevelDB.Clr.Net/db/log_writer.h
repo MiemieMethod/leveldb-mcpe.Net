@@ -10,7 +10,7 @@
 #include "leveldb/slice.h"
 #include "leveldb/status.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 class WritableFile;
 
@@ -49,6 +49,6 @@ class Writer {
 };
 
 }  // namespace log
-}  // namespace leveldb
+}  // namespace LevelDB
 
 #endif  // STORAGE_LEVELDB_DB_LOG_WRITER_H_

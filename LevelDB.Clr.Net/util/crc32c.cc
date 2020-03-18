@@ -12,7 +12,7 @@
 #include "port/port.h"
 #include "util/coding.h"
 
-namespace leveldb {
+namespace LevelDB {
     namespace crc32c {
 
         static const uint32_t table0_[256] = {
@@ -351,4 +351,4 @@ namespace leveldb {
         }
 
     }  // namespace crc32c
-}  // namespace leveldb
+}  // namespace LevelDB

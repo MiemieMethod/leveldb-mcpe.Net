@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include "leveldb/env.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 class WinLogger : public Logger {
  private:

@@ -10,7 +10,7 @@
 #include "util/random.h"
 #include "util/testharness.h"
 
-namespace leveldb {
+namespace LevelDB {
 namespace log {
 
 // Construct a string of the specified length made out of the supplied
@@ -584,7 +584,7 @@ TEST(LogTest, ReadPastEnd) {
 }
 
 }  // namespace log
-}  // namespace leveldb
+}  // namespace LevelDB
 
 int main(int argc, char** argv) {
   return leveldb::test::RunAllTests();

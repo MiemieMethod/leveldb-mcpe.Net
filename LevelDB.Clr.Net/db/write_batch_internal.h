@@ -8,7 +8,7 @@
 #include "db/dbformat.h"
 #include "leveldb/write_batch.h"
 
-namespace leveldb {
+namespace LevelDB {
 
 class MemTable;
 
@@ -44,7 +44,7 @@ class WriteBatchInternal {
   static void Append(WriteBatch* dst, const WriteBatch* src);
 };
 
-}  // namespace leveldb
+}  // namespace LevelDB
 
 
 #endif  // STORAGE_LEVELDB_DB_WRITE_BATCH_INTERNAL_H_
