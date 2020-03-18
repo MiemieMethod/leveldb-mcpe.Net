@@ -257,6 +257,7 @@
     <ClInclude Include="port\port_win.h" />
     <ClInclude Include="port\thread_annotations.h" />
     <ClInclude Include="port\win\stdint.h" />
+    <ClInclude Include="stdafx.h" />
     <ClInclude Include="table\block.h" />
     <ClInclude Include="table\block_builder.h" />
     <ClInclude Include="table\filter_block.h" />
