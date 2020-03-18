@@ -9,7 +9,7 @@
 
 namespace LevelDB {
 
-class ArenaTest { };
+ref class ArenaTest { };
 
 TEST(ArenaTest, Empty) {
   Arena arena;

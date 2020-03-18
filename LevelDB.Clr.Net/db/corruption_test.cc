@@ -24,10 +24,10 @@ namespace LevelDB {
 
 static const int kValueSize = 1000;
 
-class CorruptionTest {
+ref class CorruptionTest {
  public:
   test::ErrorEnv env_;
-  std::string dbname_;
+  System::String dbname_;
   Cache* tiny_cache_;
   Options options_;
   DB* db_;
@@ -68,7 +68,7 @@ class CorruptionTest {
   }
 
   void Build(int n) {
-    std::string key_space, value_space;
+    System::String key_space, value_space;
     WriteBatch batch;
     for (int i = 0; i < n; i++) {
       //if ((i % 100) == 0) fprintf(stderr, "@ %d of %d\n", i, n);
@@ -91,7 +91,7 @@ class CorruptionTest {
     int bad_keys = 0;
     int bad_values = 0;
     int correct = 0;
-    std::string value_space;
+    System::String value_space;
     Iterator* iter = db_->NewIterator(ReadOptions());
     for (iter->SeekToFirst(); iter->Valid(); iter->Next()) {
       uint64_t key;
@@ -125,11 +125,11 @@ class CorruptionTest {
 
   void Corrupt(FileType filetype, int offset, int bytes_to_corrupt) {
     // Pick file to corrupt
-    std::vector<std::string> filenames;
+    std::vector<System::String> filenames;
     ASSERT_OK(env_.GetChildren(dbname_, &filenames));
     uint64_t number;
     FileType type;
-    std::string fname;
+    System::String fname;
     int picked_number = -1;
     for (size_t i = 0; i < filenames.size(); i++) {
       if (ParseFileName(filenames[i], &number, &type) &&
@@ -141,7 +141,7 @@ class CorruptionTest {
     }
     ASSERT_TRUE(!fname.empty()) << filetype;
 
-    struct stat sbuf;
+    ref struct stat sbuf;
     if (stat(fname.c_str(), &sbuf) != 0) {
       const char* msg = strerror(errno);
       ASSERT_TRUE(false) << fname << ": " << msg;
@@ -163,7 +163,7 @@ class CorruptionTest {
     }
 
     // Do it
-    std::string contents;
+    System::String contents;
     Status s = ReadFileToString(Env::Default(), fname, &contents);
     ASSERT_TRUE(s.ok()) << s.ToString();
     for (int i = 0; i < bytes_to_corrupt; i++) {
@@ -173,8 +173,8 @@ class CorruptionTest {
     ASSERT_TRUE(s.ok()) << s.ToString();
   }
 
-  int Property(const std::string& name) {
-    std::string property;
+  int Property(const System::String& name) {
+    System::String property;
     int result;
     if (db_->GetProperty(name, &property) &&
         sscanf(property.c_str(), "%d", &result) == 1) {
@@ -185,7 +185,7 @@ class CorruptionTest {
   }
 
   // Return the ith key
-  Slice Key(int i, std::string* storage) {
+  Slice Key(int i, System::String* storage) {
     char buf[100];
     snprintf(buf, sizeof(buf), "%016d", i);
     storage->assign(buf, strlen(buf));
@@ -193,7 +193,7 @@ class CorruptionTest {
   }
 
   // Return the value to associate with the specified key
-  Slice Value(int k, std::string* storage) {
+  Slice Value(int k, System::String* storage) {
     Random r(k);
     return test::RandomString(&r, kValueSize, storage);
   }
@@ -220,7 +220,7 @@ TEST(CorruptionTest, NewFileErrorDuringWrite) {
   // Do enough writing to force minor compaction
   env_.writable_file_error_ = true;
   const int num = 3 + (Options().write_buffer_size / kValueSize);
-  std::string value_storage;
+  System::String value_storage;
   Status s;
   for (int i = 0; s.ok() && i < num; i++) {
     WriteBatch batch;
@@ -285,7 +285,7 @@ TEST(CorruptionTest, SequenceNumberRecovery) {
   ASSERT_OK(db_->Put(WriteOptions(), "foo", "v5"));
   RepairDB();
   Reopen();
-  std::string v;
+  System::String v;
   ASSERT_OK(db_->Get(ReadOptions(), "foo", &v));
   ASSERT_EQ("v5", v);
   // Write something.  If sequence number was not recovered properly,
@@ -310,7 +310,7 @@ TEST(CorruptionTest, CorruptedDescriptor) {
 
   RepairDB();
   Reopen();
-  std::string v;
+  System::String v;
   ASSERT_OK(db_->Get(ReadOptions(), "foo", &v));
   ASSERT_EQ("hello", v);
 }
@@ -346,7 +346,7 @@ TEST(CorruptionTest, CompactionInputErrorParanoid) {
   dbi->CompactRange(NULL, NULL);
 
   // Write must fail because of corrupted table
-  std::string tmp1, tmp2;
+  System::String tmp1, tmp2;
   Status s = db_->Put(WriteOptions(), Key(5, &tmp1), Value(5, &tmp2));
   ASSERT_TRUE(!s.ok()) << "write did not fail in corrupted paranoid db";
 }
@@ -357,9 +357,9 @@ TEST(CorruptionTest, UnrelatedKeys) {
   dbi->TEST_CompactMemTable();
   Corrupt(kTableFile, 100, 1);
 
-  std::string tmp1, tmp2;
+  System::String tmp1, tmp2;
   ASSERT_OK(db_->Put(WriteOptions(), Key(1000, &tmp1), Value(1000, &tmp2)));
-  std::string v;
+  System::String v;
   ASSERT_OK(db_->Get(ReadOptions(), Key(1000, &tmp1), &v));
   ASSERT_EQ(Value(1000, &tmp2).ToString(), v);
   dbi->TEST_CompactMemTable();

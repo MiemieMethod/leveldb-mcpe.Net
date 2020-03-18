@@ -42,9 +42,9 @@ namespace LevelDB {
 
 namespace {
 
-class Repairer {
+ref class Repairer {
  public:
-  Repairer(const std::string& dbname, const Options& options)
+  Repairer(const System::String& dbname, const Options& options)
       : dbname_(dbname),
         env_(options.env),
         icmp_(options.comparator),
@@ -92,12 +92,12 @@ class Repairer {
   }
 
  private:
-  struct TableInfo {
+  ref struct TableInfo {
     FileMetaData meta;
     SequenceNumber max_sequence;
   };
 
-  std::string const dbname_;
+  System::String const dbname_;
   Env* const env_;
   InternalKeyComparator const icmp_;
   InternalFilterPolicy const ipolicy_;
@@ -107,14 +107,14 @@ class Repairer {
   TableCache* table_cache_;
   VersionEdit edit_;
 
-  std::vector<std::string> manifests_;
+  std::vector<System::String> manifests_;
   std::vector<uint64_t> table_numbers_;
   std::vector<uint64_t> logs_;
   std::vector<TableInfo> tables_;
   uint64_t next_file_number_;
 
   Status FindFiles() {
-    std::vector<std::string> filenames;
+    std::vector<System::String> filenames;
     Status status = env_->GetChildren(dbname_, &filenames);
     if (!status.ok()) {
       return status;
@@ -148,7 +148,7 @@ class Repairer {
 
   void ConvertLogFilesToTables() {
     for (size_t i = 0; i < logs_.size(); i++) {
-      std::string logname = LogFileName(dbname_, logs_[i]);
+      System::String logname = LogFileName(dbname_, logs_[i]);
       Status status = ConvertLogToTable(logs_[i]);
       if (!status.ok()) {
         Log(options_.info_log, "Log #%llu: ignoring conversion error: %s",
@@ -160,7 +160,7 @@ class Repairer {
   }
 
   Status ConvertLogToTable(uint64_t log) {
-    struct LogReporter : public log::Reader::Reporter {
+    ref struct LogReporter : public log::Reader::Reporter {
       Env* env;
       Logger* info_log;
       uint64_t lognum;
@@ -174,7 +174,7 @@ class Repairer {
     };
 
     // Open the log file
-    std::string logname = LogFileName(dbname_, log);
+    System::String logname = LogFileName(dbname_, log);
     SequentialFile* lfile;
     Status status = env_->NewSequentialFile(logname, &lfile);
     if (!status.ok()) {
@@ -194,7 +194,7 @@ class Repairer {
                        0/*initial_offset*/);
 
     // Read all the records and add to a memtable
-    std::string scratch;
+    System::String scratch;
     Slice record;
     WriteBatch batch;
     MemTable* mem = new MemTable(icmp_);
@@ -258,7 +258,7 @@ class Repairer {
   void ScanTable(uint64_t number) {
     TableInfo t;
     t.meta.number = number;
-    std::string fname = TableFileName(dbname_, number);
+    System::String fname = TableFileName(dbname_, number);
     Status status = env_->GetFileSize(fname, &t.meta.file_size);
     if (!status.ok()) {
       // Try alternate file name.
@@ -318,12 +318,12 @@ class Repairer {
     }
   }
 
-  void RepairTable(const std::string& src, TableInfo t) {
+  void RepairTable(const System::String& src, TableInfo t) {
     // We will copy src contents to a new table and then rename the
     // new table over the source.
 
     // Create builder.
-    std::string copy = TableFileName(dbname_, next_file_number_++);
+    System::String copy = TableFileName(dbname_, next_file_number_++);
     WritableFile* file;
     Status s = env_->NewWritableFile(copy, &file);
     if (!s.ok()) {
@@ -359,7 +359,7 @@ class Repairer {
     file = NULL;
 
     if (counter > 0 && s.ok()) {
-      std::string orig = TableFileName(dbname_, t.meta.number);
+      System::String orig = TableFileName(dbname_, t.meta.number);
       s = env_->RenameFile(copy, orig);
       if (s.ok()) {
         Log(options_.info_log, "Table #%llu: %d entries repaired",
@@ -373,7 +373,7 @@ class Repairer {
   }
 
   Status WriteDescriptor() {
-    std::string tmp = TempFileName(dbname_, 1);
+    System::String tmp = TempFileName(dbname_, 1);
     WritableFile* file;
     Status status = env_->NewWritableFile(tmp, &file);
     if (!status.ok()) {
@@ -402,7 +402,7 @@ class Repairer {
     //fprintf(stderr, "NewDescriptor:\n%s\n", edit_.DebugString().c_str());
     {
       log::Writer log(file);
-      std::string record;
+      System::String record;
       edit_.EncodeTo(&record);
       status = log.AddRecord(record);
     }
@@ -431,19 +431,19 @@ class Repairer {
     return status;
   }
 
-  void ArchiveFile(const std::string& fname) {
+  void ArchiveFile(const System::String& fname) {
     // Move into another directory.  E.g., for
     //    dir/foo
     // rename to
     //    dir/lost/foo
     const char* slash = strrchr(fname.c_str(), '/');
-    std::string new_dir;
+    System::String new_dir;
     if (slash != NULL) {
       new_dir.assign(fname.data(), slash - fname.data());
     }
     new_dir.append("/lost");
     env_->CreateDir(new_dir);  // Ignore error
-    std::string new_file = new_dir;
+    System::String new_file = new_dir;
     new_file.append("/");
     new_file.append((slash == NULL) ? fname.c_str() : slash + 1);
     Status s = env_->RenameFile(fname, new_file);
@@ -453,7 +453,7 @@ class Repairer {
 };
 }  // namespace
 
-DLLX Status RepairDB(const std::string& dbname, const Options& options) {
+DLLX Status RepairDB(const System::String& dbname, const Options& options) {
   Repairer repairer(dbname, options);
   return repairer.Run();
 }

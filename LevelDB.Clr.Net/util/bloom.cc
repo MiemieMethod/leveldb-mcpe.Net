@@ -14,7 +14,7 @@ static uint32_t BloomHash(const Slice& key) {
   return Hash(key.data(), key.size(), 0xbc9f1d34);
 }
 
-class BloomFilterPolicy : public FilterPolicy {
+ref class BloomFilterPolicy : public FilterPolicy {
  private:
   size_t bits_per_key_;
   size_t k_;
@@ -32,7 +32,7 @@ class BloomFilterPolicy : public FilterPolicy {
     return "leveldb.BuiltinBloomFilter2";
   }
 
-  virtual void CreateFilter(const Slice* keys, int n, std::string* dst) const {
+  virtual void CreateFilter(const Slice* keys, int n, System::String* dst) const {
     // Compute bloom filter size (in both bits and bytes)
     size_t bits = n * bits_per_key_;
 

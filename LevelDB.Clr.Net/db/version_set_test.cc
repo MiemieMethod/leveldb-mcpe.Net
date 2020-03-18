@@ -9,7 +9,7 @@
 
 namespace LevelDB {
 
-class FindFileTest {
+ref class FindFileTest {
  public:
   std::vector<FileMetaData*> files_;
   bool disjoint_sorted_files_;

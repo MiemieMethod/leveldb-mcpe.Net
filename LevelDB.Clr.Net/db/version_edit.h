@@ -12,9 +12,9 @@
 
 namespace LevelDB {
 
-class VersionSet;
+ref class VersionSet;
 
-struct FileMetaData {
+ref struct FileMetaData {
   int refs;
   int allowed_seeks;          // Seeks allowed until compaction
   uint64_t number;
@@ -25,7 +25,7 @@ struct FileMetaData {
   FileMetaData() : refs(0), allowed_seeks(1 << 30), file_size(0) { }
 };
 
-class VersionEdit {
+ref class VersionEdit {
  public:
   VersionEdit() { Clear(); }
   ~VersionEdit() { }
@@ -76,17 +76,17 @@ class VersionEdit {
     deleted_files_.insert(std::make_pair(level, file));
   }
 
-  void EncodeTo(std::string* dst) const;
+  void EncodeTo(System::String* dst) const;
   Status DecodeFrom(const Slice& src);
 
-  std::string DebugString() const;
+  System::String DebugString() const;
 
  private:
-  friend class VersionSet;
+  friend ref class VersionSet;
 
   typedef std::set< std::pair<int, uint64_t> > DeletedFileSet;
 
-  std::string comparator_;
+  System::String comparator_;
   uint64_t log_number_;
   uint64_t prev_log_number_;
   uint64_t next_file_number_;

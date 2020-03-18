@@ -18,7 +18,7 @@
 
 namespace LevelDB {
 
-class FilterPolicy;
+ref class FilterPolicy;
 
 // A FilterBlockBuilder is used to construct all of the filters for a
 // particular Table.  It generates a single string which is stored as
@@ -26,7 +26,7 @@ class FilterPolicy;
 //
 // The sequence of calls to FilterBlockBuilder must match the regexp:
 //      (StartBlock AddKey*)* Finish
-class FilterBlockBuilder {
+ref class FilterBlockBuilder {
  public:
   explicit FilterBlockBuilder(const FilterPolicy*);
 
@@ -38,9 +38,9 @@ class FilterBlockBuilder {
   void GenerateFilter();
 
   const FilterPolicy* policy_;
-  std::string keys_;              // Flattened key contents
+  System::String keys_;              // Flattened key contents
   std::vector<size_t> start_;     // Starting index in keys_ of each key
-  std::string result_;            // Filter data computed so far
+  System::String result_;            // Filter data computed so far
   std::vector<Slice> tmp_keys_;   // policy_->CreateFilter() argument
   std::vector<uint32_t> filter_offsets_;
 
@@ -49,7 +49,7 @@ class FilterBlockBuilder {
   void operator=(const FilterBlockBuilder&);
 };
 
-class FilterBlockReader {
+ref class FilterBlockReader {
  public:
  // REQUIRES: "contents" and *policy must stay live while *this is live.
   FilterBlockReader(const FilterPolicy* policy, const Slice& contents);

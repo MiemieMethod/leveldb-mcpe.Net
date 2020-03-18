@@ -39,7 +39,7 @@ void Iterator::RegisterCleanup(CleanupFunction func, void* arg1, void* arg2) {
 }
 
 namespace {
-class EmptyIterator : public Iterator {
+ref class EmptyIterator : public Iterator {
  public:
   EmptyIterator(const Status& s) : status_(s) { }
   virtual bool Valid() const { return false; }

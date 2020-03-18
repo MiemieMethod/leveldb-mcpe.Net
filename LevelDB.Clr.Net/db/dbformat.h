@@ -43,7 +43,7 @@ static const int kReadBytesPeriod = 1048576;
 
 }  // namespace config
 
-class InternalKey;
+ref class InternalKey;
 
 // Value types encoded as the last component of internal keys.
 // DO NOT CHANGE THESE ENUM VALUES: they are embedded in the on-disk
@@ -67,7 +67,7 @@ typedef uint64_t SequenceNumber;
 static const SequenceNumber kMaxSequenceNumber =
     ((0x1ull << 56) - 1);
 
-struct ParsedInternalKey {
+ref struct ParsedInternalKey {
   Slice user_key;
   SequenceNumber sequence;
   ValueType type;
@@ -75,7 +75,7 @@ struct ParsedInternalKey {
   ParsedInternalKey() { }  // Intentionally left uninitialized (for speed)
   ParsedInternalKey(const Slice& u, const SequenceNumber& seq, ValueType t)
       : user_key(u), sequence(seq), type(t) { }
-  std::string DebugString() const;
+  System::String DebugString() const;
 };
 
 // Return the length of the encoding of "key".
@@ -84,7 +84,7 @@ inline size_t InternalKeyEncodingLength(const ParsedInternalKey& key) {
 }
 
 // Append the serialization of "key" to *result.
-extern void AppendInternalKey(std::string* result,
+extern void AppendInternalKey(System::String* result,
                               const ParsedInternalKey& key);
 
 // Attempt to parse an internal key from "internal_key".  On success,
@@ -110,40 +110,40 @@ inline ValueType ExtractValueType(const Slice& internal_key) {
 
 // A comparator for internal keys that uses a specified comparator for
 // the user key portion and breaks ties by decreasing sequence number.
-class InternalKeyComparator : public Comparator {
+ref class InternalKeyComparator : public Comparator {
  private:
-  const Comparator* user_comparator_;
+  const Comparator^ user_comparator_;
  public:
-  explicit InternalKeyComparator(const Comparator* c) : user_comparator_(c) { }
+  explicit InternalKeyComparator(const Comparator^ c) : user_comparator_(c) { }
   virtual const char* Name() const;
   virtual int Compare(const Slice& a, const Slice& b) const;
   virtual void FindShortestSeparator(
-      std::string* start,
+      System::String* start,
       const Slice& limit) const;
-  virtual void FindShortSuccessor(std::string* key) const;
+  virtual void FindShortSuccessor(System::String* key) const;
 
-  const Comparator* user_comparator() const { return user_comparator_; }
+  const Comparator^ user_comparator() const { return user_comparator_; }
 
   int Compare(const InternalKey& a, const InternalKey& b) const;
 };
 
 // Filter policy wrapper that converts from internal keys to user keys
-class InternalFilterPolicy : public FilterPolicy {
+ref class InternalFilterPolicy : public FilterPolicy {
  private:
   const FilterPolicy* const user_policy_;
  public:
   explicit InternalFilterPolicy(const FilterPolicy* p) : user_policy_(p) { }
   virtual const char* Name() const;
-  virtual void CreateFilter(const Slice* keys, int n, std::string* dst) const;
+  virtual void CreateFilter(const Slice* keys, int n, System::String* dst) const;
   virtual bool KeyMayMatch(const Slice& key, const Slice& filter) const;
 };
 
 // Modules in this directory should keep internal keys wrapped inside
-// the following class instead of plain strings so that we do not
+// the following ref class instead of plain strings so that we do not
 // incorrectly use string comparisons instead of an InternalKeyComparator.
-class InternalKey {
+ref class InternalKey {
  private:
-  std::string rep_;
+  System::String rep_;
  public:
   InternalKey() { }   // Leave rep_ as empty to indicate it is invalid
   InternalKey(const Slice& user_key, SequenceNumber s, ValueType t) {
@@ -165,7 +165,7 @@ class InternalKey {
 
   void Clear() { rep_.clear(); }
 
-  std::string DebugString() const;
+  System::String DebugString() const;
 };
 
 inline int InternalKeyComparator::Compare(
@@ -185,8 +185,8 @@ inline bool ParseInternalKey(const Slice& internal_key,
   return (c <= static_cast<unsigned char>(kTypeValue));
 }
 
-// A helper class useful for DBImpl::Get()
-class LookupKey {
+// A helper ref class useful for DBImpl::Get()
+ref class LookupKey {
  public:
   // Initialize *this for looking up user_key at a snapshot with
   // the specified sequence number.

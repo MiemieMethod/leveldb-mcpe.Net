@@ -17,9 +17,9 @@ namespace LevelDB {
 
 	DecompressAllocator::~DecompressAllocator() {}
 
-	std::string DecompressAllocator::get() {
+	System::String DecompressAllocator::get() {
 
-		std::string buffer;
+		System::String buffer;
 		std::lock_guard<std::mutex> lock(mutex);
 
 		if (!stack.empty()) {
@@ -30,7 +30,7 @@ namespace LevelDB {
 		return buffer;
 	}
 
-	void DecompressAllocator::release(std::string&& string) {
+	void DecompressAllocator::release(System::String&& string) {
 		std::lock_guard<std::mutex> lock(mutex);
 		stack.push_back(std::move(string));
 	}
@@ -40,7 +40,7 @@ namespace LevelDB {
 		stack.clear();
 	}
 
-	void BlockHandle::EncodeTo(std::string* dst) const {
+	void BlockHandle::EncodeTo(System::String* dst) const {
 		// Sanity check that all fields have been set
 		assert(offset_ != ~static_cast<uint64_t>(0));
 		assert(size_ != ~static_cast<uint64_t>(0));
@@ -58,7 +58,7 @@ namespace LevelDB {
 		}
 	}
 
-	void Footer::EncodeTo(std::string* dst) const {
+	void Footer::EncodeTo(System::String* dst) const {
 		const size_t original_size = dst->size();
 		metaindex_handle_.EncodeTo(dst);
 		index_handle_.EncodeTo(dst);
@@ -163,7 +163,7 @@ Status Footer::DecodeFrom(Slice* input) {
 				return Status::NotSupported("encountered a block compressed with an unknown decompressor");
 			}
 
-			std::string buffer;
+			System::String buffer;
 			if (options.decompress_allocator) {
 				buffer = options.decompress_allocator->get();
 			}

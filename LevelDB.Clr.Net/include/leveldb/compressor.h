@@ -7,9 +7,9 @@
 #include <memory>
 
 namespace LevelDB {
-	class DLLX Slice;
+	public ref class Slice;
 
-	class DLLX Compressor
+	public ref class Compressor
 	{
 	public:
 
@@ -34,7 +34,7 @@ namespace LevelDB {
 			inputBytes = compressedBytes = 0;
 		}
 
-		void compress(const char* input, size_t length, ::std::string& output) {
+		void compress(const char* input, size_t length, ::System::String& output) {
 
 			compressImpl(input, length, output);
 
@@ -42,15 +42,15 @@ namespace LevelDB {
 			compressedBytes += output.length();
 		}
 
-		void compress(const std::string& in, std::string& out) {
+		void compress(const System::String& in, System::String& out) {
 			compress(in.data(), in.length(), out);
 		}
 
-		virtual void compressImpl(const char* input, size_t length, ::std::string& output) const = 0;
+		virtual void compressImpl(const char* input, size_t length, ::System::String& output) const = 0;
 
-		virtual bool decompress(const char* input, size_t length, ::std::string &output) const = 0;
+		virtual bool decompress(const char* input, size_t length, ::System::String &output) const = 0;
 
-		bool decompress(const std::string& input, ::std::string& output) const {
+		bool decompress(const System::String& input, ::System::String& output) const {
 			return decompress(input.data(), input.length(), output);
 		}
 

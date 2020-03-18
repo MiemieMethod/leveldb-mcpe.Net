@@ -13,13 +13,13 @@
 
 namespace LevelDB {
 
-void AppendNumberTo(std::string* str, uint64_t num) {
+void AppendNumberTo(System::String* str, uint64_t num) {
   char buf[30];
   snprintf(buf, sizeof(buf), "%llu", (unsigned long long) num);
   str->append(buf);
 }
 
-void AppendEscapedStringTo(std::string* str, const Slice& value) {
+void AppendEscapedStringTo(System::String* str, const Slice& value) {
   for (size_t i = 0; i < value.size(); i++) {
     char c = value[i];
     if (c >= ' ' && c <= '~') {
@@ -33,14 +33,14 @@ void AppendEscapedStringTo(std::string* str, const Slice& value) {
   }
 }
 
-std::string NumberToString(uint64_t num) {
-  std::string r;
+System::String NumberToString(uint64_t num) {
+  System::String r;
   AppendNumberTo(&r, num);
   return r;
 }
 
-std::string EscapeString(const Slice& value) {
-  std::string r;
+System::String EscapeString(const Slice& value) {
+  System::String r;
   AppendEscapedStringTo(&r, value);
   return r;
 }

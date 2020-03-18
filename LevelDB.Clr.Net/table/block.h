@@ -11,18 +11,18 @@
 
 namespace LevelDB {
 
-struct BlockContents;
-class Comparator;
+ref struct BlockContents;
+ref class Comparator;
 
-class Block {
+ref class Block {
  public:
   // Initialize the block with the specified contents.
-  explicit Block(const BlockContents& contents);
+  explicit Block(const BlockContents^ contents);
 
   ~Block();
 
   size_t size() const { return size_; }
-  Iterator* NewIterator(const Comparator* comparator);
+  Iterator* NewIterator(const Comparator^ comparator);
 
  private:
   uint32_t NumRestarts() const;
@@ -36,7 +36,7 @@ class Block {
   Block(const Block&);
   void operator=(const Block&);
 
-  class Iter;
+  ref class Iter;
 };
 
 }  // namespace LevelDB

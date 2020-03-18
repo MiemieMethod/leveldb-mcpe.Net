@@ -8,10 +8,10 @@
 
 namespace LevelDB {
 
-class Coding { };
+ref class Coding { };
 
 TEST(Coding, Fixed32) {
-  std::string s;
+  System::String s;
   for (uint32_t v = 0; v < 100000; v++) {
     PutFixed32(&s, v);
   }
@@ -25,7 +25,7 @@ TEST(Coding, Fixed32) {
 }
 
 TEST(Coding, Fixed64) {
-  std::string s;
+  System::String s;
   for (int power = 0; power <= 63; power++) {
     uint64_t v = static_cast<uint64_t>(1) << power;
     PutFixed64(&s, v - 1);
@@ -53,7 +53,7 @@ TEST(Coding, Fixed64) {
 
 // Test that encoding routines generate little-endian encodings
 TEST(Coding, EncodingOutput) {
-  std::string dst;
+  System::String dst;
   PutFixed32(&dst, 0x04030201);
   ASSERT_EQ(4, dst.size());
   ASSERT_EQ(0x01, static_cast<int>(dst[0]));
@@ -75,7 +75,7 @@ TEST(Coding, EncodingOutput) {
 }
 
 TEST(Coding, Varint32) {
-  std::string s;
+  System::String s;
   for (uint32_t i = 0; i < (32 * 32); i++) {
     uint32_t v = (i / 32) << (i % 32);
     PutVarint32(&s, v);
@@ -111,7 +111,7 @@ TEST(Coding, Varint64) {
     values.push_back(power+1);
   }
 
-  std::string s;
+  System::String s;
   for (size_t i = 0; i < values.size(); i++) {
     PutVarint64(&s, values[i]);
   }
@@ -133,14 +133,14 @@ TEST(Coding, Varint64) {
 
 TEST(Coding, Varint32Overflow) {
   uint32_t result;
-  std::string input("\x81\x82\x83\x84\x85\x11");
+  System::String input("\x81\x82\x83\x84\x85\x11");
   ASSERT_TRUE(GetVarint32Ptr(input.data(), input.data() + input.size(), &result)
               == NULL);
 }
 
 TEST(Coding, Varint32Truncation) {
   uint32_t large_value = (1u << 31) + 100;
-  std::string s;
+  System::String s;
   PutVarint32(&s, large_value);
   uint32_t result;
   for (size_t len = 0; len < s.size() - 1; len++) {
@@ -152,14 +152,14 @@ TEST(Coding, Varint32Truncation) {
 
 TEST(Coding, Varint64Overflow) {
   uint64_t result;
-  std::string input("\x81\x82\x83\x84\x85\x81\x82\x83\x84\x85\x11");
+  System::String input("\x81\x82\x83\x84\x85\x81\x82\x83\x84\x85\x11");
   ASSERT_TRUE(GetVarint64Ptr(input.data(), input.data() + input.size(), &result)
               == NULL);
 }
 
 TEST(Coding, Varint64Truncation) {
   uint64_t large_value = (1ull << 63) + 100ull;
-  std::string s;
+  System::String s;
   PutVarint64(&s, large_value);
   uint64_t result;
   for (size_t len = 0; len < s.size() - 1; len++) {
@@ -170,11 +170,11 @@ TEST(Coding, Varint64Truncation) {
 }
 
 TEST(Coding, Strings) {
-  std::string s;
+  System::String s;
   PutLengthPrefixedSlice(&s, Slice(""));
   PutLengthPrefixedSlice(&s, Slice("foo"));
   PutLengthPrefixedSlice(&s, Slice("bar"));
-  PutLengthPrefixedSlice(&s, Slice(std::string(200, 'x')));
+  PutLengthPrefixedSlice(&s, Slice(System::String(200, 'x')));
 
   Slice input(s);
   Slice v;
@@ -185,7 +185,7 @@ TEST(Coding, Strings) {
   ASSERT_TRUE(GetLengthPrefixedSlice(&input, &v));
   ASSERT_EQ("bar", v.ToString());
   ASSERT_TRUE(GetLengthPrefixedSlice(&input, &v));
-  ASSERT_EQ(std::string(200, 'x'), v.ToString());
+  ASSERT_EQ(System::String(200, 'x'), v.ToString());
   ASSERT_EQ("", input.ToString());
 }
 

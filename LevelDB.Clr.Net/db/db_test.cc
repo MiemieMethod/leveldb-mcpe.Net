@@ -19,16 +19,16 @@
 
 namespace LevelDB {
 
-static std::string RandomString(Random* rnd, int len) {
-  std::string r;
+static System::String RandomString(Random* rnd, int len) {
+  System::String r;
   test::RandomString(rnd, len, &r);
   return r;
 }
 
 namespace {
-class AtomicCounter {
+ref class AtomicCounter {
  private:
-  port::Mutex mu_;
+  Port::Mutex mu_;
   int count_;
  public:
   AtomicCounter() : count_(0) { }
@@ -55,25 +55,25 @@ void DelayMilliseconds(int millis) {
 }
 
 // Special Env used to delay background operations
-class SpecialEnv : public EnvWrapper {
+ref class SpecialEnv : public EnvWrapper {
  public:
   // sstable/log Sync() calls are blocked while this pointer is non-NULL.
-  port::AtomicPointer delay_data_sync_;
+  Port::AtomicPointer delay_data_sync_;
 
   // sstable/log Sync() calls return an error.
-  port::AtomicPointer data_sync_error_;
+  Port::AtomicPointer data_sync_error_;
 
   // Simulate no-space errors while this pointer is non-NULL.
-  port::AtomicPointer no_space_;
+  Port::AtomicPointer no_space_;
 
   // Simulate non-writable file system while this pointer is non-NULL
-  port::AtomicPointer non_writable_;
+  Port::AtomicPointer non_writable_;
 
   // Force sync of manifest files to fail while this pointer is non-NULL
-  port::AtomicPointer manifest_sync_error_;
+  Port::AtomicPointer manifest_sync_error_;
 
   // Force write to manifest files to fail while this pointer is non-NULL
-  port::AtomicPointer manifest_write_error_;
+  Port::AtomicPointer manifest_write_error_;
 
   bool count_random_reads_;
   AtomicCounter random_read_counter_;
@@ -88,8 +88,8 @@ class SpecialEnv : public EnvWrapper {
     manifest_write_error_.Release_Store(NULL);
   }
 
-  Status NewWritableFile(const std::string& f, WritableFile** r) {
-    class DataFile : public WritableFile {
+  Status NewWritableFile(const System::String& f, WritableFile** r) {
+    ref class DataFile : public WritableFile {
      private:
       SpecialEnv* env_;
       WritableFile* base_;
@@ -120,7 +120,7 @@ class SpecialEnv : public EnvWrapper {
         return base_->Sync();
       }
     };
-    class ManifestFile : public WritableFile {
+    ref class ManifestFile : public WritableFile {
      private:
       SpecialEnv* env_;
       WritableFile* base_;
@@ -161,8 +161,8 @@ class SpecialEnv : public EnvWrapper {
     return s;
   }
 
-  Status NewRandomAccessFile(const std::string& f, RandomAccessFile** r) {
-    class CountingFile : public RandomAccessFile {
+  Status NewRandomAccessFile(const System::String& f, RandomAccessFile** r) {
+    ref class CountingFile : public RandomAccessFile {
      private:
       RandomAccessFile* target_;
       AtomicCounter* counter_;
@@ -186,7 +186,7 @@ class SpecialEnv : public EnvWrapper {
   }
 };
 
-class DBTest {
+ref class DBTest {
  private:
   const FilterPolicy* filter_policy_;
 
@@ -201,7 +201,7 @@ class DBTest {
   int option_config_;
 
  public:
-  std::string dbname_;
+  System::String dbname_;
   SpecialEnv* env_;
   DB* db_;
 
@@ -287,18 +287,18 @@ class DBTest {
     return DB::Open(opts, dbname_, &db_);
   }
 
-  Status Put(const std::string& k, const std::string& v) {
+  Status Put(const System::String& k, const System::String& v) {
     return db_->Put(WriteOptions(), k, v);
   }
 
-  Status Delete(const std::string& k) {
+  Status Delete(const System::String& k) {
     return db_->Delete(WriteOptions(), k);
   }
 
-  std::string Get(const std::string& k, const Snapshot* snapshot = NULL) {
+  System::String Get(const System::String& k, const Snapshot* snapshot = NULL) {
     ReadOptions options;
     options.snapshot = snapshot;
-    std::string result;
+    System::String result;
     Status s = db_->Get(options, k, &result);
     if (s.IsNotFound()) {
       result = "NOT_FOUND";
@@ -310,12 +310,12 @@ class DBTest {
 
   // Return a string that contains all key,value pairs in order,
   // formatted like "(k1->v1)(k2->v2)".
-  std::string Contents() {
-    std::vector<std::string> forward;
-    std::string result;
+  System::String Contents() {
+    std::vector<System::String> forward;
+    System::String result;
     Iterator* iter = db_->NewIterator(ReadOptions());
     for (iter->SeekToFirst(); iter->Valid(); iter->Next()) {
-      std::string s = IterStatus(iter);
+      System::String s = IterStatus(iter);
       result.push_back('(');
       result.append(s);
       result.push_back(')');
@@ -335,11 +335,11 @@ class DBTest {
     return result;
   }
 
-  std::string AllEntriesFor(const Slice& user_key) {
+  System::String AllEntriesFor(const Slice& user_key) {
     Iterator* iter = dbfull()->TEST_NewInternalIterator();
     InternalKey target(user_key, kMaxSequenceNumber, kTypeValue);
     iter->Seek(target.Encode());
-    std::string result;
+    System::String result;
     if (!iter->status().ok()) {
       result = iter->status().ToString();
     } else {
@@ -378,7 +378,7 @@ class DBTest {
   }
 
   int NumTableFilesAtLevel(int level) {
-    std::string property;
+    System::String property;
     ASSERT_TRUE(
         db_->GetProperty("leveldb.num-files-at-level" + NumberToString(level),
                          &property));
@@ -394,8 +394,8 @@ class DBTest {
   }
 
   // Return spread of files per level
-  std::string FilesPerLevel() {
-    std::string result;
+  System::String FilesPerLevel() {
+    System::String result;
     int last_non_zero_offset = 0;
     for (int level = 0; level < config::kNumLevels; level++) {
       int f = NumTableFilesAtLevel(level);
@@ -411,7 +411,7 @@ class DBTest {
   }
 
   int CountFiles() {
-    std::vector<std::string> files;
+    std::vector<System::String> files;
     env_->GetChildren(dbname_, &files);
     return static_cast<int>(files.size());
   }
@@ -429,7 +429,7 @@ class DBTest {
 
   // Do n memtable compactions, each of which produces an sstable
   // covering the range [small,large].
-  void MakeTables(int n, const std::string& small, const std::string& large) {
+  void MakeTables(int n, const System::String& small, const System::String& large) {
     for (int i = 0; i < n; i++) {
       Put(small, "begin");
       Put(large, "end");
@@ -439,7 +439,7 @@ class DBTest {
 
   // Prevent pushing of new sstables into deeper levels by adding
   // tables that cover a specified range to all levels.
-  void FillLevels(const std::string& smallest, const std::string& largest) {
+  void FillLevels(const System::String& smallest, const System::String& largest) {
     MakeTables(config::kNumLevels, smallest, largest);
   }
 
@@ -456,14 +456,14 @@ class DBTest {
     }
   }
 
-  std::string DumpSSTableList() {
-    std::string property;
+  System::String DumpSSTableList() {
+    System::String property;
     db_->GetProperty("leveldb.sstables", &property);
     return property;
   }
 
-  std::string IterStatus(Iterator* iter) {
-    std::string result;
+  System::String IterStatus(Iterator* iter) {
+    System::String result;
     if (iter->Valid()) {
       result = iter->key().ToString() + "->" + iter->value().ToString();
     } else {
@@ -473,7 +473,7 @@ class DBTest {
   }
 
   bool DeleteAnSSTFile() {
-    std::vector<std::string> filenames;
+    std::vector<System::String> filenames;
     ASSERT_OK(env_->GetChildren(dbname_, &filenames));
     uint64_t number;
     FileType type;
@@ -488,15 +488,15 @@ class DBTest {
 
   // Returns number of files renamed.
   int RenameLDBToSST() {
-    std::vector<std::string> filenames;
+    std::vector<System::String> filenames;
     ASSERT_OK(env_->GetChildren(dbname_, &filenames));
     uint64_t number;
     FileType type;
     int files_renamed = 0;
     for (size_t i = 0; i < filenames.size(); i++) {
       if (ParseFileName(filenames[i], &number, &type) && type == kTableFile) {
-        const std::string from = TableFileName(dbname_, number);
-        const std::string to = SSTTableFileName(dbname_, number);
+        const System::String from = TableFileName(dbname_, number);
+        const System::String to = SSTTableFileName(dbname_, number);
         ASSERT_OK(env_->RenameFile(from, to));
         files_renamed++;
       }
@@ -545,8 +545,8 @@ TEST(DBTest, GetFromImmutableLayer) {
     ASSERT_EQ("v1", Get("foo"));
 
     env_->delay_data_sync_.Release_Store(env_);      // Block sync calls
-    Put("k1", std::string(100000, 'x'));             // Fill memtable
-    Put("k2", std::string(100000, 'y'));             // Trigger compaction
+    Put("k1", System::String(100000, 'x'));             // Fill memtable
+    Put("k2", System::String(100000, 'y'));             // Trigger compaction
     ASSERT_EQ("v1", Get("foo"));
     env_->delay_data_sync_.Release_Store(NULL);      // Release sync calls
   } while (ChangeOptions());
@@ -563,7 +563,7 @@ TEST(DBTest, GetFromVersions) {
 TEST(DBTest, GetMemUsage) {
   do {
     ASSERT_OK(Put("foo", "v1"));
-    std::string val;
+    System::String val;
     ASSERT_TRUE(db_->GetProperty("leveldb.approximate-memory-usage", &val));
     int mem_usage = atoi(val.c_str());
     ASSERT_GT(mem_usage, 0);
@@ -575,7 +575,7 @@ TEST(DBTest, GetSnapshot) {
   do {
     // Try with both a short key and a long key
     for (int i = 0; i < 2; i++) {
-      std::string key = (i == 0) ? std::string("foo") : std::string(200, 'x');
+      System::String key = (i == 0) ? System::String("foo") : System::String(200, 'x');
       ASSERT_OK(Put(key, "v1"));
       const Snapshot* s1 = db_->GetSnapshot();
       ASSERT_OK(Put(key, "v2"));
@@ -808,34 +808,34 @@ TEST(DBTest, IterMulti) {
 
 TEST(DBTest, IterSmallAndLargeMix) {
   ASSERT_OK(Put("a", "va"));
-  ASSERT_OK(Put("b", std::string(100000, 'b')));
+  ASSERT_OK(Put("b", System::String(100000, 'b')));
   ASSERT_OK(Put("c", "vc"));
-  ASSERT_OK(Put("d", std::string(100000, 'd')));
-  ASSERT_OK(Put("e", std::string(100000, 'e')));
+  ASSERT_OK(Put("d", System::String(100000, 'd')));
+  ASSERT_OK(Put("e", System::String(100000, 'e')));
 
   Iterator* iter = db_->NewIterator(ReadOptions());
 
   iter->SeekToFirst();
   ASSERT_EQ(IterStatus(iter), "a->va");
   iter->Next();
-  ASSERT_EQ(IterStatus(iter), "b->" + std::string(100000, 'b'));
+  ASSERT_EQ(IterStatus(iter), "b->" + System::String(100000, 'b'));
   iter->Next();
   ASSERT_EQ(IterStatus(iter), "c->vc");
   iter->Next();
-  ASSERT_EQ(IterStatus(iter), "d->" + std::string(100000, 'd'));
+  ASSERT_EQ(IterStatus(iter), "d->" + System::String(100000, 'd'));
   iter->Next();
-  ASSERT_EQ(IterStatus(iter), "e->" + std::string(100000, 'e'));
+  ASSERT_EQ(IterStatus(iter), "e->" + System::String(100000, 'e'));
   iter->Next();
   ASSERT_EQ(IterStatus(iter), "(invalid)");
 
   iter->SeekToLast();
-  ASSERT_EQ(IterStatus(iter), "e->" + std::string(100000, 'e'));
+  ASSERT_EQ(IterStatus(iter), "e->" + System::String(100000, 'e'));
   iter->Prev();
-  ASSERT_EQ(IterStatus(iter), "d->" + std::string(100000, 'd'));
+  ASSERT_EQ(IterStatus(iter), "d->" + System::String(100000, 'd'));
   iter->Prev();
   ASSERT_EQ(IterStatus(iter), "c->vc");
   iter->Prev();
-  ASSERT_EQ(IterStatus(iter), "b->" + std::string(100000, 'b'));
+  ASSERT_EQ(IterStatus(iter), "b->" + System::String(100000, 'b'));
   iter->Prev();
   ASSERT_EQ(IterStatus(iter), "a->va");
   iter->Prev();
@@ -906,22 +906,22 @@ TEST(DBTest, RecoverDuringMemtableCompaction) {
 
     // Trigger a long memtable compaction and reopen the database during it
     ASSERT_OK(Put("foo", "v1"));                         // Goes to 1st log file
-    ASSERT_OK(Put("big1", std::string(10000000, 'x')));  // Fills memtable
-    ASSERT_OK(Put("big2", std::string(1000, 'y')));      // Triggers compaction
+    ASSERT_OK(Put("big1", System::String(10000000, 'x')));  // Fills memtable
+    ASSERT_OK(Put("big2", System::String(1000, 'y')));      // Triggers compaction
     ASSERT_OK(Put("bar", "v2"));                         // Goes to new log file
 
     Reopen(&options);
     ASSERT_EQ("v1", Get("foo"));
     ASSERT_EQ("v2", Get("bar"));
-    ASSERT_EQ(std::string(10000000, 'x'), Get("big1"));
-    ASSERT_EQ(std::string(1000, 'y'), Get("big2"));
+    ASSERT_EQ(System::String(10000000, 'x'), Get("big1"));
+    ASSERT_EQ(System::String(1000, 'y'), Get("big2"));
   } while (ChangeOptions());
 }
 
-static std::string Key(int i) {
+static System::String Key(int i) {
   char buf[100];
   snprintf(buf, sizeof(buf), "key%06d", i);
-  return std::string(buf);
+  return System::String(buf);
 }
 
 TEST(DBTest, MinorCompactionsHappen) {
@@ -933,19 +933,19 @@ TEST(DBTest, MinorCompactionsHappen) {
 
   int starting_num_tables = TotalTableFiles();
   for (int i = 0; i < N; i++) {
-    ASSERT_OK(Put(Key(i), Key(i) + std::string(1000, 'v')));
+    ASSERT_OK(Put(Key(i), Key(i) + System::String(1000, 'v')));
   }
   int ending_num_tables = TotalTableFiles();
   ASSERT_GT(ending_num_tables, starting_num_tables);
 
   for (int i = 0; i < N; i++) {
-    ASSERT_EQ(Key(i) + std::string(1000, 'v'), Get(Key(i)));
+    ASSERT_EQ(Key(i) + System::String(1000, 'v'), Get(Key(i)));
   }
 
   Reopen();
 
   for (int i = 0; i < N; i++) {
-    ASSERT_EQ(Key(i) + std::string(1000, 'v'), Get(Key(i)));
+    ASSERT_EQ(Key(i) + System::String(1000, 'v'), Get(Key(i)));
   }
 }
 
@@ -953,10 +953,10 @@ TEST(DBTest, RecoverWithLargeLog) {
   {
     Options options = CurrentOptions();
     Reopen(&options);
-    ASSERT_OK(Put("big1", std::string(200000, '1')));
-    ASSERT_OK(Put("big2", std::string(200000, '2')));
-    ASSERT_OK(Put("small3", std::string(10, '3')));
-    ASSERT_OK(Put("small4", std::string(10, '4')));
+    ASSERT_OK(Put("big1", System::String(200000, '1')));
+    ASSERT_OK(Put("big2", System::String(200000, '2')));
+    ASSERT_OK(Put("small3", System::String(10, '3')));
+    ASSERT_OK(Put("small4", System::String(10, '4')));
     ASSERT_EQ(NumTableFilesAtLevel(0), 0);
   }
 
@@ -966,10 +966,10 @@ TEST(DBTest, RecoverWithLargeLog) {
   options.write_buffer_size = 100000;
   Reopen(&options);
   ASSERT_EQ(NumTableFilesAtLevel(0), 3);
-  ASSERT_EQ(std::string(200000, '1'), Get("big1"));
-  ASSERT_EQ(std::string(200000, '2'), Get("big2"));
-  ASSERT_EQ(std::string(10, '3'), Get("small3"));
-  ASSERT_EQ(std::string(10, '4'), Get("small4"));
+  ASSERT_EQ(System::String(200000, '1'), Get("big1"));
+  ASSERT_EQ(System::String(200000, '2'), Get("big2"));
+  ASSERT_EQ(System::String(10, '3'), Get("small3"));
+  ASSERT_EQ(System::String(10, '4'), Get("small4"));
   ASSERT_GT(NumTableFilesAtLevel(0), 1);
 }
 
@@ -982,7 +982,7 @@ TEST(DBTest, CompactionsGenerateMultipleFiles) {
 
   // Write 8MB (80 values, each 100K)
   ASSERT_EQ(NumTableFilesAtLevel(0), 0);
-  std::vector<std::string> values;
+  std::vector<System::String> values;
   for (int i = 0; i < 80; i++) {
     values.push_back(RandomString(&rnd, 100000));
     ASSERT_OK(Put(Key(i), values[i]));
@@ -1010,7 +1010,7 @@ TEST(DBTest, RepeatedWritesToSameKey) {
   const int kMaxFiles = config::kNumLevels + config::kL0_StopWritesTrigger;
 
   Random rnd(301);
-  std::string value = RandomString(&rnd, 2 * options.write_buffer_size);
+  System::String value = RandomString(&rnd, 2 * options.write_buffer_size);
   for (int i = 0; i < 5 * kMaxFiles; i++) {
     Put("key", value);
     ASSERT_LE(TotalTableFiles(), kMaxFiles);
@@ -1030,7 +1030,7 @@ TEST(DBTest, SparseMerge) {
   //    small amount of data with prefix C
   // and that recent updates have made small changes to all three prefixes.
   // Check that we do not do a compaction that merges all of B in one shot.
-  const std::string value(1000, 'x');
+  const System::String value(1000, 'x');
   Put("A", "va");
   // Write approximately 100MB of "B" values
   for (int i = 0; i < 100000; i++) {
@@ -1112,8 +1112,8 @@ TEST(DBTest, ApproximateSizes) {
         ASSERT_TRUE(Between(Size("", Key(50)), S1*50, S2*50));
         ASSERT_TRUE(Between(Size("", Key(50)+".suffix"), S1*50, S2*50));
 
-        std::string cstart_str = Key(compact_start);
-        std::string cend_str = Key(compact_start + 9);
+        System::String cstart_str = Key(compact_start);
+        System::String cend_str = Key(compact_start + 9);
         Slice cstart = cstart_str;
         Slice cend = cend_str;
         dbfull()->TEST_CompactRange(0, &cstart, &cend);
@@ -1131,7 +1131,7 @@ TEST(DBTest, ApproximateSizes_MixOfSmallAndLarge) {
     Reopen();
 
     Random rnd(301);
-    std::string big1 = RandomString(&rnd, 100000);
+    System::String big1 = RandomString(&rnd, 100000);
     ASSERT_OK(Put(Key(0), RandomString(&rnd, 10000)));
     ASSERT_OK(Put(Key(1), RandomString(&rnd, 10000)));
     ASSERT_OK(Put(Key(2), big1));
@@ -1176,7 +1176,7 @@ TEST(DBTest, IteratorPinsRef) {
   // Write to force compactions
   Put("foo", "newvalue1");
   for (int i = 0; i < 100; i++) {
-    ASSERT_OK(Put(Key(i), Key(i) + std::string(100000, 'v'))); // 100K values
+    ASSERT_OK(Put(Key(i), Key(i) + System::String(100000, 'v'))); // 100K values
   }
   Put("foo", "newvalue2");
 
@@ -1223,7 +1223,7 @@ TEST(DBTest, HiddenValuesAreRemoved) {
     Random rnd(301);
     FillLevels("a", "z");
 
-    std::string big = RandomString(&rnd, 50000);
+    System::String big = RandomString(&rnd, 50000);
     Put("foo", big);
     Put("pastfoo", "v");
     const Snapshot* snapshot = db_->GetSnapshot();
@@ -1389,16 +1389,16 @@ TEST(DBTest, L0_CompactionBug_Issue44_b) {
 }
 
 TEST(DBTest, ComparatorCheck) {
-  class NewComparator : public Comparator {
+  ref class NewComparator : public Comparator {
    public:
     virtual const char* Name() const { return "leveldb.NewComparator"; }
     virtual int Compare(const Slice& a, const Slice& b) const {
       return BytewiseComparator()->Compare(a, b);
     }
-    virtual void FindShortestSeparator(std::string* s, const Slice& l) const {
+    virtual void FindShortestSeparator(System::String* s, const Slice& l) const {
       BytewiseComparator()->FindShortestSeparator(s, l);
     }
-    virtual void FindShortSuccessor(std::string* key) const {
+    virtual void FindShortSuccessor(System::String* key) const {
       BytewiseComparator()->FindShortSuccessor(key);
     }
   };
@@ -1407,22 +1407,22 @@ TEST(DBTest, ComparatorCheck) {
   new_options.comparator = &cmp;
   Status s = TryReopen(&new_options);
   ASSERT_TRUE(!s.ok());
-  ASSERT_TRUE(s.ToString().find("comparator") != std::string::npos)
+  ASSERT_TRUE(s.ToString().find("comparator") != System::String::npos)
       << s.ToString();
 }
 
 TEST(DBTest, CustomComparator) {
-  class NumberComparator : public Comparator {
+  ref class NumberComparator : public Comparator {
    public:
     virtual const char* Name() const { return "test.NumberComparator"; }
     virtual int Compare(const Slice& a, const Slice& b) const {
       return ToNumber(a) - ToNumber(b);
     }
-    virtual void FindShortestSeparator(std::string* s, const Slice& l) const {
+    virtual void FindShortestSeparator(System::String* s, const Slice& l) const {
       ToNumber(*s);     // Check format
       ToNumber(l);      // Check format
     }
-    virtual void FindShortSuccessor(std::string* key) const {
+    virtual void FindShortSuccessor(System::String* key) const {
       ToNumber(*key);   // Check format
     }
    private:
@@ -1501,7 +1501,7 @@ TEST(DBTest, ManualCompaction) {
 }
 
 TEST(DBTest, DBOpen_Options) {
-  std::string dbname = test::TmpDir() + "/db_options_test";
+  System::String dbname = test::TmpDir() + "/db_options_test";
   DestroyDB(dbname, Options());
 
   // Does not exist, and create_if_missing == false: error
@@ -1572,7 +1572,7 @@ TEST(DBTest, NonWritableFileSystem) {
   Reopen(&options);
   ASSERT_OK(Put("foo", "v1"));
   env_->non_writable_.Release_Store(env_);  // Force errors for new files
-  std::string big(100000, 'x');
+  System::String big(100000, 'x');
   int errors = 0;
   for (int i = 0; i < 20; i++) {
     fprintf(stderr, "iter %d; errors %d\n", i, errors);
@@ -1626,7 +1626,7 @@ TEST(DBTest, ManifestWriteError) {
   // We iterate twice.  In the second iteration, everything is the
   // same except the log record never makes it to the MANIFEST file.
   for (int iter = 0; iter < 2; iter++) {
-    port::AtomicPointer* error_type = (iter == 0)
+    Port::AtomicPointer* error_type = (iter == 0)
         ? &env_->manifest_sync_error_
         : &env_->manifest_write_error_;
 
@@ -1671,7 +1671,7 @@ TEST(DBTest, MissingSSTFile) {
   options.paranoid_checks = true;
   Status s = TryReopen(&options);
   ASSERT_TRUE(!s.ok());
-  ASSERT_TRUE(s.ToString().find("issing") != std::string::npos)
+  ASSERT_TRUE(s.ToString().find("issing") != System::String::npos)
       << s.ToString();
 }
 
@@ -1756,14 +1756,14 @@ static const int kNumThreads = 4;
 static const int kTestSeconds = 10;
 static const int kNumKeys = 1000;
 
-struct MTState {
+ref struct MTState {
   DBTest* test;
-  port::AtomicPointer stop;
-  port::AtomicPointer counter[kNumThreads];
-  port::AtomicPointer thread_done[kNumThreads];
+  Port::AtomicPointer stop;
+  Port::AtomicPointer counter[kNumThreads];
+  Port::AtomicPointer thread_done[kNumThreads];
 };
 
-struct MTThread {
+ref struct MTThread {
   MTState* state;
   int id;
 };
@@ -1775,7 +1775,7 @@ static void MTThreadBody(void* arg) {
   uintptr_t counter = 0;
   fprintf(stderr, "... starting thread %d\n", id);
   Random rnd(1000 + id);
-  std::string value;
+  System::String value;
   char valbuf[1500];
   while (t->state->stop.Acquire_Load() == NULL) {
     t->state->counter[id].Release_Store(reinterpret_cast<void*>(counter));
@@ -1848,12 +1848,12 @@ TEST(DBTest, MultiThreaded) {
 }
 
 namespace {
-typedef std::map<std::string, std::string> KVMap;
+typedef std::map<System::String, System::String> KVMap;
 }
 
-class ModelDB: public DB {
+ref class ModelDB: public DB {
  public:
-  class ModelSnapshot : public Snapshot {
+  ref class ModelSnapshot : public Snapshot {
    public:
     KVMap map_;
   };
@@ -1867,7 +1867,7 @@ class ModelDB: public DB {
     return DB::Delete(o, key);
   }
   virtual Status Get(const ReadOptions& options,
-                     const Slice& key, std::string* value) {
+                     const Slice& key, System::String* value) {
     assert(false);      // Not implemented
     return Status::NotFound(key);
   }
@@ -1892,7 +1892,7 @@ class ModelDB: public DB {
     delete reinterpret_cast<const ModelSnapshot*>(snapshot);
   }
   virtual Status Write(const WriteOptions& options, WriteBatch* batch) {
-    class Handler : public WriteBatch::Handler {
+    ref class Handler : public WriteBatch::Handler {
      public:
       KVMap* map_;
       virtual void Put(const Slice& key, const Slice& value) {
@@ -1907,7 +1907,7 @@ class ModelDB: public DB {
     return batch->Iterate(&handler);
   }
 
-  virtual bool GetProperty(const Slice& property, std::string* value) {
+  virtual bool GetProperty(const Slice& property, System::String* value) {
     return false;
   }
   virtual void GetApproximateSizes(const Range* r, int n, uint64_t* sizes) {
@@ -1923,7 +1923,7 @@ class ModelDB: public DB {
   }
 
  private:
-  class ModelIter: public Iterator {
+  ref class ModelIter: public Iterator {
    public:
     ModelIter(const KVMap* map, bool owned)
         : map_(map), owned_(owned), iter_(map_->end()) {
@@ -1957,7 +1957,7 @@ class ModelDB: public DB {
   KVMap map_;
 };
 
-static std::string RandomKey(Random* rnd) {
+static System::String RandomKey(Random* rnd) {
   int len = (rnd->OneIn(3)
              ? 1                // Short sometimes to encourage collisions
              : (rnd->OneIn(100) ? rnd->Skewed(10) : rnd->Uniform(10)));
@@ -2019,7 +2019,7 @@ TEST(DBTest, Randomized) {
     const int N = 10000;
     const Snapshot* model_snap = NULL;
     const Snapshot* db_snap = NULL;
-    std::string k, v;
+    System::String k, v;
     for (int step = 0; step < N; step++) {
       if (step % 100 == 0) {
         fprintf(stderr, "Step %d of %d\n", step, N);
@@ -2083,14 +2083,14 @@ TEST(DBTest, Randomized) {
   } while (ChangeOptions());
 }
 
-std::string MakeKey(unsigned int num) {
+System::String MakeKey(unsigned int num) {
   char buf[30];
   snprintf(buf, sizeof(buf), "%016u", num);
-  return std::string(buf);
+  return System::String(buf);
 }
 
 void BM_LogAndApply(int iters, int num_base_files) {
-  std::string dbname = test::TmpDir() + "/leveldb_test_benchmark";
+  System::String dbname = test::TmpDir() + "/leveldb_test_benchmark";
   DestroyDB(dbname, Options());
 
   DB* db = NULL;
@@ -2105,7 +2105,7 @@ void BM_LogAndApply(int iters, int num_base_files) {
 
   Env* env = Env::Default();
 
-  port::Mutex mu;
+  Port::Mutex mu;
   MutexLock l(&mu);
 
   InternalKeyComparator cmp(BytewiseComparator());
@@ -2144,7 +2144,7 @@ void BM_LogAndApply(int iters, int num_base_files) {
 }  // namespace LevelDB
 
 int main(int argc, char** argv) {
-  if (argc > 1 && std::string(argv[1]) == "--benchmark") {
+  if (argc > 1 && System::String(argv[1]) == "--benchmark") {
     leveldb::BM_LogAndApply(1000, 1);
     leveldb::BM_LogAndApply(1000, 100);
     leveldb::BM_LogAndApply(1000, 10000);

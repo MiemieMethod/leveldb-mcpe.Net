@@ -12,11 +12,11 @@
 
 namespace LevelDB {
 
-static std::string PrintContents(WriteBatch* b) {
+static System::String PrintContents(WriteBatch* b) {
   InternalKeyComparator cmp(BytewiseComparator());
   MemTable* mem = new MemTable(cmp);
   mem->Ref();
-  std::string state;
+  System::String state;
   Status s = WriteBatchInternal::InsertInto(b, mem);
   int count = 0;
   Iterator* iter = mem->NewIterator();
@@ -52,7 +52,7 @@ static std::string PrintContents(WriteBatch* b) {
   return state;
 }
 
-class WriteBatchTest { };
+ref class WriteBatchTest { };
 
 TEST(WriteBatchTest, Empty) {
   WriteBatch batch;

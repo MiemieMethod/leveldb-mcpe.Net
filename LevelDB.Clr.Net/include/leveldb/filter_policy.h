@@ -20,9 +20,9 @@
 
 namespace LevelDB {
 
-class DLLX Slice;
+public ref class Slice;
 
-class DLLX FilterPolicy {
+public ref class FilterPolicy {
  public:
   virtual ~FilterPolicy();
 
@@ -38,11 +38,11 @@ class DLLX FilterPolicy {
   //
   // Warning: do not change the initial contents of *dst.  Instead,
   // append the newly constructed filter to *dst.
-  virtual void CreateFilter(const Slice* keys, int n, std::string* dst)
+  virtual void CreateFilter(const Slice* keys, int n, System::String* dst)
       const = 0;
 
   // "filter" contains the data appended by a preceding call to
-  // CreateFilter() on this class.  This method must return true if
+  // CreateFilter() on this ref class.  This method must return true if
   // the key was in the list of keys passed to CreateFilter().
   // This method may return true or false if the key was not on the
   // list, but it should aim to return false with a high probability.

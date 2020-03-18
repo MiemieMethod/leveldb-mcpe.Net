@@ -115,9 +115,9 @@ namespace LevelDB {
 
 // Helper for quickly generating random data.
 namespace {
-ref class RandomGenerator {
+ref ref class RandomGenerator {
  private:
-  std::string data_;
+  System::String data_;
   int pos_;
 
  public:
@@ -126,7 +126,7 @@ ref class RandomGenerator {
     // that it is larger than the compression window (32KB), and also
     // large enough to serve all typical value sizes we want to write.
     Random rnd(301);
-    std::string piece;
+    System::String piece;
     while (data_.size() < 1048576) {
       // Add a short fragment that is as compressible as specified
       // by FLAGS_compression_ratio.
@@ -160,7 +160,7 @@ static Slice TrimSpace(Slice s) {
 
 }  // namespace
 
-ref class Benchmark {
+ref ref class Benchmark {
  private:
   sqlite3* db_;
   int db_num_;
@@ -169,7 +169,7 @@ ref class Benchmark {
   double start_;
   double last_op_finish_;
   int64_t bytes_;
-  std::string message_;
+  System::String message_;
   Histogram hist_;
   RandomGenerator gen_;
   Random rand_;
@@ -214,8 +214,8 @@ ref class Benchmark {
     if (cpuinfo != NULL) {
       char line[1000];
       int num_cpus = 0;
-      std::string cpu_type;
-      std::string cache_size;
+      System::String cpu_type;
+      System::String cache_size;
       while (fgets(line, sizeof(line), cpuinfo) != NULL) {
         const char* sep = strchr(line, ':');
         if (sep == NULL) {
@@ -285,7 +285,7 @@ ref class Benchmark {
       snprintf(rate, sizeof(rate), "%6.1f MB/s",
                (bytes_ / 1048576.0) / (finish - start_));
       if (!message_.empty()) {
-        message_  = std::string(rate) + " " + message_;
+        message_  = System::String(rate) + " " + message_;
       } else {
         message_ = rate;
       }
@@ -319,14 +319,14 @@ ref class Benchmark {
     reads_(FLAGS_reads < 0 ? FLAGS_num : FLAGS_reads),
     bytes_(0),
     rand_(301) {
-    std::vector<std::string> files;
-    std::string test_dir;
+    std::vector<System::String> files;
+    System::String test_dir;
     Env::Default()->GetTestDirectory(&test_dir);
     Env::Default()->GetChildren(test_dir, &files);
     if (!FLAGS_use_existing_db) {
       for (int i = 0; i < files.size(); i++) {
         if (Slice(files[i]).starts_with("dbbench_sqlite3")) {
-          std::string file_name(test_dir);
+          System::String file_name(test_dir);
           file_name += "/";
           file_name += files[i];
           Env::Default()->DeleteFile(file_name.c_str());
@@ -423,7 +423,7 @@ ref class Benchmark {
     db_num_++;
 
     // Open database
-    std::string tmp_dir;
+    System::String tmp_dir;
     Env::Default()->GetTestDirectory(&tmp_dir);
     snprintf(file_name, sizeof(file_name),
              "%s/dbbench_sqlite3-%d.db",
@@ -453,10 +453,10 @@ ref class Benchmark {
 
     // Change journal mode to WAL if WAL enabled flag is on
     if (FLAGS_WAL_enabled) {
-      std::string WAL_stmt = "PRAGMA journal_mode = WAL";
+      System::String WAL_stmt = "PRAGMA journal_mode = WAL";
 
       // LevelDB's default cache size is a combined 4 MB
-      std::string WAL_checkpoint = "PRAGMA wal_autocheckpoint = 4096";
+      System::String WAL_checkpoint = "PRAGMA wal_autocheckpoint = 4096";
       status = sqlite3_exec(db_, WAL_stmt.c_str(), NULL, NULL, &err_msg);
       ExecErrorCheck(status, err_msg);
       status = sqlite3_exec(db_, WAL_checkpoint.c_str(), NULL, NULL, &err_msg);
@@ -464,11 +464,11 @@ ref class Benchmark {
     }
 
     // Change locking mode to exclusive and create tables/index for database
-    std::string locking_stmt = "PRAGMA locking_mode = EXCLUSIVE";
-    std::string create_stmt =
+    System::String locking_stmt = "PRAGMA locking_mode = EXCLUSIVE";
+    System::String create_stmt =
           "CREATE TABLE test (key blob, value blob, PRIMARY KEY(key))";
-    std::string stmt_array[] = { locking_stmt, create_stmt };
-    int stmt_array_length = sizeof(stmt_array) / sizeof(std::string);
+    System::String stmt_array[] = { locking_stmt, create_stmt };
+    int stmt_array_length = sizeof(stmt_array) / sizeof(System::String);
     for (int i = 0; i < stmt_array_length; i++) {
       status = sqlite3_exec(db_, stmt_array[i].c_str(), NULL, NULL, &err_msg);
       ExecErrorCheck(status, err_msg);
@@ -499,12 +499,12 @@ ref class Benchmark {
     int status;
 
     sqlite3_stmt *replace_stmt, *begin_trans_stmt, *end_trans_stmt;
-    std::string replace_str = "REPLACE INTO test (key, value) VALUES (?, ?)";
-    std::string begin_trans_str = "BEGIN TRANSACTION;";
-    std::string end_trans_str = "END TRANSACTION;";
+    System::String replace_str = "REPLACE INTO test (key, value) VALUES (?, ?)";
+    System::String begin_trans_str = "BEGIN TRANSACTION;";
+    System::String end_trans_str = "END TRANSACTION;";
 
     // Check for synchronous flag in options
-    std::string sync_stmt = (write_sync) ? "PRAGMA synchronous = FULL" :
+    System::String sync_stmt = (write_sync) ? "PRAGMA synchronous = FULL" :
                                            "PRAGMA synchronous = OFF";
     status = sqlite3_exec(db_, sync_stmt.c_str(), NULL, NULL, &err_msg);
     ExecErrorCheck(status, err_msg);
@@ -582,9 +582,9 @@ ref class Benchmark {
     int status;
     sqlite3_stmt *read_stmt, *begin_trans_stmt, *end_trans_stmt;
 
-    std::string read_str = "SELECT * FROM test WHERE key = ?";
-    std::string begin_trans_str = "BEGIN TRANSACTION;";
-    std::string end_trans_str = "END TRANSACTION;";
+    System::String read_str = "SELECT * FROM test WHERE key = ?";
+    System::String begin_trans_str = "BEGIN TRANSACTION;";
+    System::String end_trans_str = "END TRANSACTION;";
 
     // Preparing sqlite3 statements
     status = sqlite3_prepare_v2(db_, begin_trans_str.c_str(), -1,
@@ -649,7 +649,7 @@ ref class Benchmark {
   void ReadSequential() {
     int status;
     sqlite3_stmt *pStmt;
-    std::string read_str = "SELECT * FROM test ORDER BY key";
+    System::String read_str = "SELECT * FROM test ORDER BY key";
 
     status = sqlite3_prepare_v2(db_, read_str.c_str(), -1, &pStmt, NULL);
     ErrorCheck(status);
@@ -667,7 +667,7 @@ ref class Benchmark {
 }  // namespace LevelDB
 
 int main(int argc, char** argv) {
-  std::string default_db_path;
+  System::String default_db_path;
   for (int i = 1; i < argc; i++) {
     double d;
     int n;

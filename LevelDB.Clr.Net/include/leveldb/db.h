@@ -16,21 +16,21 @@ namespace LevelDB {
 static const int kMajorVersion = 1;
 static const int kMinorVersion = 20;
 
-struct DLLX Options;
-struct DLLX ReadOptions;
-struct DLLX WriteOptions;
-class DLLX WriteBatch;
+public ref struct Options;
+public ref struct ReadOptions;
+public ref struct WriteOptions;
+public ref class WriteBatch;
 
 // Abstract handle to particular state of a DB.
 // A Snapshot is an immutable object and can therefore be safely
 // accessed from multiple threads without any external synchronization.
-class DLLX Snapshot {
+public ref class Snapshot {
  protected:
   virtual ~Snapshot();
 };
 
 // A range of keys
-struct DLLX Range {
+public ref struct Range {
   Slice start;          // Included in the range
   Slice limit;          // Not included in the range
 
@@ -41,7 +41,7 @@ struct DLLX Range {
 // A DB is a persistent ordered map from keys to values.
 // A DB is safe for concurrent access from multiple threads without
 // any external synchronization.
-class DLLX DB {
+public ref class DB {
  public:
   // Open the database with the specified "name".
   // Stores a pointer to a heap-allocated database in *dbptr and returns
@@ -49,7 +49,7 @@ class DLLX DB {
   // Stores NULL in *dbptr and returns a non-OK status on error.
   // Caller should delete *dbptr when it is no longer needed.
   static Status Open(const Options& options,
-                     const std::string& name,
+                     const System::String& name,
                      DB** dbptr);
 
   DB() { }
@@ -81,7 +81,7 @@ class DLLX DB {
   //
   // May return some other Status on an error.
   virtual Status Get(const ReadOptions& options,
-                     const Slice& key, std::string* value) = 0;
+                     const Slice& key, System::String* value) = 0;
 
   // Return a heap-allocated iterator over the contents of the database.
   // The result of NewIterator() is initially invalid (caller must
@@ -117,7 +117,7 @@ class DLLX DB {
   //     of the sstables that make up the db contents.
   //  "leveldb.approximate-memory-usage" - returns the approximate number of
   //     bytes of memory in use by the DB.
-  virtual bool GetProperty(const Slice& property, std::string* value) = 0;
+  virtual bool GetProperty(const Slice& property, System::String* value) = 0;
 
   // For each i in [0,n-1], store in "sizes[i]", the approximate
   // file system space used by keys in "[range[i].start .. range[i].limit)".
@@ -156,13 +156,13 @@ class DLLX DB {
 
 // Destroy the contents of the specified database.
 // Be very careful using this method.
-extern DLLX Status DestroyDB(const std::string& name, const Options& options);
+extern DLLX Status DestroyDB(const System::String& name, const Options& options);
 
 // If a DB cannot be opened, you may attempt to call this method to
 // resurrect as much of the contents of the database as possible.
 // Some data may be lost, so be careful when calling this function
 // on a database that contains important information.
-extern DLLX Status RepairDB(const std::string& dbname, const Options& options);
+extern DLLX Status RepairDB(const System::String& dbname, const Options& options);
 
 }  // namespace LevelDB
 

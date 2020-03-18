@@ -49,21 +49,21 @@ using leveldb::WriteOptions;
 
 extern "C" {
 
-struct leveldb_t              { DB*               rep; };
-struct leveldb_iterator_t     { Iterator*         rep; };
-struct leveldb_writebatch_t   { WriteBatch        rep; };
-struct leveldb_snapshot_t     { const Snapshot*   rep; };
-struct leveldb_readoptions_t  { ReadOptions       rep; };
-struct leveldb_writeoptions_t { WriteOptions      rep; };
-struct leveldb_options_t      { Options           rep; };
-struct leveldb_cache_t        { Cache*            rep; };
-struct leveldb_seqfile_t      { SequentialFile*   rep; };
-struct leveldb_randomfile_t   { RandomAccessFile* rep; };
-struct leveldb_writablefile_t { WritableFile*     rep; };
-struct leveldb_logger_t       { Logger*           rep; };
-struct leveldb_filelock_t     { FileLock*         rep; };
+ref struct leveldb_t              { DB*               rep; };
+ref struct leveldb_iterator_t     { Iterator*         rep; };
+ref struct leveldb_writebatch_t   { WriteBatch        rep; };
+ref struct leveldb_snapshot_t     { const Snapshot*   rep; };
+ref struct leveldb_readoptions_t  { ReadOptions       rep; };
+ref struct leveldb_writeoptions_t { WriteOptions      rep; };
+ref struct leveldb_options_t      { Options           rep; };
+ref struct leveldb_cache_t        { Cache*            rep; };
+ref struct leveldb_seqfile_t      { SequentialFile*   rep; };
+ref struct leveldb_randomfile_t   { RandomAccessFile* rep; };
+ref struct leveldb_writablefile_t { WritableFile*     rep; };
+ref struct leveldb_logger_t       { Logger*           rep; };
+ref struct leveldb_filelock_t     { FileLock*         rep; };
 
-struct leveldb_comparator_t : public Comparator {
+ref struct leveldb_comparator_t : public Comparator {
   void* state_;
   void (*destructor_)(void*);
   int (*compare_)(
@@ -85,11 +85,11 @@ struct leveldb_comparator_t : public Comparator {
   }
 
   // No-ops since the C binding does not support key shortening methods.
-  virtual void FindShortestSeparator(std::string*, const Slice&) const { }
-  virtual void FindShortSuccessor(std::string* key) const { }
+  virtual void FindShortestSeparator(System::String*, const Slice&) const { }
+  virtual void FindShortSuccessor(System::String* key) const { }
 };
 
-struct leveldb_filterpolicy_t : public FilterPolicy {
+ref struct leveldb_filterpolicy_t : public FilterPolicy {
   void* state_;
   void (*destructor_)(void*);
   const char* (*name_)(void*);
@@ -111,7 +111,7 @@ struct leveldb_filterpolicy_t : public FilterPolicy {
     return (*name_)(state_);
   }
 
-  virtual void CreateFilter(const Slice* keys, int n, std::string* dst) const {
+  virtual void CreateFilter(const Slice* keys, int n, System::String* dst) const {
     std::vector<const char*> key_pointers(n);
     std::vector<size_t> key_sizes(n);
     for (int i = 0; i < n; i++) {
@@ -130,7 +130,7 @@ struct leveldb_filterpolicy_t : public FilterPolicy {
   }
 };
 
-struct leveldb_env_t {
+ref struct leveldb_env_t {
   Env* rep;
   bool is_default;
 };
@@ -149,7 +149,7 @@ static bool SaveError(char** errptr, const Status& s) {
   return true;
 }
 
-static char* CopyString(const std::string& str) {
+static char* CopyString(const System::String& str) {
   char* result = reinterpret_cast<char*>(malloc(sizeof(char) * str.size()));
   memcpy(result, str.data(), sizeof(char) * str.size());
   return result;
@@ -160,7 +160,7 @@ leveldb_t* leveldb_open(
     const char* name,
     char** errptr) {
   DB* db;
-  if (SaveError(errptr, DB::Open(options->rep, std::string(name), &db))) {
+  if (SaveError(errptr, DB::Open(options->rep, System::String(name), &db))) {
     return NULL;
   }
   leveldb_t* result = new leveldb_t;
@@ -207,7 +207,7 @@ char* leveldb_get(
     size_t* vallen,
     char** errptr) {
   char* result = NULL;
-  std::string tmp;
+  System::String tmp;
   Status s = db->rep->Get(options->rep, Slice(key, keylen), &tmp);
   if (s.ok()) {
     *vallen = tmp.size();
@@ -246,7 +246,7 @@ void leveldb_release_snapshot(
 char* leveldb_property_value(
     leveldb_t* db,
     const char* propname) {
-  std::string tmp;
+  System::String tmp;
   if (db->rep->GetProperty(Slice(propname), &tmp)) {
     // We use strdup() since we expect human readable output.
     return strdup(tmp.c_str());
@@ -370,7 +370,7 @@ void leveldb_writebatch_iterate(
     void* state,
     void (*put)(void*, const char* k, size_t klen, const char* v, size_t vlen),
     void (*deleted)(void*, const char* k, size_t klen)) {
-  class H : public WriteBatch::Handler {
+  ref class H : public WriteBatch::Handler {
    public:
     void* state_;
     void (*put_)(void*, const char* k, size_t klen, const char* v, size_t vlen);
@@ -521,11 +521,11 @@ leveldb_filterpolicy_t* leveldb_filterpolicy_create_bloom(int bits_per_key) {
   // Make a leveldb_filterpolicy_t, but override all of its methods so
   // they delegate to a NewBloomFilterPolicy() instead of user
   // supplied C functions.
-  struct Wrapper : public leveldb_filterpolicy_t {
+  ref struct Wrapper : public leveldb_filterpolicy_t {
     const FilterPolicy* rep_;
     ~Wrapper() { delete rep_; }
     const char* Name() const { return rep_->Name(); }
-    void CreateFilter(const Slice* keys, int n, std::string* dst) const {
+    void CreateFilter(const Slice* keys, int n, System::String* dst) const {
       return rep_->CreateFilter(keys, n, dst);
     }
     bool KeyMayMatch(const Slice& key, const Slice& filter) const {

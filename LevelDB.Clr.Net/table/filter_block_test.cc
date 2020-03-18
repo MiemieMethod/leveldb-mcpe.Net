@@ -14,13 +14,13 @@
 namespace LevelDB {
 
 // For testing: emit an array with one hash value per key
-class TestHashFilter : public FilterPolicy {
+ref class TestHashFilter : public FilterPolicy {
  public:
   virtual const char* Name() const {
     return "TestHashFilter";
   }
 
-  virtual void CreateFilter(const Slice* keys, int n, std::string* dst) const {
+  virtual void CreateFilter(const Slice* keys, int n, System::String* dst) const {
     for (int i = 0; i < n; i++) {
       uint32_t h = Hash(keys[i].data(), keys[i].size(), 1);
       PutFixed32(dst, h);
@@ -38,7 +38,7 @@ class TestHashFilter : public FilterPolicy {
   }
 };
 
-class FilterBlockTest {
+ref class FilterBlockTest {
  public:
   TestHashFilter policy_;
 };

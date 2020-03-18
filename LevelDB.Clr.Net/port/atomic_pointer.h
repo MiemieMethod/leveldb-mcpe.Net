@@ -49,7 +49,7 @@
 #endif
 
 namespace LevelDB {
-namespace port {
+namespace Port {
 
 // Define MemoryBarrier() if available
 // Windows on x86
@@ -128,7 +128,7 @@ inline void MemoryBarrier() {
 
 // AtomicPointer built using platform-specific MemoryBarrier()
 #if defined(LEVELDB_HAVE_MEMORY_BARRIER)
-class AtomicPointer {
+ref class AtomicPointer {
  private:
   void* rep_;
  public:
@@ -149,7 +149,7 @@ class AtomicPointer {
 
 // AtomicPointer based on <cstdatomic>
 #elif defined(LEVELDB_ATOMIC_PRESENT)
-class AtomicPointer {
+ref class AtomicPointer {
  private:
   std::atomic<void*> rep_;
  public:
@@ -171,7 +171,7 @@ class AtomicPointer {
 
 // Atomic pointer based on sparc memory barriers
 #elif defined(__sparcv9) && defined(__GNUC__)
-class AtomicPointer {
+ref class AtomicPointer {
  private:
   void* rep_;
  public:
@@ -201,7 +201,7 @@ class AtomicPointer {
 
 // Atomic pointer based on ia64 acq/rel
 #elif defined(__ia64) && defined(__GNUC__)
-class AtomicPointer {
+ref class AtomicPointer {
  private:
   void* rep_;
  public:
@@ -232,7 +232,7 @@ class AtomicPointer {
 // We have neither MemoryBarrier(), nor <atomic>
 #else
 
-class AtomicPointer {
+ref class AtomicPointer {
 private:
 	std::atomic<void*> ptr;
 public:
@@ -263,7 +263,7 @@ public:
 #undef ARCH_CPU_ARM64_FAMILY
 #undef ARCH_CPU_PPC_FAMILY
 
-}  // namespace port
+}  // namespace Port
 }  // namespace LevelDB
 
 #endif  // PORT_ATOMIC_POINTER_H_

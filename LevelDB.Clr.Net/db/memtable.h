@@ -13,11 +13,11 @@
 
 namespace LevelDB {
 
-class InternalKeyComparator;
-class Mutex;
-class MemTableIterator;
+ref class InternalKeyComparator;
+ref class Mutex;
+ref class MemTableIterator;
 
-class MemTable {
+ref class MemTable {
  public:
   // MemTables are reference counted.  The initial reference count
   // is zero and the caller must call Ref() at least once.
@@ -58,18 +58,18 @@ class MemTable {
   // If memtable contains a deletion for key, store a NotFound() error
   // in *status and return true.
   // Else, return false.
-  bool Get(const LookupKey& key, std::string* value, Status* s);
+  bool Get(const LookupKey& key, System::String* value, Status* s);
 
  private:
   ~MemTable();  // Private since only Unref() should be used to delete it
 
-  struct KeyComparator {
+  ref struct KeyComparator {
     const InternalKeyComparator comparator;
     explicit KeyComparator(const InternalKeyComparator& c) : comparator(c) { }
     int operator()(const char* a, const char* b) const;
   };
-  friend class MemTableIterator;
-  friend class MemTableBackwardIterator;
+  friend ref class MemTableIterator;
+  friend ref class MemTableBackwardIterator;
 
   typedef SkipList<const char*, KeyComparator> Table;
 

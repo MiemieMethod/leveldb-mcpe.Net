@@ -7,7 +7,7 @@
 
 namespace LevelDB {
 
-class Env;
+ref class Env;
 
 // Returns a new environment that stores its data in memory and delegates
 // all non-file-storage tasks to base_env. The caller must delete the result

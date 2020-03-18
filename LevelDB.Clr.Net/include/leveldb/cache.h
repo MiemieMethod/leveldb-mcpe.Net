@@ -23,13 +23,13 @@
 
 namespace LevelDB {
 
-class DLLX Cache;
+public ref class Cache;
 
 // Create a new cache with a fixed size capacity.  This implementation
 // of Cache uses a least-recently-used eviction policy.
 extern DLLX Cache* NewLRUCache(size_t capacity);
 
-class DLLX Cache {
+public ref class Cache {
  public:
   Cache() { }
 
@@ -38,7 +38,7 @@ class DLLX Cache {
   virtual ~Cache();
 
   // Opaque handle to an entry stored in the cache.
-  struct DLLX Handle { };
+  public ref struct Handle { };
 
   // Insert a mapping from key->value into the cache and assign it
   // the specified charge against the total cache capacity.
@@ -83,7 +83,7 @@ class DLLX Cache {
 
   // Remove all cache entries that are not actively in use.  Memory-constrained
   // applications may wish to call this method to reduce memory usage.
-  // Default implementation of Prune() does nothing.  Subclasses are strongly
+  // Default implementation of Prune() does nothing.  Subref classes are strongly
   // encouraged to override the default implementation.  A future release of
   // leveldb may change Prune() to a pure abstract method.
   virtual void Prune() {}
@@ -97,7 +97,7 @@ class DLLX Cache {
   void LRU_Append(Handle* e);
   void Unref(Handle* e);
 
-  struct DLLX Rep;
+  public ref struct Rep;
   Rep* rep_;
 
   // No copying allowed

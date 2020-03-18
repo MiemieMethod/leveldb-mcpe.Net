@@ -4,7 +4,7 @@
 
 #include <zstd.h>
 
-void leveldb::ZstdCompressor::compressImpl(const char* input, size_t length, ::std::string& output) const
+void leveldb::ZstdCompressor::compressImpl(const char* input, size_t length, ::System::String& output) const
 {
 	//extend the buffer to the worst case
 	auto originalSize = output.size();
@@ -20,7 +20,7 @@ void leveldb::ZstdCompressor::compressImpl(const char* input, size_t length, ::s
 }
 
 
-bool leveldb::ZstdCompressor::decompress(const char* input, size_t length, ::std::string &output) const
+bool leveldb::ZstdCompressor::decompress(const char* input, size_t length, ::System::String &output) const
 {
 	//extend the buffer to contain the worst case. Worst case is that input length == output length
 	auto originalSize = output.size();

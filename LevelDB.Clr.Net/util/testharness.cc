@@ -13,7 +13,7 @@ namespace LevelDB {
 namespace test {
 
 namespace {
-struct Test {
+ref struct Test {
   const char* base;
   const char* name;
   void (*func)();
@@ -41,7 +41,7 @@ int RunAllTests() {
     for (size_t i = 0; i < tests->size(); i++) {
       const Test& t = (*tests)[i];
       if (matcher != NULL) {
-        std::string name = t.base;
+        System::String name = t.base;
         name.push_back('.');
         name.append(t.name);
         if (strstr(name.c_str(), matcher) == NULL) {
@@ -57,8 +57,8 @@ int RunAllTests() {
   return 0;
 }
 
-std::string TmpDir() {
-  std::string dir;
+System::String TmpDir() {
+  System::String dir;
   Status s = Env::Default()->GetTestDirectory(&dir);
   ASSERT_TRUE(s.ok()) << s.ToString();
   return dir;

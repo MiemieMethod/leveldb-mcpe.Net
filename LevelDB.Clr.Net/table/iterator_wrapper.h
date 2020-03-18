@@ -10,11 +10,11 @@
 
 namespace LevelDB {
 
-// A internal wrapper class with an interface similar to Iterator that
+// A internal wrapper ref class with an interface similar to Iterator that
 // caches the valid() and key() results for an underlying iterator.
 // This can help avoid virtual function calls and also gives better
 // cache locality.
-class IteratorWrapper {
+ref class IteratorWrapper {
  public:
   IteratorWrapper(): iter_(NULL), valid_(false) { }
   explicit IteratorWrapper(Iterator* iter): iter_(NULL) {

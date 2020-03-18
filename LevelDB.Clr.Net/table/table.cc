@@ -17,7 +17,7 @@
 
 namespace LevelDB {
 
-struct Table::Rep {
+ref struct Table::Rep {
   ~Rep() {
     delete filter;
     delete [] filter_data;
@@ -108,7 +108,7 @@ void Table::ReadMeta(const Footer& footer) {
   Block* meta = new Block(contents);
 
   Iterator* iter = meta->NewIterator(BytewiseComparator());
-  std::string key = "filter.";
+  System::String key = "filter.";
   key.append(rep_->options.filter_policy->Name());
   iter->Seek(key);
   if (iter->Valid() && iter->key() == Slice(key)) {

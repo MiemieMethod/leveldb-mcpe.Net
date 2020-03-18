@@ -13,10 +13,10 @@ static const int kDelayMicros = 100000;
 static const int kReadOnlyFileLimit = 4;
 static const int kMMapLimit = 4;
 
-class EnvTest {
+ref class EnvTest {
  private:
-  port::Mutex mu_;
-  std::string events_;
+  Port::Mutex mu_;
+  System::String events_;
 
  public:
   Env* env_;
@@ -24,24 +24,24 @@ class EnvTest {
 };
 
 static void SetBool(void* ptr) {
-  reinterpret_cast<port::AtomicPointer*>(ptr)->NoBarrier_Store(ptr);
+  reinterpret_cast<Port::AtomicPointer*>(ptr)->NoBarrier_Store(ptr);
 }
 
 TEST(EnvTest, RunImmediately) {
-  port::AtomicPointer called (NULL);
+  Port::AtomicPointer called (NULL);
   env_->Schedule(&SetBool, &called);
   env_->SleepForMicroseconds(kDelayMicros);
   ASSERT_TRUE(called.NoBarrier_Load() != NULL);
 }
 
 TEST(EnvTest, RunMany) {
-  port::AtomicPointer last_id (NULL);
+  Port::AtomicPointer last_id (NULL);
 
-  struct CB {
-    port::AtomicPointer* last_id_ptr;   // Pointer to shared slot
+  ref struct CB {
+    Port::AtomicPointer* last_id_ptr;   // Pointer to shared slot
     uintptr_t id;             // Order# for the execution of this callback
 
-    CB(port::AtomicPointer* p, int i) : last_id_ptr(p), id(i) { }
+    CB(Port::AtomicPointer* p, int i) : last_id_ptr(p), id(i) { }
 
     static void Run(void* v) {
       CB* cb = reinterpret_cast<CB*>(v);
@@ -66,8 +66,8 @@ TEST(EnvTest, RunMany) {
   ASSERT_EQ(4, reinterpret_cast<uintptr_t>(cur));
 }
 
-struct State {
-  port::Mutex mu;
+ref struct State {
+  Port::Mutex mu;
   int val;
   int num_running;
 };
@@ -101,10 +101,10 @@ TEST(EnvTest, StartThread) {
 
 TEST(EnvTest, TestOpenNonExistentFile) {
   // Write some test data to a single file that will be opened |n| times.
-  std::string test_dir;
+  System::String test_dir;
   ASSERT_OK(env_->GetTestDirectory(&test_dir));
 
-  std::string non_existent_file = test_dir + "/non_existent_file";
+  System::String non_existent_file = test_dir + "/non_existent_file";
   ASSERT_TRUE(!env_->FileExists(non_existent_file));
 
   RandomAccessFile* random_access_file;

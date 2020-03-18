@@ -9,7 +9,7 @@
 
 namespace LevelDB {
 
-class Histogram {
+ref class Histogram {
  public:
   Histogram() { }
   ~Histogram() { }
@@ -18,7 +18,7 @@ class Histogram {
   void Add(double value);
   void Merge(const Histogram& other);
 
-  std::string ToString() const;
+  System::String ToString() const;
 
  private:
   double min_;

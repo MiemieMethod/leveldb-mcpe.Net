@@ -10,16 +10,16 @@
 
 namespace LevelDB {
 
-class SnapshotList;
+ref class SnapshotList;
 
 // Snapshots are kept in a doubly-linked list in the DB.
 // Each SnapshotImpl corresponds to a particular sequence number.
-class SnapshotImpl : public Snapshot {
+ref class SnapshotImpl : public Snapshot {
  public:
   SequenceNumber number_;  // const after creation
 
  private:
-  friend class SnapshotList;
+  friend ref class SnapshotList;
 
   // SnapshotImpl is kept in a doubly-linked circular list
   SnapshotImpl* prev_;
@@ -28,7 +28,7 @@ class SnapshotImpl : public Snapshot {
   SnapshotList* list_;                 // just for sanity checks
 };
 
-class SnapshotList {
+ref class SnapshotList {
  public:
   SnapshotList() {
     list_.prev_ = &list_;

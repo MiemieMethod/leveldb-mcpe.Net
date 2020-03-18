@@ -19,11 +19,11 @@
 namespace LevelDB {
 
 // Standard Put... routines append to a string
-extern void PutFixed32(std::string* dst, uint32_t value);
-extern void PutFixed64(std::string* dst, uint64_t value);
-extern void PutVarint32(std::string* dst, uint32_t value);
-extern void PutVarint64(std::string* dst, uint64_t value);
-extern void PutLengthPrefixedSlice(std::string* dst, const Slice& value);
+extern void PutFixed32(System::String* dst, uint32_t value);
+extern void PutFixed64(System::String* dst, uint64_t value);
+extern void PutVarint32(System::String* dst, uint32_t value);
+extern void PutVarint64(System::String* dst, uint64_t value);
+extern void PutLengthPrefixedSlice(System::String* dst, const Slice& value);
 
 // Standard Get... routines parse a value from the beginning of a Slice
 // and advance the slice past the parsed value.
@@ -56,7 +56,7 @@ extern char* EncodeVarint64(char* dst, uint64_t value);
 // without any bounds checking.
 
 inline uint32_t DecodeFixed32(const char* ptr) {
-  if (port::kLittleEndian) {
+  if (Port::kLittleEndian) {
     // Load the raw bytes
     uint32_t result;
     memcpy(&result, ptr, sizeof(result));  // gcc optimizes this to a plain load
@@ -70,7 +70,7 @@ inline uint32_t DecodeFixed32(const char* ptr) {
 }
 
 inline uint64_t DecodeFixed64(const char* ptr) {
-  if (port::kLittleEndian) {
+  if (Port::kLittleEndian) {
     // Load the raw bytes
     uint64_t result;
     memcpy(&result, ptr, sizeof(result));  // gcc optimizes this to a plain load

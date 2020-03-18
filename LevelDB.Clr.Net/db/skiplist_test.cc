@@ -14,7 +14,7 @@ namespace LevelDB {
 
 typedef uint64_t Key;
 
-struct Comparator {
+ref struct Comparator {
   int operator()(const Key& a, const Key& b) const {
     if (a < b) {
       return -1;
@@ -26,7 +26,7 @@ struct Comparator {
   }
 };
 
-class SkipTest { };
+ref class SkipTest { };
 
 TEST(SkipTest, Empty) {
   Arena arena;
@@ -146,7 +146,7 @@ TEST(SkipTest, InsertAndLookup) {
 // calls to Next() and Seek().  For every key we encounter, we
 // check that it is either expected given the initial snapshot or has
 // been concurrently added since the iterator started.
-class ConcurrentTest {
+ref class ConcurrentTest {
  private:
   static const uint32_t K = 4;
 
@@ -185,8 +185,8 @@ class ConcurrentTest {
   }
 
   // Per-key generation
-  struct State {
-    port::AtomicPointer generation[K];
+  ref struct State {
+    Port::AtomicPointer generation[K];
     void Set(int k, intptr_t v) {
       generation[k].Release_Store(reinterpret_cast<void*>(v));
     }
@@ -294,11 +294,11 @@ TEST(SkipTest, ConcurrentWithoutThreads) {
   }
 }
 
-class TestState {
+ref class TestState {
  public:
   ConcurrentTest t_;
   int seed_;
-  port::AtomicPointer quit_flag_;
+  Port::AtomicPointer quit_flag_;
 
   enum ReaderState {
     STARTING,
@@ -328,9 +328,9 @@ class TestState {
   }
 
  private:
-  port::Mutex mu_;
+  Port::Mutex mu_;
   ReaderState state_;
-  port::CondVar state_cv_;
+  Port::CondVar state_cv_;
 };
 
 static void ConcurrentReader(void* arg) {

@@ -17,15 +17,15 @@
 
 namespace LevelDB {
 
-class MemTable;
-class TableCache;
-class Version;
-class VersionEdit;
-class VersionSet;
+ref class MemTable;
+ref class TableCache;
+ref class Version;
+ref class VersionEdit;
+ref class VersionSet;
 
-class DBImpl : public DB {
+ref class DBImpl : public DB {
  public:
-  DBImpl(const Options& options, const std::string& dbname);
+  DBImpl(const Options& options, const System::String& dbname);
   virtual ~DBImpl();
 
   // Implementations of the DB interface
@@ -34,11 +34,11 @@ class DBImpl : public DB {
   virtual Status Write(const WriteOptions& options, WriteBatch* updates);
   virtual Status Get(const ReadOptions& options,
                      const Slice& key,
-                     std::string* value);
+                     System::String* value);
   virtual Iterator* NewIterator(const ReadOptions&);
   virtual const Snapshot* GetSnapshot();
   virtual void ReleaseSnapshot(const Snapshot* snapshot);
-  virtual bool GetProperty(const Slice& property, std::string* value);
+  virtual bool GetProperty(const Slice& property, System::String* value);
   virtual void GetApproximateSizes(const Range* range, int n, uint64_t* sizes);
   virtual void CompactRange(const Slice* begin, const Slice* end);
   // Set the suspend flag, which tells the database not to schedule background work until resume
@@ -71,9 +71,9 @@ class DBImpl : public DB {
   void RecordReadSample(Slice key);
 
  private:
-  friend class DB;
-  struct CompactionState;
-  struct Writer;
+  friend ref class DB;
+  ref struct CompactionState;
+  ref struct Writer;
 
   Iterator* NewInternalIterator(const ReadOptions&,
                                 SequenceNumber* latest_snapshot,
@@ -131,7 +131,7 @@ class DBImpl : public DB {
   const Options options_;  // options_.comparator == &internal_comparator_
   bool owns_info_log_;
   bool owns_cache_;
-  const std::string dbname_;
+  const System::String dbname_;
 
   // table_cache_ provides its own synchronization
   TableCache* table_cache_;
@@ -140,12 +140,12 @@ class DBImpl : public DB {
   FileLock* db_lock_;
 
   // State below is protected by mutex_
-  port::Mutex mutex_;
-  port::AtomicPointer shutting_down_;
-  port::CondVar bg_cv_;          // Signalled when background work finishes
+  Port::Mutex mutex_;
+  Port::AtomicPointer shutting_down_;
+  Port::CondVar bg_cv_;          // Signalled when background work finishes
   MemTable* mem_;
   MemTable* imm_;                // Memtable being compacted
-  port::AtomicPointer has_imm_;  // So bg thread can detect non-NULL imm_
+  Port::AtomicPointer has_imm_;  // So bg thread can detect non-NULL imm_
   WritableFile* logfile_;
   uint64_t logfile_number_;
   log::Writer* log_;
@@ -165,10 +165,10 @@ class DBImpl : public DB {
   bool bg_compaction_scheduled_;
 
   // Has anyone issued a request to suspend background work?
-  port::AtomicPointer suspending_compaction_;
+  Port::AtomicPointer suspending_compaction_;
 
   // Information for a manual compaction
-  struct ManualCompaction {
+  ref struct ManualCompaction {
     int level;
     bool done;
     const InternalKey* begin;   // NULL means beginning of key range
@@ -184,7 +184,7 @@ class DBImpl : public DB {
 
   // Per level compaction stats.  stats_[level] stores the stats for
   // compactions that produced data for the specified "level".
-  struct CompactionStats {
+  ref struct CompactionStats {
     int64_t micros;
     int64_t bytes_read;
     int64_t bytes_written;
@@ -203,15 +203,15 @@ class DBImpl : public DB {
   DBImpl(const DBImpl&);
   void operator=(const DBImpl&);
 
-  const Comparator* user_comparator() const {
+  const Comparator^ user_comparator() const {
     return internal_comparator_.user_comparator();
   }
 };
 
 // Sanitize db options.  The caller should delete result.info_log if
 // it is not equal to src.info_log.
-extern Options SanitizeOptions(const std::string& db,
-                               const InternalKeyComparator* icmp,
+extern Options SanitizeOptions(const System::String& db,
+                               const InternalKeyComparator^ icmp,
                                const InternalFilterPolicy* ipolicy,
                                const Options& src);
 

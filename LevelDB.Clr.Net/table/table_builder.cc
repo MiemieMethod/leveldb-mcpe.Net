@@ -18,7 +18,7 @@
 
 namespace LevelDB {
 
-struct TableBuilder::Rep {
+ref struct TableBuilder::Rep {
   Options options;
   Options index_block_options;
   WritableFile* file;
@@ -26,7 +26,7 @@ struct TableBuilder::Rep {
   Status status;
   BlockBuilder data_block;
   BlockBuilder index_block;
-  std::string last_key;
+  System::String last_key;
   int64_t num_entries;
   bool closed;          // Either Finish() or Abandon() has been called.
   FilterBlockBuilder* filter_block;
@@ -43,7 +43,7 @@ struct TableBuilder::Rep {
   bool pending_index_entry;
   BlockHandle pending_handle;  // Handle to add to index block
 
-  std::string compressed_output;
+  System::String compressed_output;
 
   Rep(const Options& opt, WritableFile* f)
       : options(opt),
@@ -101,7 +101,7 @@ void TableBuilder::Add(const Slice& key, const Slice& value) {
   if (r->pending_index_entry) {
     assert(r->data_block.empty());
     r->options.comparator->FindShortestSeparator(&r->last_key, key);
-    std::string handle_encoding;
+    System::String handle_encoding;
     r->pending_handle.EncodeTo(&handle_encoding);
     r->index_block.Add(r->last_key, Slice(handle_encoding));
     r->pending_index_entry = false;
@@ -151,7 +151,7 @@ void TableBuilder::WriteBlock(BlockBuilder* block, BlockHandle* handle) {
 
   // TODO(postrelease): Support more compression options: zlib?
   if (compressor) {
- 		std::string& compressed = r->compressed_output;
+ 		System::String& compressed = r->compressed_output;
 		compressor->compress(raw.data(), raw.size(), compressed);
 
       if ( compressed.size() < raw.size() - (raw.size() / 8u)) {
@@ -214,9 +214,9 @@ Status TableBuilder::Finish() {
     BlockBuilder meta_index_block(&r->options);
     if (r->filter_block != NULL) {
       // Add mapping from "filter.Name" to location of filter data
-      std::string key = "filter.";
+      System::String key = "filter.";
       key.append(r->options.filter_policy->Name());
-      std::string handle_encoding;
+      System::String handle_encoding;
       filter_block_handle.EncodeTo(&handle_encoding);
       meta_index_block.Add(key, handle_encoding);
     }
@@ -229,7 +229,7 @@ Status TableBuilder::Finish() {
   if (ok()) {
     if (r->pending_index_entry) {
       r->options.comparator->FindShortSuccessor(&r->last_key);
-      std::string handle_encoding;
+      System::String handle_encoding;
       r->pending_handle.EncodeTo(&handle_encoding);
       r->index_block.Add(r->last_key, Slice(handle_encoding));
       r->pending_index_entry = false;
@@ -242,7 +242,7 @@ Status TableBuilder::Finish() {
     Footer footer;
     footer.set_metaindex_handle(metaindex_block_handle);
     footer.set_index_handle(index_block_handle);
-    std::string footer_encoding;
+    System::String footer_encoding;
     footer.EncodeTo(&footer_encoding);
     r->status = r->file->Append(footer_encoding);
     if (r->status.ok()) {

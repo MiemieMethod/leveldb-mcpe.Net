@@ -11,7 +11,7 @@
 #include <string.h>
 
 namespace LevelDB {
-namespace port {
+namespace Port {
 
 static void PthreadCall(const char* label, int result) {
   if (result != 0) {
@@ -28,7 +28,7 @@ void Mutex::Lock() { PthreadCall("lock", pthread_mutex_lock(&mu_)); }
 
 void Mutex::Unlock() { PthreadCall("unlock", pthread_mutex_unlock(&mu_)); }
 
-CondVar::CondVar(Mutex* mu)
+CondVar::CondVar(Mutex^ mu)
     : mu_(mu) {
     PthreadCall("init cv", pthread_cond_init(&cv_, NULL));
 }
@@ -51,6 +51,6 @@ void InitOnce(OnceType* once, void (*initializer)()) {
   PthreadCall("once", pthread_once(once, initializer));
 }
 
-}  // namespace port
+}  // namespace Port
 }  // namespace LevelDB
 #endif

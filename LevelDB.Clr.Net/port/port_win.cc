@@ -44,7 +44,7 @@
 #endif
 
 namespace LevelDB {
-namespace port {
+namespace Port {
 
 AtomicPointer::AtomicPointer(void* v) {
   Release_Store(v);

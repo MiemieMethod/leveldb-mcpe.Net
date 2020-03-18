@@ -10,7 +10,7 @@
 namespace LevelDB {
 namespace {
 
-class StdoutPrinter : public WritableFile {
+ref class StdoutPrinter : public WritableFile {
  public:
   virtual Status Append(const Slice& data) {
     fwrite(data.data(), 1, data.size(), stdout);
@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
     Usage();
     ok = false;
   } else {
-    std::string command = argv[1];
+    System::String command = argv[1];
     if (command == "dump") {
       ok = leveldb::HandleDumpCommand(env, argv+2, argc-2);
     } else {

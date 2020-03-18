@@ -120,9 +120,9 @@ namespace {
 leveldb::Env* g_env = NULL;
 
 // Helper for quickly generating random data.
-class RandomGenerator {
+ref class RandomGenerator {
  private:
-  std::string data_;
+  System::String data_;
   int pos_;
 
  public:
@@ -131,7 +131,7 @@ class RandomGenerator {
     // that it is larger than the compression window (32KB), and also
     // large enough to serve all typical value sizes we want to write.
     Random rnd(301);
-    std::string piece;
+    System::String piece;
     while (data_.size() < 1048576) {
       // Add a short fragment that is as compressible as specified
       // by FLAGS_compression_ratio.
@@ -165,7 +165,7 @@ static Slice TrimSpace(Slice s) {
 }
 #endif
 
-static void AppendWithSpace(std::string* str, Slice msg) {
+static void AppendWithSpace(System::String* str, Slice msg) {
   if (msg.empty()) return;
   if (!str->empty()) {
     str->push_back(' ');
@@ -173,7 +173,7 @@ static void AppendWithSpace(std::string* str, Slice msg) {
   str->append(msg.data(), msg.size());
 }
 
-class Stats {
+ref class Stats {
  private:
   double start_;
   double finish_;
@@ -183,7 +183,7 @@ class Stats {
   int64_t bytes_;
   double last_op_finish_;
   Histogram hist_;
-  std::string message_;
+  System::String message_;
 
  public:
   Stats() { Start(); }
@@ -256,7 +256,7 @@ class Stats {
     // that does not call FinishedSingleOp().
     if (done_ < 1) done_ = 1;
 
-    std::string extra;
+    System::String extra;
     if (bytes_ > 0) {
       // Rate is computed on actual elapsed time, not the sum of per-thread
       // elapsed times.
@@ -281,9 +281,9 @@ class Stats {
 };
 
 // State shared by all concurrent executions of the same benchmark.
-struct SharedState {
-  port::Mutex mu;
-  port::CondVar cv;
+ref struct SharedState {
+  Port::Mutex mu;
+  Port::CondVar cv;
   int total;
 
   // Each thread goes through the following states:
@@ -300,7 +300,7 @@ struct SharedState {
 };
 
 // Per-thread state for concurrent executions of the same benchmark.
-struct ThreadState {
+ref struct ThreadState {
   int tid;             // 0..n-1 when running in n threads
   Random rand;         // Has different seeds for different threads
   Stats stats;
@@ -314,7 +314,7 @@ struct ThreadState {
 
 }  // namespace
 
-class Benchmark {
+ref class Benchmark {
  private:
   Cache* cache_;
   const FilterPolicy* filter_policy_;
@@ -357,8 +357,8 @@ class Benchmark {
 
     // See if snappy is working by attempting to compress a compressible string
     const char text[] = "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy";
-    std::string compressed;
-    if (!port::Snappy_Compress(text, sizeof(text), &compressed)) {
+    System::String compressed;
+    if (!Port::Snappy_Compress(text, sizeof(text), &compressed)) {
       fprintf(stdout, "WARNING: Snappy compression is not enabled\n");
     } else if (compressed.size() >= sizeof(text)) {
       fprintf(stdout, "WARNING: Snappy compression is not effective\n");
@@ -377,8 +377,8 @@ class Benchmark {
     if (cpuinfo != NULL) {
       char line[1000];
       int num_cpus = 0;
-      std::string cpu_type;
-      std::string cache_size;
+      System::String cpu_type;
+      System::String cache_size;
       while (fgets(line, sizeof(line), cpuinfo) != NULL) {
         const char* sep = strchr(line, ':');
         if (sep == NULL) {
@@ -412,11 +412,11 @@ class Benchmark {
     entries_per_batch_(1),
     reads_(FLAGS_reads < 0 ? FLAGS_num : FLAGS_reads),
     heap_counter_(0) {
-    std::vector<std::string> files;
+    std::vector<System::String> files;
     g_env->GetChildren(FLAGS_db, &files);
     for (size_t i = 0; i < files.size(); i++) {
       if (Slice(files[i]).starts_with("heap-")) {
-        g_env->DeleteFile(std::string(FLAGS_db) + "/" + files[i]);
+        g_env->DeleteFile(System::String(FLAGS_db) + "/" + files[i]);
       }
     }
     if (!FLAGS_use_existing_db) {
@@ -548,7 +548,7 @@ class Benchmark {
   }
 
  private:
-  struct ThreadArg {
+  ref struct ThreadArg {
     Benchmark* bm;
     SharedState* shared;
     ThreadState* thread;
@@ -628,7 +628,7 @@ class Benchmark {
     // Checksum about 500MB of data total
     const int size = 4096;
     const char* label = "(4K per op)";
-    std::string data(size, 'x');
+    System::String data(size, 'x');
     int64_t bytes = 0;
     uint32_t crc = 0;
     while (bytes < 500 * 1048576) {
@@ -645,7 +645,7 @@ class Benchmark {
 
   void AcquireLoad(ThreadState* thread) {
     int dummy;
-    port::AtomicPointer ap(&dummy);
+    Port::AtomicPointer ap(&dummy);
     int count = 0;
     void *ptr = NULL;
     thread->stats.AddMessage("(each op is 1000 loads)");
@@ -665,9 +665,9 @@ class Benchmark {
     int64_t bytes = 0;
     int64_t produced = 0;
     bool ok = true;
-    std::string compressed;
+    System::String compressed;
     while (ok && bytes < 1024 * 1048576) {  // Compress 1G
-      ok = port::Snappy_Compress(input.data(), input.size(), &compressed);
+      ok = Port::Snappy_Compress(input.data(), input.size(), &compressed);
       produced += compressed.size();
       bytes += input.size();
       thread->stats.FinishedSingleOp();
@@ -687,12 +687,12 @@ class Benchmark {
   void SnappyUncompress(ThreadState* thread) {
     RandomGenerator gen;
     Slice input = gen.Generate(Options().block_size);
-    std::string compressed;
-    bool ok = port::Snappy_Compress(input.data(), input.size(), &compressed);
+    System::String compressed;
+    bool ok = Port::Snappy_Compress(input.data(), input.size(), &compressed);
     int64_t bytes = 0;
     char* uncompressed = new char[input.size()];
     while (ok && bytes < 1024 * 1048576) {  // Compress 1G
-      ok =  port::Snappy_Uncompress(compressed.data(), compressed.size(),
+      ok =  Port::Snappy_Uncompress(compressed.data(), compressed.size(),
                                     uncompressed);
       bytes += input.size();
       thread->stats.FinishedSingleOp();
@@ -799,7 +799,7 @@ class Benchmark {
 
   void ReadRandom(ThreadState* thread) {
     ReadOptions options;
-    std::string value;
+    System::String value;
     int found = 0;
     for (int i = 0; i < reads_; i++) {
       char key[100];
@@ -817,7 +817,7 @@ class Benchmark {
 
   void ReadMissing(ThreadState* thread) {
     ReadOptions options;
-    std::string value;
+    System::String value;
     for (int i = 0; i < reads_; i++) {
       char key[100];
       const int k = thread->rand.Next() % FLAGS_num;
@@ -829,7 +829,7 @@ class Benchmark {
 
   void ReadHot(ThreadState* thread) {
     ReadOptions options;
-    std::string value;
+    System::String value;
     const int range = (FLAGS_num + 99) / 100;
     for (int i = 0; i < reads_; i++) {
       char key[100];
@@ -922,7 +922,7 @@ class Benchmark {
   }
 
   void PrintStats(const char* key) {
-    std::string stats;
+    System::String stats;
     if (!db_->GetProperty(key, &stats)) {
       stats = "(failed)";
     }
@@ -942,7 +942,7 @@ class Benchmark {
       fprintf(stderr, "%s\n", s.ToString().c_str());
       return;
     }
-    bool ok = port::GetHeapProfile(WriteToFile, file);
+    bool ok = Port::GetHeapProfile(WriteToFile, file);
     delete file;
     if (!ok) {
       fprintf(stderr, "heap profiling not supported\n");
@@ -958,7 +958,7 @@ int main(int argc, char** argv) {
   FLAGS_max_file_size = leveldb::Options().max_file_size;
   FLAGS_block_size = leveldb::Options().block_size;
   FLAGS_open_files = leveldb::Options().max_open_files;
-  std::string default_db_path;
+  System::String default_db_path;
 
   for (int i = 1; i < argc; i++) {
     double d;

@@ -25,16 +25,16 @@
 
 namespace LevelDB {
 
-namespace log { class Writer; }
+namespace log { ref class Writer; }
 
-class Compaction;
-class Iterator;
-class MemTable;
-class TableBuilder;
-class TableCache;
-class Version;
-class VersionSet;
-class WritableFile;
+ref class Compaction;
+ref class Iterator;
+ref class MemTable;
+ref class TableBuilder;
+ref class TableCache;
+ref class Version;
+ref class VersionSet;
+ref class WritableFile;
 
 // Return the smallest index i such that files[i]->largest >= key.
 // Return files.size() if there is no such file.
@@ -56,7 +56,7 @@ extern bool SomeFileOverlapsRange(
     const Slice* smallest_user_key,
     const Slice* largest_user_key);
 
-class Version {
+ref class Version {
  public:
   // Append to *iters a sequence of iterators that will
   // yield the contents of this Version when merged together.
@@ -66,11 +66,11 @@ class Version {
   // Lookup the value for key.  If found, store it in *val and
   // return OK.  Else return a non-OK status.  Fills *stats.
   // REQUIRES: lock is not held
-  struct GetStats {
+  ref struct GetStats {
     FileMetaData* seek_file;
     int seek_file_level;
   };
-  Status Get(const ReadOptions&, const LookupKey& key, std::string* val,
+  Status Get(const ReadOptions&, const LookupKey& key, System::String* val,
              GetStats* stats);
 
   // Adds "stats" into the current state.  Returns true if a new
@@ -111,13 +111,13 @@ class Version {
   int NumFiles(int level) const { return (int)files_[level].size(); }
 
   // Return a human readable string that describes this version's contents.
-  std::string DebugString() const;
+  System::String DebugString() const;
 
  private:
-  friend class Compaction;
-  friend class VersionSet;
+  friend ref class Compaction;
+  friend ref class VersionSet;
 
-  class LevelFileNumIterator;
+  ref class LevelFileNumIterator;
   Iterator* NewConcatenatingIterator(const ReadOptions&, int level) const;
 
   // Call func(arg, level, f) for every file that overlaps user_key in
@@ -162,12 +162,12 @@ class Version {
   void operator=(const Version&);
 };
 
-class VersionSet {
+ref class VersionSet {
  public:
-  VersionSet(const std::string& dbname,
+  VersionSet(const System::String& dbname,
              const Options* options,
              TableCache* table_cache,
-             const InternalKeyComparator*);
+             const InternalKeyComparator^);
   ~VersionSet();
 
   // Apply *edit to the current version to form a new descriptor that
@@ -175,7 +175,7 @@ class VersionSet {
   // current version.  Will release *mu while actually writing to the file.
   // REQUIRES: *mu is held on entry.
   // REQUIRES: no other thread concurrently calls LogAndApply()
-  Status LogAndApply(VersionEdit* edit, port::Mutex* mu)
+  Status LogAndApply(VersionEdit* edit, Port::Mutex^ mu)
       EXCLUSIVE_LOCKS_REQUIRED(mu);
 
   // Recover the last saved descriptor from persistent storage.
@@ -263,18 +263,18 @@ class VersionSet {
 
   // Return a human-readable short (single-line) summary of the number
   // of files per level.  Uses *scratch as backing store.
-  struct LevelSummaryStorage {
+  ref struct LevelSummaryStorage {
     char buffer[100];
   };
   const char* LevelSummary(LevelSummaryStorage* scratch) const;
 
  private:
-  class Builder;
+  ref class Builder;
 
-  friend class Compaction;
-  friend class Version;
+  friend ref class Compaction;
+  friend ref class Version;
 
-  bool ReuseManifest(const std::string& dscname, const std::string& dscbase);
+  bool ReuseManifest(const System::String& dscname, const System::String& dscbase);
 
   void Finalize(Version* v);
 
@@ -295,7 +295,7 @@ class VersionSet {
   void AppendVersion(Version* v);
 
   Env* const env_;
-  const std::string dbname_;
+  const System::String dbname_;
   const Options* const options_;
   TableCache* const table_cache_;
   const InternalKeyComparator icmp_;
@@ -313,7 +313,7 @@ class VersionSet {
 
   // Per-level key at which the next compaction at that level should start.
   // Either an empty string, or a valid InternalKey.
-  std::string compact_pointer_[config::kNumLevels];
+  System::String compact_pointer_[config::kNumLevels];
 
   // No copying allowed
   VersionSet(const VersionSet&);
@@ -321,7 +321,7 @@ class VersionSet {
 };
 
 // A Compaction encapsulates information about a compaction.
-class Compaction {
+ref class Compaction {
  public:
   ~Compaction();
 
@@ -363,8 +363,8 @@ class Compaction {
   void ReleaseInputs();
 
  private:
-  friend class Version;
-  friend class VersionSet;
+  friend ref class Version;
+  friend ref class VersionSet;
 
   Compaction(const Options* options, int level);
 

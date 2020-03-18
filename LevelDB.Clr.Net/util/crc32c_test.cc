@@ -8,7 +8,7 @@
 namespace LevelDB {
 namespace crc32c {
 
-class CRC { };
+ref class CRC { };
 
 TEST(CRC, StandardResults) {
   // From rfc3720 section B.4.

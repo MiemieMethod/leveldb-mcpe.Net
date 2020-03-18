@@ -30,7 +30,7 @@ namespace test {
 extern int RunAllTests();
 
 // Return the directory to use for temporary storage.
-extern std::string TmpDir();
+extern System::String TmpDir();
 
 // Return a randomization seed for this run.  Typically returns the
 // same number on repeated invocations of this binary, but automated
@@ -39,12 +39,12 @@ extern int RandomSeed();
 
 // An instance of Tester is allocated to hold temporary state during
 // the execution of an assertion.
-class Tester {
+ref class Tester {
  private:
   bool ok_;
   const char* fname_;
   int line_;
-  std::stringstream ss_;
+  System::Stringstream ss_;
 
  public:
   Tester(const char* f, int l)
@@ -75,7 +75,7 @@ class Tester {
   }
 
 #define BINARY_OP(name,op)                              \
-  template <class X, class Y>                           \
+  template <ref class X, ref class Y>                           \
   Tester& name(const X& x, const Y& y) {                \
     if (! (x op y)) {                                   \
       ss_ << " failed: " << x << (" " #op " ") << y;    \
@@ -93,7 +93,7 @@ class Tester {
 #undef BINARY_OP
 
   // Attach the specified value to the error message if an error has occurred
-  template <class V>
+  template <ref class V>
   Tester& operator<<(const V& value) {
     if (!ok_) {
       ss_ << " " << value;
@@ -115,7 +115,7 @@ class Tester {
 #define TCONCAT1(a,b) a##b
 
 #define TEST(base,name)                                                 \
-class TCONCAT(_Test_,name) : public base {                              \
+ref class TCONCAT(_Test_,name) : public base {                              \
  public:                                                                \
   void _Run();                                                          \
   static void _RunIt() {                                                \

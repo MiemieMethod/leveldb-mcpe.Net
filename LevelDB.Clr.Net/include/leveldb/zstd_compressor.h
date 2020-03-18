@@ -5,7 +5,7 @@
 
 namespace LevelDB {
 
-	class DLLX ZstdCompressor : public Compressor
+	public ref class ZstdCompressor : public Compressor
 	{
 	public:
 		static const int SERIALIZE_ID = 3;
@@ -23,9 +23,9 @@ namespace LevelDB {
 			assert(compressionLevel >= -1 && compressionLevel <= 9);
 		}
 
-		virtual void compressImpl(const char* input, size_t length, ::std::string& output) const override;
+		virtual void compressImpl(const char* input, size_t length, ::System::String& output) const override;
 
-		virtual bool decompress(const char* input, size_t length, ::std::string &output) const override;
+		virtual bool decompress(const char* input, size_t length, ::System::String &output) const override;
 
 	private:
 

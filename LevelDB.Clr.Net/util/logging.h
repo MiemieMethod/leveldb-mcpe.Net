@@ -15,22 +15,22 @@
 
 namespace LevelDB {
 
-class Slice;
-class WritableFile;
+ref class Slice;
+ref class WritableFile;
 
 // Append a human-readable printout of "num" to *str
-extern void AppendNumberTo(std::string* str, uint64_t num);
+extern void AppendNumberTo(System::String* str, uint64_t num);
 
 // Append a human-readable printout of "value" to *str.
 // Escapes any non-printable characters found in "value".
-extern void AppendEscapedStringTo(std::string* str, const Slice& value);
+extern void AppendEscapedStringTo(System::String* str, const Slice& value);
 
 // Return a human-readable printout of "num"
-extern std::string NumberToString(uint64_t num);
+extern System::String NumberToString(uint64_t num);
 
 // Return a human-readable version of "value".
 // Escapes any non-printable characters found in "value".
-extern std::string EscapeString(const Slice& value);
+extern System::String EscapeString(const Slice& value);
 
 // Parse a human-readable number from "*in" into *value.  On success,
 // advances "*in" past the consumed number and sets "*val" to the

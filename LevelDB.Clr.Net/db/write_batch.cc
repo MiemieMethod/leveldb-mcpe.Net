@@ -116,7 +116,7 @@ void WriteBatch::Delete(const Slice& key) {
 }
 
 namespace {
-class MemTableInserter : public WriteBatch::Handler {
+ref class MemTableInserter : public WriteBatch::Handler {
  public:
   SequenceNumber sequence_;
   MemTable* mem_;

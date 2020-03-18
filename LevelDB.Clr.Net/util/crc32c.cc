@@ -289,12 +289,12 @@ namespace LevelDB {
         // Determine if the CPU running this program can accelerate the CRC32C
         // calculation.
         static bool CanAccelerateCRC32C() {
-          // port::AcceleretedCRC32C returns zero when unable to accelerate.
+          // Port::AcceleretedCRC32C returns zero when unable to accelerate.
           static const char kTestCRCBuffer[] = "TestCRCBuffer";
           static const char kBufSize = sizeof(kTestCRCBuffer) - 1;
           static const uint32_t kTestCRCValue = 0xdcbc59fa;
 
-          return port::AcceleratedCRC32C(0, kTestCRCBuffer, kBufSize) == kTestCRCValue;
+          return Port::AcceleratedCRC32C(0, kTestCRCBuffer, kBufSize) == kTestCRCValue;
         }
         */
 
@@ -302,7 +302,7 @@ namespace LevelDB {
             /* there is no code for AcceleratedCRC32C
             static bool accelerate = CanAccelerateCRC32C();
             if (accelerate) {
-              return port::AcceleratedCRC32C(crc, buf, size);
+              return Port::AcceleratedCRC32C(crc, buf, size);
             }
             */
 

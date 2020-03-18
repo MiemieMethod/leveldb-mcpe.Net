@@ -25,10 +25,10 @@ namespace LevelDB {
 
 // Return reverse of "key".
 // Used to test non-lexicographic comparators.
-static std::string Reverse(const Slice& key) {
-  std::string str(key.ToString());
-  std::string rev("");
-  for (std::string::reverse_iterator rit = str.rbegin();
+static System::String Reverse(const Slice& key) {
+  System::String str(key.ToString());
+  System::String rev("");
+  for (System::String::reverse_iterator rit = str.rbegin();
        rit != str.rend(); ++rit) {
     rev.push_back(*rit);
   }
@@ -36,7 +36,7 @@ static std::string Reverse(const Slice& key) {
 }
 
 namespace {
-class ReverseKeyComparator : public Comparator {
+ref class ReverseKeyComparator : public Comparator {
  public:
   virtual const char* Name() const {
     return "leveldb.ReverseBytewiseComparator";
@@ -47,16 +47,16 @@ class ReverseKeyComparator : public Comparator {
   }
 
   virtual void FindShortestSeparator(
-      std::string* start,
+      System::String* start,
       const Slice& limit) const {
-    std::string s = Reverse(*start);
-    std::string l = Reverse(limit);
+    System::String s = Reverse(*start);
+    System::String l = Reverse(limit);
     BytewiseComparator()->FindShortestSeparator(&s, l);
     *start = Reverse(s);
   }
 
-  virtual void FindShortSuccessor(std::string* key) const {
-    std::string s = Reverse(*key);
+  virtual void FindShortSuccessor(System::String* key) const {
+    System::String s = Reverse(*key);
     BytewiseComparator()->FindShortSuccessor(&s);
     *key = Reverse(s);
   }
@@ -64,12 +64,12 @@ class ReverseKeyComparator : public Comparator {
 }  // namespace
 static ReverseKeyComparator reverse_key_comparator;
 
-static void Increment(const Comparator* cmp, std::string* key) {
+static void Increment(const Comparator^ cmp, System::String* key) {
   if (cmp == BytewiseComparator()) {
     key->push_back('\0');
   } else {
     assert(cmp == &reverse_key_comparator);
-    std::string rev = Reverse(*key);
+    System::String rev = Reverse(*key);
     rev.push_back('\0');
     *key = Reverse(rev);
   }
@@ -77,22 +77,22 @@ static void Increment(const Comparator* cmp, std::string* key) {
 
 // An STL comparator that uses a Comparator
 namespace {
-struct STLLessThan {
-  const Comparator* cmp;
+ref struct STLLessThan {
+  const Comparator^ cmp;
 
   STLLessThan() : cmp(BytewiseComparator()) { }
-  STLLessThan(const Comparator* c) : cmp(c) { }
-  bool operator()(const std::string& a, const std::string& b) const {
+  STLLessThan(const Comparator^ c) : cmp(c) { }
+  bool operator()(const System::String& a, const System::String& b) const {
     return cmp->Compare(Slice(a), Slice(b)) < 0;
   }
 };
 }  // namespace
 
-class StringSink: public WritableFile {
+ref class StringSink: public WritableFile {
  public:
   ~StringSink() { }
 
-  const std::string& contents() const { return contents_; }
+  const System::String& contents() const { return contents_; }
 
   virtual Status Close() { return Status::OK(); }
   virtual Status Flush() { return Status::OK(); }
@@ -104,11 +104,11 @@ class StringSink: public WritableFile {
   }
 
  private:
-  std::string contents_;
+  System::String contents_;
 };
 
 
-class StringSource: public RandomAccessFile {
+ref class StringSource: public RandomAccessFile {
  public:
   StringSource(const Slice& contents)
       : contents_(contents.data(), contents.size()) {
@@ -132,19 +132,19 @@ class StringSource: public RandomAccessFile {
   }
 
  private:
-  std::string contents_;
+  System::String contents_;
 };
 
-typedef std::map<std::string, std::string, STLLessThan> KVMap;
+typedef std::map<System::String, System::String, STLLessThan> KVMap;
 
-// Helper class for tests to unify the interface between
+// Helper ref class for tests to unify the interface between
 // BlockBuilder/TableBuilder and Block/Table.
-class Constructor {
+ref class Constructor {
  public:
-  explicit Constructor(const Comparator* cmp) : data_(STLLessThan(cmp)) { }
+  explicit Constructor(const Comparator^ cmp) : data_(STLLessThan(cmp)) { }
   virtual ~Constructor() { }
 
-  void Add(const std::string& key, const Slice& value) {
+  void Add(const System::String& key, const Slice& value) {
     data_[key] = value.ToString();
   }
 
@@ -152,7 +152,7 @@ class Constructor {
   // been added so far.  Returns the keys in sorted order in "*keys"
   // and stores the key/value pairs in "*kvmap"
   void Finish(const Options& options,
-              std::vector<std::string>* keys,
+              std::vector<System::String>* keys,
               KVMap* kvmap) {
     *kvmap = data_;
     keys->clear();
@@ -179,9 +179,9 @@ class Constructor {
   KVMap data_;
 };
 
-class BlockConstructor: public Constructor {
+ref class BlockConstructor: public Constructor {
  public:
-  explicit BlockConstructor(const Comparator* cmp)
+  explicit BlockConstructor(const Comparator^ cmp)
       : Constructor(cmp),
         comparator_(cmp),
         block_(NULL) { }
@@ -212,16 +212,16 @@ class BlockConstructor: public Constructor {
   }
 
  private:
-  const Comparator* comparator_;
-  std::string data_;
+  const Comparator^ comparator_;
+  System::String data_;
   Block* block_;
 
   BlockConstructor();
 };
 
-class TableConstructor: public Constructor {
+ref class TableConstructor: public Constructor {
  public:
-  TableConstructor(const Comparator* cmp)
+  TableConstructor(const Comparator^ cmp)
       : Constructor(cmp),
         source_(NULL), table_(NULL) {
   }
@@ -273,15 +273,15 @@ class TableConstructor: public Constructor {
   TableConstructor();
 };
 
-// A helper class that converts internal format keys into user keys
-class KeyConvertingIterator: public Iterator {
+// A helper ref class that converts internal format keys into user keys
+ref class KeyConvertingIterator: public Iterator {
  public:
   explicit KeyConvertingIterator(Iterator* iter) : iter_(iter) { }
   virtual ~KeyConvertingIterator() { delete iter_; }
   virtual bool Valid() const { return iter_->Valid(); }
   virtual void Seek(const Slice& target) {
     ParsedInternalKey ikey(target, kMaxSequenceNumber, kTypeValue);
-    std::string encoded;
+    System::String encoded;
     AppendInternalKey(&encoded, ikey);
     iter_->Seek(encoded);
   }
@@ -314,9 +314,9 @@ class KeyConvertingIterator: public Iterator {
   void operator=(const KeyConvertingIterator&);
 };
 
-class MemTableConstructor: public Constructor {
+ref class MemTableConstructor: public Constructor {
  public:
-  explicit MemTableConstructor(const Comparator* cmp)
+  explicit MemTableConstructor(const Comparator^ cmp)
       : Constructor(cmp),
         internal_comparator_(cmp) {
     memtable_ = new MemTable(internal_comparator_);
@@ -347,9 +347,9 @@ class MemTableConstructor: public Constructor {
   MemTable* memtable_;
 };
 
-class DBConstructor: public Constructor {
+ref class DBConstructor: public Constructor {
  public:
-  explicit DBConstructor(const Comparator* cmp)
+  explicit DBConstructor(const Comparator^ cmp)
       : Constructor(cmp),
         comparator_(cmp) {
     db_ = NULL;
@@ -379,7 +379,7 @@ class DBConstructor: public Constructor {
 
  private:
   void NewDB() {
-    std::string name = test::TmpDir() + "/table_testdb";
+    System::String name = test::TmpDir() + "/table_testdb";
 
     Options options;
     options.comparator = comparator_;
@@ -393,7 +393,7 @@ class DBConstructor: public Constructor {
     ASSERT_TRUE(status.ok()) << status.ToString();
   }
 
-  const Comparator* comparator_;
+  const Comparator^ comparator_;
   DB* db_;
 };
 
@@ -404,7 +404,7 @@ enum TestType {
   DB_TEST
 };
 
-struct TestArgs {
+ref struct TestArgs {
   TestType type;
   bool reverse_compare;
   int restart_interval;
@@ -435,7 +435,7 @@ static const TestArgs kTestArgList[] = {
 };
 static const int kNumTestArgs = sizeof(kTestArgList) / sizeof(kTestArgList[0]);
 
-class Harness {
+ref class Harness {
  public:
   Harness() : constructor_(NULL) { }
 
@@ -471,12 +471,12 @@ class Harness {
     delete constructor_;
   }
 
-  void Add(const std::string& key, const std::string& value) {
+  void Add(const System::String& key, const System::String& value) {
     constructor_->Add(key, value);
   }
 
   void Test(Random* rnd) {
-    std::vector<std::string> keys;
+    std::vector<System::String> keys;
     KVMap data;
     constructor_->Finish(options_, &keys, &data);
 
@@ -485,7 +485,7 @@ class Harness {
     TestRandomAccess(rnd, keys, data);
   }
 
-  void TestForwardScan(const std::vector<std::string>& keys,
+  void TestForwardScan(const std::vector<System::String>& keys,
                        const KVMap& data) {
     Iterator* iter = constructor_->NewIterator();
     ASSERT_TRUE(!iter->Valid());
@@ -500,7 +500,7 @@ class Harness {
     delete iter;
   }
 
-  void TestBackwardScan(const std::vector<std::string>& keys,
+  void TestBackwardScan(const std::vector<System::String>& keys,
                         const KVMap& data) {
     Iterator* iter = constructor_->NewIterator();
     ASSERT_TRUE(!iter->Valid());
@@ -516,7 +516,7 @@ class Harness {
   }
 
   void TestRandomAccess(Random* rnd,
-                        const std::vector<std::string>& keys,
+                        const std::vector<System::String>& keys,
                         const KVMap& data) {
     static const bool kVerbose = false;
     Iterator* iter = constructor_->NewIterator();
@@ -545,7 +545,7 @@ class Harness {
         }
 
         case 2: {
-          std::string key = PickRandomKey(rnd, keys);
+          System::String key = PickRandomKey(rnd, keys);
           model_iter = data.lower_bound(key);
           if (kVerbose) fprintf(stderr, "Seek '%s'\n",
                                 EscapeString(key).c_str());
@@ -574,7 +574,7 @@ class Harness {
           if (keys.empty()) {
             model_iter = data.end();
           } else {
-            std::string last = data.rbegin()->first;
+            System::String last = data.rbegin()->first;
             model_iter = data.lower_bound(last);
           }
           ASSERT_EQ(ToString(data, model_iter), ToString(iter));
@@ -585,7 +585,7 @@ class Harness {
     delete iter;
   }
 
-  std::string ToString(const KVMap& data, const KVMap::const_iterator& it) {
+  System::String ToString(const KVMap& data, const KVMap::const_iterator& it) {
     if (it == data.end()) {
       return "END";
     } else {
@@ -593,7 +593,7 @@ class Harness {
     }
   }
 
-  std::string ToString(const KVMap& data,
+  System::String ToString(const KVMap& data,
                        const KVMap::const_reverse_iterator& it) {
     if (it == data.rend()) {
       return "END";
@@ -602,7 +602,7 @@ class Harness {
     }
   }
 
-  std::string ToString(const Iterator* it) {
+  System::String ToString(const Iterator* it) {
     if (!it->Valid()) {
       return "END";
     } else {
@@ -610,12 +610,12 @@ class Harness {
     }
   }
 
-  std::string PickRandomKey(Random* rnd, const std::vector<std::string>& keys) {
+  System::String PickRandomKey(Random* rnd, const std::vector<System::String>& keys) {
     if (keys.empty()) {
       return "foo";
     } else {
       const int index = rnd->Uniform(keys.size());
-      std::string result = keys[index];
+      System::String result = keys[index];
       switch (rnd->Uniform(3)) {
         case 0:
           // Return an existing key
@@ -725,7 +725,7 @@ TEST(Harness, Randomized) {
                 (i + 1), int(kNumTestArgs), num_entries);
       }
       for (int e = 0; e < num_entries; e++) {
-        std::string v;
+        System::String v;
         Add(test::RandomKey(&rnd, rnd.Skewed(4)),
             test::RandomString(&rnd, rnd.Skewed(5), &v).ToString());
       }
@@ -740,7 +740,7 @@ TEST(Harness, RandomizedLongDB) {
   Init(args);
   int num_entries = 100000;
   for (int e = 0; e < num_entries; e++) {
-    std::string v;
+    System::String v;
     Add(test::RandomKey(&rnd, rnd.Skewed(4)),
         test::RandomString(&rnd, rnd.Skewed(5), &v).ToString());
   }
@@ -749,7 +749,7 @@ TEST(Harness, RandomizedLongDB) {
   // We must have created enough data to force merging
   int files = 0;
   for (int level = 0; level < config::kNumLevels; level++) {
-    std::string value;
+    System::String value;
     char name[100];
     snprintf(name, sizeof(name), "leveldb.num-files-at-level%d", level);
     ASSERT_TRUE(db()->GetProperty(name, &value));
@@ -758,7 +758,7 @@ TEST(Harness, RandomizedLongDB) {
   ASSERT_GT(files, 0);
 }
 
-class MemTableTest { };
+ref class MemTableTest { };
 
 TEST(MemTableTest, Simple) {
   InternalKeyComparator cmp(BytewiseComparator());
@@ -766,10 +766,10 @@ TEST(MemTableTest, Simple) {
   memtable->Ref();
   WriteBatch batch;
   WriteBatchInternal::SetSequence(&batch, 100);
-  batch.Put(std::string("k1"), std::string("v1"));
-  batch.Put(std::string("k2"), std::string("v2"));
-  batch.Put(std::string("k3"), std::string("v3"));
-  batch.Put(std::string("largekey"), std::string("vlarge"));
+  batch.Put(System::String("k1"), System::String("v1"));
+  batch.Put(System::String("k2"), System::String("v2"));
+  batch.Put(System::String("k3"), System::String("v3"));
+  batch.Put(System::String("largekey"), System::String("vlarge"));
   ASSERT_TRUE(WriteBatchInternal::InsertInto(&batch, memtable).ok());
 
   Iterator* iter = memtable->NewIterator();
@@ -796,18 +796,18 @@ static bool Between(uint64_t val, uint64_t low, uint64_t high) {
   return result;
 }
 
-class TableTest { };
+ref class TableTest { };
 
 TEST(TableTest, ApproximateOffsetOfPlain) {
   TableConstructor c(BytewiseComparator());
   c.Add("k01", "hello");
   c.Add("k02", "hello2");
-  c.Add("k03", std::string(10000, 'x'));
-  c.Add("k04", std::string(200000, 'x'));
-  c.Add("k05", std::string(300000, 'x'));
+  c.Add("k03", System::String(10000, 'x'));
+  c.Add("k04", System::String(200000, 'x'));
+  c.Add("k05", System::String(300000, 'x'));
   c.Add("k06", "hello3");
-  c.Add("k07", std::string(100000, 'x'));
-  std::vector<std::string> keys;
+  c.Add("k07", System::String(100000, 'x'));
+  std::vector<System::String> keys;
   KVMap kvmap;
   Options options;
   options.block_size = 1024;
@@ -829,9 +829,9 @@ TEST(TableTest, ApproximateOffsetOfPlain) {
 
 static bool SnappyCompressionSupported() {
 #ifdef SNAPPY
-  std::string out;
+  System::String out;
   Slice in = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-  return port::Snappy_Compress(in.data(), in.size(), &out);
+  return Port::Snappy_Compress(in.data(), in.size(), &out);
 #else
   return false;
 #endif
@@ -845,12 +845,12 @@ TEST(TableTest, ApproximateOffsetOfCompressed) {
 
   Random rnd(301);
   TableConstructor c(BytewiseComparator());
-  std::string tmp;
+  System::String tmp;
   c.Add("k01", "hello");
   c.Add("k02", test::CompressibleString(&rnd, 0.25, 10000, &tmp));
   c.Add("k03", "hello3");
   c.Add("k04", test::CompressibleString(&rnd, 0.25, 10000, &tmp));
-  std::vector<std::string> keys;
+  std::vector<System::String> keys;
   KVMap kvmap;
   Options options;
   options.block_size = 1024;

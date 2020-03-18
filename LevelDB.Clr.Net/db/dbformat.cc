@@ -15,24 +15,24 @@ static uint64_t PackSequenceAndType(uint64_t seq, ValueType t) {
   return (seq << 8) | t;
 }
 
-void AppendInternalKey(std::string* result, const ParsedInternalKey& key) {
+void AppendInternalKey(System::String* result, const ParsedInternalKey& key) {
   result->append(key.user_key.data(), key.user_key.size());
   PutFixed64(result, PackSequenceAndType(key.sequence, key.type));
 }
 
-std::string ParsedInternalKey::DebugString() const {
+System::String ParsedInternalKey::DebugString() const {
   char buf[50];
   snprintf(buf, sizeof(buf), "' @ %llu : %d",
            (unsigned long long) sequence,
            int(type));
-  std::string result = "'";
+  System::String result = "'";
   result += EscapeString(user_key.ToString());
   result += buf;
   return result;
 }
 
-std::string InternalKey::DebugString() const {
-  std::string result;
+System::String InternalKey::DebugString() const {
+  System::String result;
   ParsedInternalKey parsed;
   if (ParseInternalKey(rep_, &parsed)) {
     result = parsed.DebugString();
@@ -66,12 +66,12 @@ int InternalKeyComparator::Compare(const Slice& akey, const Slice& bkey) const {
 }
 
 void InternalKeyComparator::FindShortestSeparator(
-      std::string* start,
+      System::String* start,
       const Slice& limit) const {
   // Attempt to shorten the user portion of the key
   Slice user_start = ExtractUserKey(*start);
   Slice user_limit = ExtractUserKey(limit);
-  std::string tmp(user_start.data(), user_start.size());
+  System::String tmp(user_start.data(), user_start.size());
   user_comparator_->FindShortestSeparator(&tmp, user_limit);
   if (tmp.size() < user_start.size() &&
       user_comparator_->Compare(user_start, tmp) < 0) {
@@ -84,9 +84,9 @@ void InternalKeyComparator::FindShortestSeparator(
   }
 }
 
-void InternalKeyComparator::FindShortSuccessor(std::string* key) const {
+void InternalKeyComparator::FindShortSuccessor(System::String* key) const {
   Slice user_key = ExtractUserKey(*key);
-  std::string tmp(user_key.data(), user_key.size());
+  System::String tmp(user_key.data(), user_key.size());
   user_comparator_->FindShortSuccessor(&tmp);
   if (tmp.size() < user_key.size() &&
       user_comparator_->Compare(user_key, tmp) < 0) {
@@ -103,7 +103,7 @@ const char* InternalFilterPolicy::Name() const {
 }
 
 void InternalFilterPolicy::CreateFilter(const Slice* keys, int n,
-                                        std::string* dst) const {
+                                        System::String* dst) const {
   // We rely on the fact that the code in table.cc does not mind us
   // adjusting keys[].
   Slice* mkey = const_cast<Slice*>(keys);

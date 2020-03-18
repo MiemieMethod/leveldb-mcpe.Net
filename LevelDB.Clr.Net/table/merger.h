@@ -7,8 +7,8 @@
 
 namespace LevelDB {
 
-class Comparator;
-class Iterator;
+ref class Comparator;
+ref class Iterator;
 
 // Return an iterator that provided the union of the data in
 // children[0,n-1].  Takes ownership of the child iterators and
@@ -19,7 +19,7 @@ class Iterator;
 //
 // REQUIRES: n >= 0
 extern Iterator* NewMergingIterator(
-    const Comparator* comparator, Iterator** children, int n);
+    const Comparator^ comparator, Iterator** children, int n);
 
 }  // namespace LevelDB
 

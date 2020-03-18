@@ -12,17 +12,17 @@
 
 namespace LevelDB {
 
-class DLLX Cache;
-class DLLX Comparator;
-class DLLX Env;
-class DLLX FilterPolicy;
-class DLLX Logger;
-class DLLX Snapshot;
-class DLLX Compressor;
-class DLLX DecompressAllocator;
+public ref class Cache;
+public ref class Comparator;
+public ref class Env;
+public ref class FilterPolicy;
+public ref class Logger;
+public ref class Snapshot;
+public ref class Compressor;
+public ref class DecompressAllocator;
 
 // Options to control the behavior of a database (passed to DB::Open)
-struct DLLX Options {
+public ref struct Options {
   // -------------------
   // Parameters that affect behavior
 
@@ -32,7 +32,7 @@ struct DLLX Options {
   // REQUIRES: The client must ensure that the comparator supplied
   // here has the same name and orders keys *exactly* the same as the
   // comparator provided to previous open calls on the same DB.
-  const Comparator* comparator;
+  const Comparator^ comparator;
 
   // If true, the database will be created if it is missing.
   // Default: false
@@ -152,7 +152,7 @@ struct DLLX Options {
 };
 
 // Options that control read operations
-struct DLLX ReadOptions {
+public ref struct ReadOptions {
   // If true, all data read from underlying storage will be
   // verified against corresponding checksums.
   // Default: false
@@ -183,7 +183,7 @@ struct DLLX ReadOptions {
 };
 
 // Options that control write operations
-struct DLLX WriteOptions {
+public ref struct WriteOptions {
   // If true, the write will be flushed from the operating system
   // buffer cache (by calling WritableFile::Sync()) before the write
   // is considered complete.  If this flag is true, writes will be

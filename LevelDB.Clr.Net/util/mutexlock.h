@@ -10,26 +10,26 @@
 
 namespace LevelDB {
 
-// Helper class that locks a mutex on construction and unlocks the mutex when
+// Helper ref class that locks a mutex on construction and unlocks the mutex when
 // the destructor of the MutexLock object is invoked.
 //
 // Typical usage:
 //
-//   void MyClass::MyMethod() {
+//   void Myref class::MyMethod() {
 //     MutexLock l(&mu_);       // mu_ is an instance variable
 //     ... some complex code, possibly with multiple return paths ...
 //   }
 
-class SCOPED_LOCKABLE MutexLock {
+ref class SCOPED_LOCKABLE MutexLock {
  public:
-  explicit MutexLock(port::Mutex *mu) EXCLUSIVE_LOCK_FUNCTION(mu)
+  explicit MutexLock(Port::Mutex *mu) EXCLUSIVE_LOCK_FUNCTION(mu)
       : mu_(mu)  {
     this->mu_->Lock();
   }
   ~MutexLock() UNLOCK_FUNCTION() { this->mu_->Unlock(); }
 
  private:
-  port::Mutex *const mu_;
+  Port::Mutex *const mu_;
   // No copying allowed
   MutexLock(const MutexLock&);
   void operator=(const MutexLock&);

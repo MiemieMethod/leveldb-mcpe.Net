@@ -7,7 +7,7 @@
 
 namespace LevelDB {
 
-	void ZlibCompressorBase::compressImpl(const char* input, size_t length, ::std::string& buffer) const
+	void ZlibCompressorBase::compressImpl(const char* input, size_t length, ::System::String& buffer) const
 	{
 		const size_t BUFSIZE = 128 * 1024;
 		unsigned char temp_buffer[BUFSIZE];
@@ -55,7 +55,7 @@ namespace LevelDB {
 		deflateEnd(&strm);
 	}
 
-	int ZlibCompressorBase::inflate(const char* input, size_t length, ::std::string &output) const {
+	int ZlibCompressorBase::inflate(const char* input, size_t length, ::System::String &output) const {
 		const int CHUNK = 64 * 1024;
 
 		int ret;
@@ -109,7 +109,7 @@ namespace LevelDB {
 		return ret == Z_STREAM_END ? Z_OK : Z_DATA_ERROR;
 	}
 
-	bool ZlibCompressorBase::decompress(const char* input, size_t length, ::std::string &output) const {
+	bool ZlibCompressorBase::decompress(const char* input, size_t length, ::System::String &output) const {
 		return inflate(input, length, output) == Z_OK;
 	}
 		

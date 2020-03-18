@@ -11,9 +11,9 @@
 namespace LevelDB {
 
 namespace {
-class MergingIterator : public Iterator {
+ref class MergingIterator : public Iterator {
  public:
-  MergingIterator(const Comparator* comparator, Iterator** children, int n)
+  MergingIterator(const Comparator^ comparator, Iterator** children, int n)
       : comparator_(comparator),
         children_(new IteratorWrapper[n]),
         n_(n),
@@ -139,7 +139,7 @@ class MergingIterator : public Iterator {
   // We might want to use a heap in case there are lots of children.
   // For now we use a simple array since we expect a very small number
   // of children in leveldb.
-  const Comparator* comparator_;
+  const Comparator^ comparator_;
   IteratorWrapper* children_;
   int n_;
   IteratorWrapper* current_;
@@ -183,7 +183,7 @@ void MergingIterator::FindLargest() {
 }
 }  // namespace
 
-Iterator* NewMergingIterator(const Comparator* cmp, Iterator** list, int n) {
+Iterator* NewMergingIterator(const Comparator^ cmp, Iterator** list, int n) {
   assert(n >= 0);
   if (n == 0) {
     return NewEmptyIterator();

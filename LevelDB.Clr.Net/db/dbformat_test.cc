@@ -8,30 +8,30 @@
 
 namespace LevelDB {
 
-static std::string IKey(const std::string& user_key,
+static System::String IKey(const System::String& user_key,
                         uint64_t seq,
                         ValueType vt) {
-  std::string encoded;
+  System::String encoded;
   AppendInternalKey(&encoded, ParsedInternalKey(user_key, seq, vt));
   return encoded;
 }
 
-static std::string Shorten(const std::string& s, const std::string& l) {
-  std::string result = s;
+static System::String Shorten(const System::String& s, const System::String& l) {
+  System::String result = s;
   InternalKeyComparator(BytewiseComparator()).FindShortestSeparator(&result, l);
   return result;
 }
 
-static std::string ShortSuccessor(const std::string& s) {
-  std::string result = s;
+static System::String ShortSuccessor(const System::String& s) {
+  System::String result = s;
   InternalKeyComparator(BytewiseComparator()).FindShortSuccessor(&result);
   return result;
 }
 
-static void TestKey(const std::string& key,
+static void TestKey(const System::String& key,
                     uint64_t seq,
                     ValueType vt) {
-  std::string encoded = IKey(key, seq, vt);
+  System::String encoded = IKey(key, seq, vt);
 
   Slice in(encoded);
   ParsedInternalKey decoded("", 0, kTypeValue);
@@ -44,7 +44,7 @@ static void TestKey(const std::string& key,
   ASSERT_TRUE(!ParseInternalKey(Slice("bar"), &decoded));
 }
 
-class FormatTest { };
+ref class FormatTest { };
 
 TEST(FormatTest, InternalKey_EncodeDecode) {
   const char* keys[] = { "", "k", "hello", "longggggggggggggggggggggg" };

@@ -44,7 +44,7 @@ namespace {
 // combines multiple entries for the same userkey found in the DB
 // representation into a single entry while accounting for sequence
 // numbers, deletion markers, overwrites, etc.
-class DBIter: public Iterator {
+ref class DBIter: public Iterator {
  public:
   // Which direction is the iterator currently moving?
   // (1) When moving forward, the internal iterator is positioned at
@@ -56,7 +56,7 @@ class DBIter: public Iterator {
     kReverse
   };
 
-  DBIter(DBImpl* db, const Comparator* cmp, Iterator* iter, SequenceNumber s,
+  DBIter(DBImpl* db, const Comparator^ cmp, Iterator* iter, SequenceNumber s,
          uint32_t seed)
       : db_(db),
         user_comparator_(cmp),
@@ -94,17 +94,17 @@ class DBIter: public Iterator {
   virtual void SeekToLast();
 
  private:
-  void FindNextUserEntry(bool skipping, std::string* skip);
+  void FindNextUserEntry(bool skipping, System::String* skip);
   void FindPrevUserEntry();
   bool ParseKey(ParsedInternalKey* key);
 
-  inline void SaveKey(const Slice& k, std::string* dst) {
+  inline void SaveKey(const Slice& k, System::String* dst) {
     dst->assign(k.data(), k.size());
   }
 
   inline void ClearSavedValue() {
     if (saved_value_.capacity() > 1048576) {
-      std::string empty;
+      System::String empty;
       swap(empty, saved_value_);
     } else {
       saved_value_.clear();
@@ -117,13 +117,13 @@ class DBIter: public Iterator {
   }
 
   DBImpl* db_;
-  const Comparator* const user_comparator_;
+  const Comparator^ const user_comparator_;
   Iterator* const iter_;
   SequenceNumber const sequence_;
 
   Status status_;
-  std::string saved_key_;     // == current key when direction_==kReverse
-  std::string saved_value_;   // == current raw value when direction_==kReverse
+  System::String saved_key_;     // == current key when direction_==kReverse
+  System::String saved_value_;   // == current raw value when direction_==kReverse
   Direction direction_;
   bool valid_;
 
@@ -178,7 +178,7 @@ void DBIter::Next() {
   FindNextUserEntry(true, &saved_key_);
 }
 
-void DBIter::FindNextUserEntry(bool skipping, std::string* skip) {
+void DBIter::FindNextUserEntry(bool skipping, System::String* skip) {
   // Loop until we hit an acceptable entry to yield
   assert(iter_->Valid());
   assert(direction_ == kForward);
@@ -257,7 +257,7 @@ void DBIter::FindPrevUserEntry() {
         } else {
           Slice raw_value = iter_->value();
           if (saved_value_.capacity() > raw_value.size() + 1048576) {
-            std::string empty;
+            System::String empty;
             swap(empty, saved_value_);
           }
           SaveKey(ExtractUserKey(iter_->key()), &saved_key_);
@@ -315,7 +315,7 @@ void DBIter::SeekToLast() {
 
 Iterator* NewDBIterator(
     DBImpl* db,
-    const Comparator* user_key_comparator,
+    const Comparator^ user_key_comparator,
     Iterator* internal_iter,
     SequenceNumber sequence,
     uint32_t seed) {

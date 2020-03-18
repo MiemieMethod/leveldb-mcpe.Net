@@ -27,9 +27,9 @@
 
 namespace LevelDB {
 
-class DLLX Slice;
+public ref class Slice;
 
-class DLLX WriteBatch {
+public ref class WriteBatch {
  public:
   WriteBatch();
   ~WriteBatch();
@@ -50,7 +50,7 @@ class DLLX WriteBatch {
   size_t ApproximateSize();
 
   // Support for iterating over the contents of a batch.
-  class DLLX Handler {
+  public ref class Handler {
    public:
     virtual ~Handler();
     virtual void Put(const Slice& key, const Slice& value) = 0;
@@ -59,9 +59,9 @@ class DLLX WriteBatch {
   Status Iterate(Handler* handler) const;
 
  private:
-  friend class WriteBatchInternal;
+  friend ref class WriteBatchInternal;
 
-  std::string rep_;  // See comment in write_batch.cc for the format of rep_
+  System::String rep_;  // See comment in write_batch.cc for the format of rep_
 
   // Intentionally copyable
 };

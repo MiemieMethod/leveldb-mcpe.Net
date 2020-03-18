@@ -14,7 +14,7 @@ static const int kDelayMicros = 100000;
 static const int kReadOnlyFileLimit = 4;
 static const int kMMapLimit = 4;
 
-class EnvPosixTest {
+ref class EnvPosixTest {
  public:
   Env* env_;
   EnvPosixTest() : env_(Env::Default()) { }
@@ -27,9 +27,9 @@ class EnvPosixTest {
 
 TEST(EnvPosixTest, TestOpenOnRead) {
   // Write some test data to a single file that will be opened |n| times.
-  std::string test_dir;
+  System::String test_dir;
   ASSERT_OK(env_->GetTestDirectory(&test_dir));
-  std::string test_file = test_dir + "/open_on_read.txt";
+  System::String test_file = test_dir + "/open_on_read.txt";
 
   FILE* f = fopen(test_file.c_str(), "w");
   ASSERT_TRUE(f != NULL);

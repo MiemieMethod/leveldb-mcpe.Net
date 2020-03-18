@@ -9,7 +9,7 @@
 
 namespace LevelDB {
 
-struct ReadOptions;
+ref struct ReadOptions;
 
 // Return a new two level iterator.  A two-level iterator contains an
 // index iterator whose values point to a sequence of blocks where

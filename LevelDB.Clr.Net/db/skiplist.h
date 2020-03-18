@@ -35,12 +35,12 @@
 
 namespace LevelDB {
 
-class Arena;
+ref class Arena;
 
-template<typename Key, class Comparator>
-class SkipList {
+template<typename Key, ref class Comparator>
+ref class SkipList {
  private:
-  struct Node;
+  ref struct Node;
 
  public:
   // Create a new SkipList object that will use "cmp" for comparing keys,
@@ -56,7 +56,7 @@ class SkipList {
   bool Contains(const Key& key) const;
 
   // Iteration over the contents of a skip list
-  class Iterator {
+  ref class Iterator {
    public:
     // Initialize an iterator over the specified list.
     // The returned iterator is not valid.
@@ -105,7 +105,7 @@ class SkipList {
 
   // Modified only by Insert().  Read racily by readers, but stale
   // values are ok.
-  port::AtomicPointer max_height_;   // Height of the entire list
+  Port::AtomicPointer max_height_;   // Height of the entire list
 
   inline int GetMaxHeight() const {
     return static_cast<int>(
@@ -143,8 +143,8 @@ class SkipList {
 };
 
 // Implementation details follow
-template<typename Key, class Comparator>
-struct SkipList<Key,Comparator>::Node {
+template<typename Key, ref class Comparator>
+ref struct SkipList<Key,Comparator>::Node {
   explicit Node(const Key& k) : key(k) { }
 
   Key const key;
@@ -176,41 +176,41 @@ struct SkipList<Key,Comparator>::Node {
 
  private:
   // Array of length equal to the node height.  next_[0] is lowest level link.
-  port::AtomicPointer next_[1];
+  Port::AtomicPointer next_[1];
 };
 
-template<typename Key, class Comparator>
+template<typename Key, ref class Comparator>
 typename SkipList<Key,Comparator>::Node*
 SkipList<Key,Comparator>::NewNode(const Key& key, int height) {
   char* mem = arena_->AllocateAligned(
-      sizeof(Node) + sizeof(port::AtomicPointer) * (height - 1));
+      sizeof(Node) + sizeof(Port::AtomicPointer) * (height - 1));
   return new (mem) Node(key);
 }
 
-template<typename Key, class Comparator>
+template<typename Key, ref class Comparator>
 inline SkipList<Key,Comparator>::Iterator::Iterator(const SkipList* list) {
   list_ = list;
   node_ = NULL;
 }
 
-template<typename Key, class Comparator>
+template<typename Key, ref class Comparator>
 inline bool SkipList<Key,Comparator>::Iterator::Valid() const {
   return node_ != NULL;
 }
 
-template<typename Key, class Comparator>
+template<typename Key, ref class Comparator>
 inline const Key& SkipList<Key,Comparator>::Iterator::key() const {
   assert(Valid());
   return node_->key;
 }
 
-template<typename Key, class Comparator>
+template<typename Key, ref class Comparator>
 inline void SkipList<Key,Comparator>::Iterator::Next() {
   assert(Valid());
   node_ = node_->Next(0);
 }
 
-template<typename Key, class Comparator>
+template<typename Key, ref class Comparator>
 inline void SkipList<Key,Comparator>::Iterator::Prev() {
   // Instead of using explicit "prev" links, we just search for the
   // last node that falls before key.
@@ -221,17 +221,17 @@ inline void SkipList<Key,Comparator>::Iterator::Prev() {
   }
 }
 
-template<typename Key, class Comparator>
+template<typename Key, ref class Comparator>
 inline void SkipList<Key,Comparator>::Iterator::Seek(const Key& target) {
   node_ = list_->FindGreaterOrEqual(target, NULL);
 }
 
-template<typename Key, class Comparator>
+template<typename Key, ref class Comparator>
 inline void SkipList<Key,Comparator>::Iterator::SeekToFirst() {
   node_ = list_->head_->Next(0);
 }
 
-template<typename Key, class Comparator>
+template<typename Key, ref class Comparator>
 inline void SkipList<Key,Comparator>::Iterator::SeekToLast() {
   node_ = list_->FindLast();
   if (node_ == list_->head_) {
@@ -239,7 +239,7 @@ inline void SkipList<Key,Comparator>::Iterator::SeekToLast() {
   }
 }
 
-template<typename Key, class Comparator>
+template<typename Key, ref class Comparator>
 int SkipList<Key,Comparator>::RandomHeight() {
   // Increase height with probability 1 in kBranching
   static const unsigned int kBranching = 4;
@@ -252,13 +252,13 @@ int SkipList<Key,Comparator>::RandomHeight() {
   return height;
 }
 
-template<typename Key, class Comparator>
+template<typename Key, ref class Comparator>
 bool SkipList<Key,Comparator>::KeyIsAfterNode(const Key& key, Node* n) const {
   // NULL n is considered infinite
   return (n != NULL) && (compare_(n->key, key) < 0);
 }
 
-template<typename Key, class Comparator>
+template<typename Key, ref class Comparator>
 typename SkipList<Key,Comparator>::Node* SkipList<Key,Comparator>::FindGreaterOrEqual(const Key& key, Node** prev)
     const {
   Node* x = head_;
@@ -280,7 +280,7 @@ typename SkipList<Key,Comparator>::Node* SkipList<Key,Comparator>::FindGreaterOr
   }
 }
 
-template<typename Key, class Comparator>
+template<typename Key, ref class Comparator>
 typename SkipList<Key,Comparator>::Node*
 SkipList<Key,Comparator>::FindLessThan(const Key& key) const {
   Node* x = head_;
@@ -301,7 +301,7 @@ SkipList<Key,Comparator>::FindLessThan(const Key& key) const {
   }
 }
 
-template<typename Key, class Comparator>
+template<typename Key, ref class Comparator>
 typename SkipList<Key,Comparator>::Node* SkipList<Key,Comparator>::FindLast()
     const {
   Node* x = head_;
@@ -321,7 +321,7 @@ typename SkipList<Key,Comparator>::Node* SkipList<Key,Comparator>::FindLast()
   }
 }
 
-template<typename Key, class Comparator>
+template<typename Key, ref class Comparator>
 SkipList<Key,Comparator>::SkipList(Comparator cmp, Arena* arena)
     : compare_(cmp),
       arena_(arena),
@@ -333,7 +333,7 @@ SkipList<Key,Comparator>::SkipList(Comparator cmp, Arena* arena)
   }
 }
 
-template<typename Key, class Comparator>
+template<typename Key, ref class Comparator>
 void SkipList<Key,Comparator>::Insert(const Key& key) {
   // TODO(opt): We can use a barrier-free variant of FindGreaterOrEqual()
   // here since Insert() is externally synchronized.
@@ -369,7 +369,7 @@ void SkipList<Key,Comparator>::Insert(const Key& key) {
   }
 }
 
-template<typename Key, class Comparator>
+template<typename Key, ref class Comparator>
 bool SkipList<Key,Comparator>::Contains(const Key& key) const {
   Node* x = FindGreaterOrEqual(key, NULL);
   if (x != NULL && Equal(key, x->key)) {

@@ -22,7 +22,7 @@
 
 namespace LevelDB {
 
-class DLLX Slice {
+public ref class Slice {
  public:
   // Create an empty slice.
   Slice() : data_(""), size_(0) { }
@@ -31,7 +31,7 @@ class DLLX Slice {
   Slice(const char* d, size_t n) : data_(d), size_(n) { }
 
   // Create a slice that refers to the contents of "s"
-  Slice(const std::string& s) : data_(s.data()), size_(s.size()) { }
+  Slice(const System::String& s) : data_(s.data()), size_(s.size()) { }
 
   // Create a slice that refers to s[0,strlen(s)-1]
   Slice(const char* s) : data_(s), size_(strlen(s)) { }
@@ -63,7 +63,7 @@ class DLLX Slice {
   }
 
   // Return a string that contains the copy of the referenced data.
-  std::string ToString() const { return std::string(data_, size_); }
+  System::String ToString() const { return System::String(data_, size_); }
 
   // Three-way comparison.  Returns value:
   //   <  0 iff "*this" <  "b",

@@ -3,7 +3,7 @@
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 //
 // An iterator yields a sequence of key/value pairs from a source.
-// The following class DLLX defines the interface.  Multiple implementations
+// The following public ref class defines the interface.  Multiple implementations
 // are provided by this library.  In particular, iterators are provided
 // to access the contents of a Table or a DB.
 //
@@ -20,7 +20,7 @@
 
 namespace LevelDB {
 
-class DLLX Iterator {
+public ref class Iterator {
  public:
   Iterator();
   virtual ~Iterator();
@@ -76,7 +76,7 @@ class DLLX Iterator {
   void RegisterCleanup(CleanupFunction function, void* arg1, void* arg2);
 
  private:
-  struct DLLX Cleanup {
+  public ref struct Cleanup {
     CleanupFunction function;
     void* arg1;
     void* arg2;

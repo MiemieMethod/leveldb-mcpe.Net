@@ -8,7 +8,7 @@
 namespace LevelDB {
 
 static void TestEncodeDecode(const VersionEdit& edit) {
-  std::string encoded, encoded2;
+  System::String encoded, encoded2;
   edit.EncodeTo(&encoded);
   VersionEdit parsed;
   Status s = parsed.DecodeFrom(encoded);
@@ -17,7 +17,7 @@ static void TestEncodeDecode(const VersionEdit& edit) {
   ASSERT_EQ(encoded, encoded2);
 }
 
-class VersionEditTest { };
+ref class VersionEditTest { };
 
 TEST(VersionEditTest, EncodeDecode) {
   static const uint64_t kBig = 1ull << 50;

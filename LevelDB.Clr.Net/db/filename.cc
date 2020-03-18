@@ -13,9 +13,9 @@ namespace LevelDB {
 
 // A utility routine: write "data" to the named file and Sync() it.
 extern Status WriteStringToFileSync(Env* env, const Slice& data,
-                                    const std::string& fname);
+                                    const System::String& fname);
 
-static std::string MakeFileName(const std::string& name, uint64_t number,
+static System::String MakeFileName(const System::String& name, uint64_t number,
                                 const char* suffix) {
   char buf[100];
   snprintf(buf, sizeof(buf), "/%06llu.%s",
@@ -24,22 +24,22 @@ static std::string MakeFileName(const std::string& name, uint64_t number,
   return name + buf;
 }
 
-std::string LogFileName(const std::string& name, uint64_t number) {
+System::String LogFileName(const System::String& name, uint64_t number) {
   assert(number > 0);
   return MakeFileName(name, number, "log");
 }
 
-std::string TableFileName(const std::string& name, uint64_t number) {
+System::String TableFileName(const System::String& name, uint64_t number) {
   assert(number > 0);
   return MakeFileName(name, number, "ldb");
 }
 
-std::string SSTTableFileName(const std::string& name, uint64_t number) {
+System::String SSTTableFileName(const System::String& name, uint64_t number) {
   assert(number > 0);
   return MakeFileName(name, number, "sst");
 }
 
-std::string DescriptorFileName(const std::string& dbname, uint64_t number) {
+System::String DescriptorFileName(const System::String& dbname, uint64_t number) {
   assert(number > 0);
   char buf[100];
   snprintf(buf, sizeof(buf), "/MANIFEST-%06llu",
@@ -47,25 +47,25 @@ std::string DescriptorFileName(const std::string& dbname, uint64_t number) {
   return dbname + buf;
 }
 
-std::string CurrentFileName(const std::string& dbname) {
+System::String CurrentFileName(const System::String& dbname) {
   return dbname + "/CURRENT";
 }
 
-std::string LockFileName(const std::string& dbname) {
+System::String LockFileName(const System::String& dbname) {
   return dbname + "/LOCK";
 }
 
-std::string TempFileName(const std::string& dbname, uint64_t number) {
+System::String TempFileName(const System::String& dbname, uint64_t number) {
   assert(number > 0);
   return MakeFileName(dbname, number, "dbtmp");
 }
 
-std::string InfoLogFileName(const std::string& dbname) {
+System::String InfoLogFileName(const System::String& dbname) {
   return dbname + "/LOG";
 }
 
 // Return the name of the old info log file for "dbname".
-std::string OldInfoLogFileName(const std::string& dbname) {
+System::String OldInfoLogFileName(const System::String& dbname) {
   return dbname + "/LOG.old";
 }
 
@@ -77,7 +77,7 @@ std::string OldInfoLogFileName(const std::string& dbname) {
 //    dbname/LOG.old
 //    dbname/MANIFEST-[0-9]+
 //    dbname/[0-9]+.(log|sst|ldb)
-bool ParseFileName(const std::string& fname,
+bool ParseFileName(const System::String& fname,
                    uint64_t* number,
                    FileType* type) {
   Slice rest(fname);
@@ -123,14 +123,14 @@ bool ParseFileName(const std::string& fname,
   return true;
 }
 
-Status SetCurrentFile(Env* env, const std::string& dbname,
+Status SetCurrentFile(Env* env, const System::String& dbname,
                       uint64_t descriptor_number) {
   // Remove leading "dbname/" and add newline to manifest file name
-  std::string manifest = DescriptorFileName(dbname, descriptor_number);
+  System::String manifest = DescriptorFileName(dbname, descriptor_number);
   Slice contents = manifest;
   assert(contents.starts_with(dbname + "/"));
   contents.remove_prefix(dbname.size() + 1);
-  std::string tmp = TempFileName(dbname, descriptor_number);
+  System::String tmp = TempFileName(dbname, descriptor_number);
   Status s = WriteStringToFileSync(env, contents.ToString() + "\n", tmp);
   if (s.ok()) {
     s = env->RenameFile(tmp, CurrentFileName(dbname));

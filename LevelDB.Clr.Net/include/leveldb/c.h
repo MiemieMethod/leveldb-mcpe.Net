@@ -13,7 +13,7 @@
 
   Some conventions:
 
-  (1) We expose just opaque struct pointers and functions to clients.
+  (1) We expose just opaque ref struct pointers and functions to clients.
   This allows us to change internal representations without having to
   recompile clients.
 
@@ -50,22 +50,22 @@ extern "C" {
 
     /* Exported types */
 
-    typedef struct leveldb_t               leveldb_t;
-    typedef struct leveldb_cache_t         leveldb_cache_t;
-    typedef struct leveldb_comparator_t    leveldb_comparator_t;
-    typedef struct leveldb_env_t           leveldb_env_t;
-    typedef struct leveldb_filelock_t      leveldb_filelock_t;
-    typedef struct leveldb_filterpolicy_t  leveldb_filterpolicy_t;
-    typedef struct leveldb_iterator_t      leveldb_iterator_t;
-    typedef struct leveldb_logger_t        leveldb_logger_t;
-    typedef struct leveldb_options_t       leveldb_options_t;
-    typedef struct leveldb_randomfile_t    leveldb_randomfile_t;
-    typedef struct leveldb_readoptions_t   leveldb_readoptions_t;
-    typedef struct leveldb_seqfile_t       leveldb_seqfile_t;
-    typedef struct leveldb_snapshot_t      leveldb_snapshot_t;
-    typedef struct leveldb_writablefile_t  leveldb_writablefile_t;
-    typedef struct leveldb_writebatch_t    leveldb_writebatch_t;
-    typedef struct leveldb_writeoptions_t  leveldb_writeoptions_t;
+    typedef ref struct leveldb_t               leveldb_t;
+    typedef ref struct leveldb_cache_t         leveldb_cache_t;
+    typedef ref struct leveldb_comparator_t    leveldb_comparator_t;
+    typedef ref struct leveldb_env_t           leveldb_env_t;
+    typedef ref struct leveldb_filelock_t      leveldb_filelock_t;
+    typedef ref struct leveldb_filterpolicy_t  leveldb_filterpolicy_t;
+    typedef ref struct leveldb_iterator_t      leveldb_iterator_t;
+    typedef ref struct leveldb_logger_t        leveldb_logger_t;
+    typedef ref struct leveldb_options_t       leveldb_options_t;
+    typedef ref struct leveldb_randomfile_t    leveldb_randomfile_t;
+    typedef ref struct leveldb_readoptions_t   leveldb_readoptions_t;
+    typedef ref struct leveldb_seqfile_t       leveldb_seqfile_t;
+    typedef ref struct leveldb_snapshot_t      leveldb_snapshot_t;
+    typedef ref struct leveldb_writablefile_t  leveldb_writablefile_t;
+    typedef ref struct leveldb_writebatch_t    leveldb_writebatch_t;
+    typedef ref struct leveldb_writeoptions_t  leveldb_writeoptions_t;
 
     /* DB operations */
 

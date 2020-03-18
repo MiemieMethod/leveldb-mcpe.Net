@@ -104,14 +104,14 @@ int FindFile(const InternalKeyComparator& icmp,
   return right;
 }
 
-static bool AfterFile(const Comparator* ucmp,
+static bool AfterFile(const Comparator^ ucmp,
                       const Slice* user_key, const FileMetaData* f) {
   // NULL user_key occurs before all keys and is therefore never after *f
   return (user_key != NULL &&
           ucmp->Compare(*user_key, f->largest.user_key()) > 0);
 }
 
-static bool BeforeFile(const Comparator* ucmp,
+static bool BeforeFile(const Comparator^ ucmp,
                        const Slice* user_key, const FileMetaData* f) {
   // NULL user_key occurs after all keys and is therefore never before *f
   return (user_key != NULL &&
@@ -124,7 +124,7 @@ bool SomeFileOverlapsRange(
     const std::vector<FileMetaData*>& files,
     const Slice* smallest_user_key,
     const Slice* largest_user_key) {
-  const Comparator* ucmp = icmp.user_comparator();
+  const Comparator^ ucmp = icmp.user_comparator();
   if (!disjoint_sorted_files) {
     // Need to check against all files
     for (size_t i = 0; i < files.size(); i++) {
@@ -160,7 +160,7 @@ bool SomeFileOverlapsRange(
 // is the largest key that occurs in the file, and value() is an
 // 16-byte value containing the file number and file size, both
 // encoded using EncodeFixed64.
-class Version::LevelFileNumIterator : public Iterator {
+ref class Version::LevelFileNumIterator : public Iterator {
  public:
   LevelFileNumIterator(const InternalKeyComparator& icmp,
                        const std::vector<FileMetaData*>* flist)
@@ -258,11 +258,11 @@ enum SaverState {
   kDeleted,
   kCorrupt,
 };
-struct Saver {
+ref struct Saver {
   SaverState state;
-  const Comparator* ucmp;
+  const Comparator^ ucmp;
   Slice user_key;
-  std::string* value;
+  System::String* value;
 };
 }
 static void SaveValue(void* arg, const Slice& ikey, const Slice& v) {
@@ -288,7 +288,7 @@ void Version::ForEachOverlapping(Slice user_key, Slice internal_key,
                                  void* arg,
                                  bool (*func)(void*, int, FileMetaData*)) {
   // TODO(sanjay): Change Version::Get() to use this function.
-  const Comparator* ucmp = vset_->icmp_.user_comparator();
+  const Comparator^ ucmp = vset_->icmp_.user_comparator();
 
   // Search level-0 in order from newest to oldest.
   std::vector<FileMetaData*> tmp;
@@ -331,11 +331,11 @@ void Version::ForEachOverlapping(Slice user_key, Slice internal_key,
 
 Status Version::Get(const ReadOptions& options,
                     const LookupKey& k,
-                    std::string* value,
+                    System::String* value,
                     GetStats* stats) {
   Slice ikey = k.internal_key();
   Slice user_key = k.user_key();
-  const Comparator* ucmp = vset_->icmp_.user_comparator();
+  const Comparator^ ucmp = vset_->icmp_.user_comparator();
   Status s;
 
   stats->seek_file = NULL;
@@ -447,7 +447,7 @@ bool Version::RecordReadSample(Slice internal_key) {
     return false;
   }
 
-  struct State {
+  ref struct State {
     GetStats stats;  // Holds first matching file
     int matches;
 
@@ -543,7 +543,7 @@ void Version::GetOverlappingInputs(
   if (end != NULL) {
     user_end = end->user_key();
   }
-  const Comparator* user_cmp = vset_->icmp_.user_comparator();
+  const Comparator^ user_cmp = vset_->icmp_.user_comparator();
   for (size_t i = 0; i < files_[level].size(); ) {
     FileMetaData* f = files_[level][i++];
     const Slice file_start = f->smallest.user_key();
@@ -571,8 +571,8 @@ void Version::GetOverlappingInputs(
   }
 }
 
-std::string Version::DebugString() const {
-  std::string r;
+System::String Version::DebugString() const {
+  System::String r;
   for (int level = 0; level < config::kNumLevels; level++) {
     // E.g.,
     //   --- level 1 ---
@@ -597,14 +597,14 @@ std::string Version::DebugString() const {
   return r;
 }
 
-// A helper class so we can efficiently apply a whole sequence
+// A helper ref class so we can efficiently apply a whole sequence
 // of edits to a particular state without creating intermediate
 // Versions that contain full copies of the intermediate state.
-class VersionSet::Builder {
+ref class VersionSet::Builder {
  private:
   // Helper to sort by v->files_[file_number].smallest
-  struct BySmallestKey {
-    const InternalKeyComparator* internal_comparator;
+  ref struct BySmallestKey {
+    const InternalKeyComparator^ internal_comparator;
 
     bool operator()(FileMetaData* f1, FileMetaData* f2) const {
       int r = internal_comparator->Compare(f1->smallest, f2->smallest);
@@ -618,7 +618,7 @@ class VersionSet::Builder {
   };
 
   typedef std::set<FileMetaData*, BySmallestKey> FileSet;
-  struct LevelState {
+  ref struct LevelState {
     std::set<uint64_t> deleted_files;
     FileSet* added_files;
   };
@@ -772,10 +772,10 @@ class VersionSet::Builder {
   }
 };
 
-VersionSet::VersionSet(const std::string& dbname,
+VersionSet::VersionSet(const System::String& dbname,
                        const Options* options,
                        TableCache* table_cache,
-                       const InternalKeyComparator* cmp)
+                       const InternalKeyComparator^ cmp)
     : env_(options->env),
       dbname_(dbname),
       options_(options),
@@ -817,7 +817,7 @@ void VersionSet::AppendVersion(Version* v) {
   v->next_->prev_ = v;
 }
 
-Status VersionSet::LogAndApply(VersionEdit* edit, port::Mutex* mu) {
+Status VersionSet::LogAndApply(VersionEdit* edit, Port::Mutex^ mu) {
   if (edit->has_log_number_) {
     assert(edit->log_number_ >= log_number_);
     assert(edit->log_number_ < next_file_number_);
@@ -842,7 +842,7 @@ Status VersionSet::LogAndApply(VersionEdit* edit, port::Mutex* mu) {
 
   // Initialize new descriptor log file if necessary by creating
   // a temporary file that contains a snapshot of the current version.
-  std::string new_manifest_file;
+  System::String new_manifest_file;
   Status s;
   if (descriptor_log_ == NULL) {
     // No reason to unlock *mu here since we only hit this path in the
@@ -863,7 +863,7 @@ Status VersionSet::LogAndApply(VersionEdit* edit, port::Mutex* mu) {
 
     // Write new record to MANIFEST log
     if (s.ok()) {
-      std::string record;
+      System::String record;
       edit->EncodeTo(&record);
       s = descriptor_log_->AddRecord(record);
       if (s.ok()) {
@@ -903,7 +903,7 @@ Status VersionSet::LogAndApply(VersionEdit* edit, port::Mutex* mu) {
 }
 
 Status VersionSet::Recover(bool *save_manifest) {
-  struct LogReporter : public log::Reader::Reporter {
+  ref struct LogReporter : public log::Reader::Reporter {
     Status* status;
     virtual void Corruption(size_t bytes, const Status& s) {
       if (this->status->ok()) *this->status = s;
@@ -911,7 +911,7 @@ Status VersionSet::Recover(bool *save_manifest) {
   };
 
   // Read "CURRENT" file, which contains a pointer to the current manifest file
-  std::string current;
+  System::String current;
   Status s = ReadFileToString(env_, CurrentFileName(dbname_), &current);
   if (!s.ok()) {
     return s;
@@ -928,7 +928,7 @@ Status VersionSet::Recover(bool *save_manifest) {
 
   current.resize(size - resizeSize);
 
-  std::string dscname = dbname_ + "/" + current;
+  System::String dscname = dbname_ + "/" + current;
   SequentialFile* file;
   s = env_->NewSequentialFile(dscname, &file);
   if (!s.ok()) {
@@ -954,7 +954,7 @@ Status VersionSet::Recover(bool *save_manifest) {
     reporter.status = &s;
     log::Reader reader(file, &reporter, true/*checksum*/, 0/*initial_offset*/);
     Slice record;
-    std::string scratch;
+    System::String scratch;
     while (reader.ReadRecord(&record, &scratch) && s.ok()) {
       VersionEdit edit;
       s = edit.DecodeFrom(record);
@@ -1035,8 +1035,8 @@ Status VersionSet::Recover(bool *save_manifest) {
   return s;
 }
 
-bool VersionSet::ReuseManifest(const std::string& dscname,
-                               const std::string& dscbase) {
+bool VersionSet::ReuseManifest(const System::String& dscname,
+                               const System::String& dscbase) {
   if (!options_->reuse_logs) {
     return false;
   }
@@ -1135,7 +1135,7 @@ Status VersionSet::WriteSnapshot(log::Writer* log) {
     }
   }
 
-  std::string record;
+  System::String record;
   edit.EncodeTo(&record);
   return log->AddRecord(record);
 }
@@ -1494,7 +1494,7 @@ void Compaction::AddInputDeletions(VersionEdit* edit) {
 
 bool Compaction::IsBaseLevelForKey(const Slice& user_key) {
   // Maybe use binary search to find right entry instead of linear search?
-  const Comparator* user_cmp = input_version_->vset_->icmp_.user_comparator();
+  const Comparator^ user_cmp = input_version_->vset_->icmp_.user_comparator();
   for (int lvl = level_ + 2; lvl < config::kNumLevels; lvl++) {
     const std::vector<FileMetaData*>& files = input_version_->files_[lvl];
     for (; level_ptrs_[lvl] < files.size(); ) {
@@ -1516,7 +1516,7 @@ bool Compaction::IsBaseLevelForKey(const Slice& user_key) {
 bool Compaction::ShouldStopBefore(const Slice& internal_key) {
   const VersionSet* vset = input_version_->vset_;
   // Scan to find earliest grandparent file that contains key.
-  const InternalKeyComparator* icmp = &vset->icmp_;
+  const InternalKeyComparator^ icmp = &vset->icmp_;
   while (grandparent_index_ < grandparents_.size() &&
       icmp->Compare(internal_key,
                     grandparents_[grandparent_index_]->largest.Encode()) > 0) {

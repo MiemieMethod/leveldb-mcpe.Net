@@ -6,22 +6,22 @@
 #include <fstream>
 #endif
 
-namespace port {
+namespace Port {
 
 #if defined(_MSC_VER)
-	// std::strings won't work for windows as all their STL/Win32 APIs assume char* are pure ASCII
+	// System::Strings won't work for windows as all their STL/Win32 APIs assume char* are pure ASCII
 	// "luckily", there is an unofficial parameter for iostream that takes a wide character Unicode string
 	typedef std::wstring filepath;
 	typedef wchar_t filepath_char;
 #define _FILE_STR(str) L ## str
 #else
-	typedef std::string filepath;
+	typedef System::String filepath;
 	typedef char filepath_char;
 #define _FILE_STR(str) str
 #endif
 
 
-	inline filepath toFilePath(const std::string &string) {
+	inline filepath toFilePath(const System::String &string) {
 #if defined(_MSC_VER)
 		std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
 		return std::move(converter.from_bytes(string));
@@ -44,7 +44,7 @@ namespace port {
 	inline FILE* fopen_mb(const char* const filename, const filepath_char* mode) {
 		filepath path = toFilePath(filename);
 
-		return port::fopen_mb(path.c_str(), mode);
+		return Port::fopen_mb(path.c_str(), mode);
 	}
 #else
 	inline FILE* fopen_mb(const filepath_char* filename, const filepath_char* mode) {

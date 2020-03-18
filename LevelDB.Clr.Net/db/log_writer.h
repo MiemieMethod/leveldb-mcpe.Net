@@ -12,11 +12,11 @@
 
 namespace LevelDB {
 
-class WritableFile;
+ref class WritableFile;
 
 namespace log {
 
-class Writer {
+ref class Writer {
  public:
   // Create a writer that will append data to "*dest".
   // "*dest" must be initially empty.

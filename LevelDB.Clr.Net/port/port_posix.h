@@ -72,14 +72,14 @@
 #endif
 
 namespace LevelDB {
-namespace port {
+namespace Port {
 
 static const bool kLittleEndian = PLATFORM_IS_LITTLE_ENDIAN;
 #undef PLATFORM_IS_LITTLE_ENDIAN
 
-class CondVar;
+ref class CondVar;
 
-class Mutex {
+ref class Mutex {
  public:
   Mutex();
   ~Mutex();
@@ -89,7 +89,7 @@ class Mutex {
   void AssertHeld() { }
 
  private:
-  friend class CondVar;
+  friend ref class CondVar;
   pthread_mutex_t mu_;
 
   // No copying
@@ -97,16 +97,16 @@ class Mutex {
   void operator=(const Mutex&);
 };
 
-class CondVar {
+ref class CondVar {
  public:
-  explicit CondVar(Mutex* mu);
+  explicit CondVar(Mutex^ mu);
   ~CondVar();
   void Wait();
   void Signal();
   void SignalAll();
  private:
   pthread_cond_t cv_;
-  Mutex* mu_;
+  Mutex^ mu_;
 };
 
 typedef pthread_once_t OnceType;
@@ -119,7 +119,7 @@ inline bool GetHeapProfile(void (*func)(void*, const char*, int), void* arg) {
 
 uint32_t AcceleratedCRC32C(uint32_t crc, const char* buf, size_t size);
 
-} // namespace port
+} // namespace Port
 } // namespace LevelDB
 
 #endif  // STORAGE_LEVELDB_PORT_PORT_POSIX_H_

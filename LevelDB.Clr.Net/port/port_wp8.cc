@@ -43,9 +43,9 @@
 #endif
 
 namespace LevelDB {
-	namespace port {
+	namespace Port {
 
-		CondVar::CondVar(Mutex* mu) :
+		CondVar::CondVar(Mutex^ mu) :
 			waiting_(0),
 			mu_(mu),
 			sem1_(::CreateSemaphoreExW(NULL, 0, 10000, NULL, 0, SEMAPHORE_MODIFY_STATE)),

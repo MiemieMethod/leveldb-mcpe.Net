@@ -38,23 +38,24 @@
 #include <mutex>
 
 namespace LevelDB {
-	namespace port {
+	namespace Port {
 
 		// Windows is little endian (for now :p)
 		static const bool kLittleEndian = true;
 
-		class CondVar;
+		ref class CondVar;
 
-		class Mutex {
+		ref class Mutex {
 		public:
 			Mutex() {			
 			}
 
 			void Lock() {
-				mutex.lock();
+				mutex.ReleaseMutex();
 			}
+
 			void Unlock() {
-				mutex.unlock();
+				mutex.WaitOne();
 			}
 
 			void AssertHeld() {
@@ -62,27 +63,26 @@ namespace LevelDB {
 			}
 
 		private:
-
-			std::mutex mutex;
+			System::Threading::Mutex mutex;
 
 			// No copying
-			Mutex(const Mutex&) /*= delete*/;
-			void operator=(const Mutex&) /*= delete*/;
+			Mutex(const Mutex^) /*= delete*/;
+			void operator=(const Mutex^) /*= delete*/;
 		};
 
 		// the Win32 API offers a dependable condition variable mechanism, but only starting with
 		// Windows 2008 and Vista
 		// no matter what we will implement our own condition variable with a semaphore
 		// implementation as described in a paper written by Andrew D. Birrell in 2003
-		class CondVar {
+		ref class CondVar {
 		public:
-			explicit CondVar(Mutex* mu);
+			explicit CondVar(Mutex^ mu);
 			~CondVar();
 			void Wait();
 			void Signal();
 			void SignalAll();
 		private:
-			Mutex* mu_;
+			Mutex^ mu_;
 
 			Mutex wait_mtx_;
 			long waiting_;
@@ -94,7 +94,7 @@ namespace LevelDB {
 		};
 
 		// Storage for a lock-free pointer
-		class AtomicPointer {
+		ref class AtomicPointer {
 		private:
 			void * rep_;
 		public:
@@ -111,13 +111,13 @@ namespace LevelDB {
 
 		// Thread-safe initialization.
 		// Used as follows:
-		//      static port::OnceType init_control = LEVELDB_ONCE_INIT;
+		//      static Port::OnceType init_control = LEVELDB_ONCE_INIT;
 		//      static void Initializer() { ... do something ...; }
 		//      ...
-		//      port::InitOnce(&init_control, &Initializer);
+		//      Port::InitOnce(&init_control, &Initializer);
 		typedef intptr_t OnceType;
 #define LEVELDB_ONCE_INIT 0
-		inline void InitOnce(port::OnceType*, void(*initializer)()) {
+		inline void InitOnce(Port::OnceType*, void(*initializer)()) {
 			initializer();
 		}
 

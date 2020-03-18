@@ -20,24 +20,24 @@ namespace LevelDB {
 
 namespace {
 
-bool GuessType(const std::string& fname, FileType* type) {
+bool GuessType(const System::String& fname, FileType* type) {
   size_t pos = fname.rfind('/');
-  std::string basename;
-  if (pos == std::string::npos) {
+  System::String basename;
+  if (pos == System::String::npos) {
     basename = fname;
   } else {
-    basename = std::string(fname.data() + pos + 1, fname.size() - pos - 1);
+    basename = System::String(fname.data() + pos + 1, fname.size() - pos - 1);
   }
   uint64_t ignored;
   return ParseFileName(basename, &ignored, type);
 }
 
 // Notified when log reader encounters corruption.
-class CorruptionReporter : public log::Reader::Reporter {
+ref class CorruptionReporter : public log::Reader::Reporter {
  public:
   WritableFile* dst_;
   virtual void Corruption(size_t bytes, const Status& status) {
-    std::string r = "corruption: ";
+    System::String r = "corruption: ";
     AppendNumberTo(&r, bytes);
     r += " bytes; ";
     r += status.ToString();
@@ -47,7 +47,7 @@ class CorruptionReporter : public log::Reader::Reporter {
 };
 
 // Print contents of a log file. (*func)() is called on every record.
-Status PrintLogContents(Env* env, const std::string& fname,
+Status PrintLogContents(Env* env, const System::String& fname,
                         void (*func)(uint64_t, Slice, WritableFile*),
                         WritableFile* dst) {
   SequentialFile* file;
@@ -59,7 +59,7 @@ Status PrintLogContents(Env* env, const std::string& fname,
   reporter.dst_ = dst;
   log::Reader reader(file, &reporter, true, 0);
   Slice record;
-  std::string scratch;
+  System::String scratch;
   while (reader.ReadRecord(&record, &scratch)) {
     (*func)(reader.LastRecordOffset(), record, dst);
   }
@@ -68,11 +68,11 @@ Status PrintLogContents(Env* env, const std::string& fname,
 }
 
 // Called on every item found in a WriteBatch.
-class WriteBatchItemPrinter : public WriteBatch::Handler {
+ref class WriteBatchItemPrinter : public WriteBatch::Handler {
  public:
   WritableFile* dst_;
   virtual void Put(const Slice& key, const Slice& value) {
-    std::string r = "  put '";
+    System::String r = "  put '";
     AppendEscapedStringTo(&r, key);
     r += "' '";
     AppendEscapedStringTo(&r, value);
@@ -80,7 +80,7 @@ class WriteBatchItemPrinter : public WriteBatch::Handler {
     dst_->Append(r);
   }
   virtual void Delete(const Slice& key) {
-    std::string r = "  del '";
+    System::String r = "  del '";
     AppendEscapedStringTo(&r, key);
     r += "'\n";
     dst_->Append(r);
@@ -91,7 +91,7 @@ class WriteBatchItemPrinter : public WriteBatch::Handler {
 // Called on every log record (each one of which is a WriteBatch)
 // found in a kLogFile.
 static void WriteBatchPrinter(uint64_t pos, Slice record, WritableFile* dst) {
-  std::string r = "--- offset ";
+  System::String r = "--- offset ";
   AppendNumberTo(&r, pos);
   r += "; ";
   if (record.size() < 12) {
@@ -115,14 +115,14 @@ static void WriteBatchPrinter(uint64_t pos, Slice record, WritableFile* dst) {
   }
 }
 
-Status DumpLog(Env* env, const std::string& fname, WritableFile* dst) {
+Status DumpLog(Env* env, const System::String& fname, WritableFile* dst) {
   return PrintLogContents(env, fname, WriteBatchPrinter, dst);
 }
 
 // Called on every log record (each one of which is a WriteBatch)
 // found in a kDescriptorFile.
 static void VersionEditPrinter(uint64_t pos, Slice record, WritableFile* dst) {
-  std::string r = "--- offset ";
+  System::String r = "--- offset ";
   AppendNumberTo(&r, pos);
   r += "; ";
   VersionEdit edit;
@@ -136,11 +136,11 @@ static void VersionEditPrinter(uint64_t pos, Slice record, WritableFile* dst) {
   dst->Append(r);
 }
 
-Status DumpDescriptor(Env* env, const std::string& fname, WritableFile* dst) {
+Status DumpDescriptor(Env* env, const System::String& fname, WritableFile* dst) {
   return PrintLogContents(env, fname, VersionEditPrinter, dst);
 }
 
-Status DumpTable(Env* env, const std::string& fname, WritableFile* dst) {
+Status DumpTable(Env* env, const System::String& fname, WritableFile* dst) {
   uint64_t file_size;
   RandomAccessFile* file = NULL;
   Table* table = NULL;
@@ -164,7 +164,7 @@ Status DumpTable(Env* env, const std::string& fname, WritableFile* dst) {
   ReadOptions ro;
   ro.fill_cache = false;
   Iterator* iter = table->NewIterator(ro);
-  std::string r;
+  System::String r;
   for (iter->SeekToFirst(); iter->Valid(); iter->Next()) {
     r.clear();
     ParsedInternalKey key;
@@ -207,7 +207,7 @@ Status DumpTable(Env* env, const std::string& fname, WritableFile* dst) {
 
 }  // namespace
 
-Status DumpFile(Env* env, const std::string& fname, WritableFile* dst) {
+Status DumpFile(Env* env, const System::String& fname, WritableFile* dst) {
   FileType ftype;
   if (!GuessType(fname, &ftype)) {
     return Status::InvalidArgument(fname + ": unknown file type");

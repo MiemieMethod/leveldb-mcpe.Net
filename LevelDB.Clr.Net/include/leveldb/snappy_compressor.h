@@ -4,7 +4,7 @@
 #ifdef SNAPPY
 
 namespace LevelDB {
-	class DLLX SnappyCompressor : public Compressor 
+	public ref class SnappyCompressor : public Compressor 
 	{
 	public:
 
@@ -17,9 +17,9 @@ namespace LevelDB {
 
 		}
 
-		virtual void compressImpl(const char* input, size_t length, ::std::string& output) const override;
+		virtual void compressImpl(const char* input, size_t length, ::System::String& output) const override;
 
-		virtual bool decompress(const char* input, size_t length, ::std::string& output) const override;
+		virtual bool decompress(const char* input, size_t length, ::System::String& output) const override;
 	};
 }
 

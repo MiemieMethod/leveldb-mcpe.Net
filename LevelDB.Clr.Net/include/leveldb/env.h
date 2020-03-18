@@ -21,14 +21,14 @@
 
 namespace LevelDB {
 
-class DLLX FileLock;
-class DLLX Logger;
-class DLLX RandomAccessFile;
-class DLLX SequentialFile;
-class DLLX Slice;
-class DLLX WritableFile;
+public ref class FileLock;
+public ref class Logger;
+public ref class RandomAccessFile;
+public ref class SequentialFile;
+public ref class Slice;
+public ref class WritableFile;
 
-class DLLX Env {
+public ref class Env {
  public:
   Env() { }
   virtual ~Env();
@@ -47,7 +47,7 @@ class DLLX Env {
   // NotFound status when the file does not exist.
   //
   // The returned file will only be accessed by one thread at a time.
-  virtual Status NewSequentialFile(const std::string& fname,
+  virtual Status NewSequentialFile(const System::String& fname,
                                    SequentialFile** result) = 0;
 
   // Create a brand new random access read-only file with the
@@ -58,7 +58,7 @@ class DLLX Env {
   // not exist.
   //
   // The returned file may be concurrently accessed by multiple threads.
-  virtual Status NewRandomAccessFile(const std::string& fname,
+  virtual Status NewRandomAccessFile(const System::String& fname,
                                      RandomAccessFile** result) = 0;
 
   // Create an object that writes to a new file with the specified
@@ -68,7 +68,7 @@ class DLLX Env {
   // returns non-OK.
   //
   // The returned file will only be accessed by one thread at a time.
-  virtual Status NewWritableFile(const std::string& fname,
+  virtual Status NewWritableFile(const System::String& fname,
                                  WritableFile** result) = 0;
 
   // Create an object that either appends to an existing file, or
@@ -83,33 +83,33 @@ class DLLX Env {
   // not allow appending to an existing file.  Users of Env (including
   // the leveldb implementation) must be prepared to deal with
   // an Env that does not support appending.
-  virtual Status NewAppendableFile(const std::string& fname,
+  virtual Status NewAppendableFile(const System::String& fname,
                                    WritableFile** result);
 
   // Returns true iff the named file exists.
-  virtual bool FileExists(const std::string& fname) = 0;
+  virtual bool FileExists(const System::String& fname) = 0;
 
   // Store in *result the names of the children of the specified directory.
   // The names are relative to "dir".
   // Original contents of *results are dropped.
-  virtual Status GetChildren(const std::string& dir,
-                             std::vector<std::string>* result) = 0;
+  virtual Status GetChildren(const System::String& dir,
+                             std::vector<System::String>* result) = 0;
 
   // Delete the named file.
-  virtual Status DeleteFile(const std::string& fname) = 0;
+  virtual Status DeleteFile(const System::String& fname) = 0;
 
   // Create the specified directory.
-  virtual Status CreateDir(const std::string& dirname) = 0;
+  virtual Status CreateDir(const System::String& dirname) = 0;
 
   // Delete the specified directory.
-  virtual Status DeleteDir(const std::string& dirname) = 0;
+  virtual Status DeleteDir(const System::String& dirname) = 0;
 
   // Store the size of fname in *file_size.
-  virtual Status GetFileSize(const std::string& fname, uint64_t* file_size) = 0;
+  virtual Status GetFileSize(const System::String& fname, uint64_t* file_size) = 0;
 
   // Rename file src to target.
-  virtual Status RenameFile(const std::string& src,
-                            const std::string& target) = 0;
+  virtual Status RenameFile(const System::String& src,
+                            const System::String& target) = 0;
 
   // Lock the specified file.  Used to prevent concurrent access to
   // the same db by multiple processes.  On failure, stores NULL in
@@ -125,7 +125,7 @@ class DLLX Env {
   // to go away.
   //
   // May create the named file if it does not already exist.
-  virtual Status LockFile(const std::string& fname, FileLock** lock) = 0;
+  virtual Status LockFile(const System::String& fname, FileLock** lock) = 0;
 
   // Release the lock acquired by a previous successful call to LockFile.
   // REQUIRES: lock was returned by a successful LockFile() call
@@ -150,10 +150,10 @@ class DLLX Env {
   // or many not have just been created. The directory may or may not differ
   // between runs of the same process, but subsequent calls will return the
   // same directory.
-  virtual Status GetTestDirectory(std::string* path) = 0;
+  virtual Status GetTestDirectory(System::String* path) = 0;
 
   // Create and return a log file for storing informational messages.
-  virtual Status NewLogger(const std::string& fname, Logger** result) = 0;
+  virtual Status NewLogger(const System::String& fname, Logger** result) = 0;
 
   // Returns the number of micro-seconds since some fixed point in time. Only
   // useful for computing deltas of time.
@@ -169,7 +169,7 @@ class DLLX Env {
 };
 
 // A file abstraction for reading sequentially through a file
-class DLLX SequentialFile {
+public ref class SequentialFile {
  public:
   SequentialFile() { }
   virtual ~SequentialFile();
@@ -200,7 +200,7 @@ class DLLX SequentialFile {
 };
 
 // A file abstraction for randomly reading the contents of a file.
-class DLLX RandomAccessFile {
+public ref class RandomAccessFile {
  public:
   RandomAccessFile() { }
   virtual ~RandomAccessFile();
@@ -226,7 +226,7 @@ class DLLX RandomAccessFile {
 // A file abstraction for sequential writing.  The implementation
 // must provide buffering since callers may append small fragments
 // at a time to the file.
-class DLLX WritableFile {
+public ref class WritableFile {
  public:
   WritableFile() { }
   virtual ~WritableFile();
@@ -243,7 +243,7 @@ class DLLX WritableFile {
 };
 
 // An interface for writing log messages.
-class DLLX Logger {
+public ref class Logger {
  public:
   Logger() { }
   virtual ~Logger();
@@ -259,7 +259,7 @@ class DLLX Logger {
 
 
 // Identifies a locked file.
-class DLLX FileLock {
+public ref class FileLock {
  public:
   FileLock() { }
   virtual ~FileLock();
@@ -278,16 +278,16 @@ extern void Log(Logger* info_log, const char* format, ...)
 
 // A utility routine: write "data" to the named file.
 extern Status WriteStringToFile(Env* env, const Slice& data,
-                                const std::string& fname);
+                                const System::String& fname);
 
 // A utility routine: read contents of named file into *data
-extern Status ReadFileToString(Env* env, const std::string& fname,
-                               std::string* data);
+extern Status ReadFileToString(Env* env, const System::String& fname,
+                               System::String* data);
 
 // An implementation of Env that forwards all calls to another Env.
 // May be useful to clients who wish to override just part of the
 // functionality of another Env.
-class DLLX EnvWrapper : public Env {
+public ref class EnvWrapper : public Env {
  public:
   // Initialize an EnvWrapper that delegates all calls to *t
   explicit EnvWrapper(Env* t) : target_(t) { }
@@ -297,32 +297,32 @@ class DLLX EnvWrapper : public Env {
   Env* target() const { return target_; }
 
   // The following text is boilerplate that forwards all methods to target()
-  Status NewSequentialFile(const std::string& f, SequentialFile** r) {
+  Status NewSequentialFile(const System::String& f, SequentialFile** r) {
     return target_->NewSequentialFile(f, r);
   }
-  Status NewRandomAccessFile(const std::string& f, RandomAccessFile** r) {
+  Status NewRandomAccessFile(const System::String& f, RandomAccessFile** r) {
     return target_->NewRandomAccessFile(f, r);
   }
-  Status NewWritableFile(const std::string& f, WritableFile** r) {
+  Status NewWritableFile(const System::String& f, WritableFile** r) {
     return target_->NewWritableFile(f, r);
   }
-  Status NewAppendableFile(const std::string& f, WritableFile** r) {
+  Status NewAppendableFile(const System::String& f, WritableFile** r) {
     return target_->NewAppendableFile(f, r);
   }
-  bool FileExists(const std::string& f) { return target_->FileExists(f); }
-  Status GetChildren(const std::string& dir, std::vector<std::string>* r) {
+  bool FileExists(const System::String& f) { return target_->FileExists(f); }
+  Status GetChildren(const System::String& dir, std::vector<System::String>* r) {
     return target_->GetChildren(dir, r);
   }
-  Status DeleteFile(const std::string& f) { return target_->DeleteFile(f); }
-  Status CreateDir(const std::string& d) { return target_->CreateDir(d); }
-  Status DeleteDir(const std::string& d) { return target_->DeleteDir(d); }
-  Status GetFileSize(const std::string& f, uint64_t* s) {
+  Status DeleteFile(const System::String& f) { return target_->DeleteFile(f); }
+  Status CreateDir(const System::String& d) { return target_->CreateDir(d); }
+  Status DeleteDir(const System::String& d) { return target_->DeleteDir(d); }
+  Status GetFileSize(const System::String& f, uint64_t* s) {
     return target_->GetFileSize(f, s);
   }
-  Status RenameFile(const std::string& s, const std::string& t) {
+  Status RenameFile(const System::String& s, const System::String& t) {
     return target_->RenameFile(s, t);
   }
-  Status LockFile(const std::string& f, FileLock** l) {
+  Status LockFile(const System::String& f, FileLock** l) {
     return target_->LockFile(f, l);
   }
   Status UnlockFile(FileLock* l) { return target_->UnlockFile(l); }
@@ -332,10 +332,10 @@ class DLLX EnvWrapper : public Env {
   void StartThread(void (*f)(void*), void* a) {
     return target_->StartThread(f, a);
   }
-  virtual Status GetTestDirectory(std::string* path) {
+  virtual Status GetTestDirectory(System::String* path) {
     return target_->GetTestDirectory(path);
   }
-  virtual Status NewLogger(const std::string& fname, Logger** result) {
+  virtual Status NewLogger(const System::String& fname, Logger** result) {
     return target_->NewLogger(fname, result);
   }
   uint64_t NowMicros() {

@@ -102,8 +102,8 @@ double Histogram::StandardDeviation() const {
   return sqrt(variance);
 }
 
-std::string Histogram::ToString() const {
-  std::string r;
+System::String Histogram::ToString() const {
+  System::String r;
   char buf[200];
   snprintf(buf, sizeof(buf),
            "Count: %.0f  Average: %.4f  StdDev: %.2f\n",

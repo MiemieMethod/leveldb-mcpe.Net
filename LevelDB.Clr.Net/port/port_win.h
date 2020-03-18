@@ -41,14 +41,14 @@
 #include <condition_variable>
 
 namespace LevelDB {
-	namespace port {
+	namespace Port {
 
 		// Windows is little endian (for now :p)
 		static const bool kLittleEndian = true;
 
-		class CondVar;
+		ref class CondVar;
 
-		class Mutex {
+		ref class Mutex {
 		public:
 			Mutex() {
 
@@ -66,15 +66,15 @@ namespace LevelDB {
 			}
 
 		private:
-			friend class CondVar;
+			friend ref class CondVar;
 
 			std::mutex mutex;
 		};
 
 		// Thinly wraps std::condition_variable.
-		class CondVar {
+		ref class CondVar {
 		public:
-			explicit CondVar(Mutex* mu) : mu_(mu) { assert(mu != nullptr); }
+			explicit CondVar(Mutex^ mu) : mu_(mu) { assert(mu != nullptr); }
 			~CondVar() = default;
 
 			CondVar(const CondVar&) = delete;
@@ -89,11 +89,11 @@ namespace LevelDB {
 			void SignalAll() { cv_.notify_all(); }
 		private:
 			std::condition_variable cv_;
-			Mutex* const mu_;
+			Mutex^ const mu_;
 		};
 
 		// Storage for a lock-free pointer
-		class AtomicPointer {
+		ref class AtomicPointer {
 		private:
 			void * rep_;
 		public:
@@ -110,13 +110,13 @@ namespace LevelDB {
 
 		// Thread-safe initialization.
 		// Used as follows:
-		//      static port::OnceType init_control = LEVELDB_ONCE_INIT;
+		//      static Port::OnceType init_control = LEVELDB_ONCE_INIT;
 		//      static void Initializer() { ... do something ...; }
 		//      ...
-		//      port::InitOnce(&init_control, &Initializer);
+		//      Port::InitOnce(&init_control, &Initializer);
 		typedef intptr_t OnceType;
 #define LEVELDB_ONCE_INIT 0
-		inline void InitOnce(port::OnceType*, void(*initializer)()) {
+		inline void InitOnce(Port::OnceType*, void(*initializer)()) {
 			initializer();
 		}
 

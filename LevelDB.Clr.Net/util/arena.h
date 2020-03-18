@@ -13,7 +13,7 @@
 
 namespace LevelDB {
 
-    class Arena {
+    ref class Arena {
     public:
         Arena();
         ~Arena();
@@ -42,7 +42,7 @@ namespace LevelDB {
         std::vector<char*> blocks_;
 
         // Total memory usage of the arena.
-        port::AtomicPointer memory_usage_;
+        Port::AtomicPointer memory_usage_;
 
         // No copying allowed
         Arena(const Arena&);

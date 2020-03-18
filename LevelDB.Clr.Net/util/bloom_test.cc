@@ -18,11 +18,11 @@ static Slice Key(int i, char* buffer) {
   return Slice(buffer, sizeof(uint32_t));
 }
 
-class BloomTest {
+ref class BloomTest {
  private:
   const FilterPolicy* policy_;
-  std::string filter_;
-  std::vector<std::string> keys_;
+  System::String filter_;
+  std::vector<System::String> keys_;
 
  public:
   BloomTest() : policy_(NewBloomFilterPolicy(10)) { }

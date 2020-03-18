@@ -11,11 +11,11 @@
 
 namespace LevelDB {
 
-class Issue200 { };
+ref class Issue200 { };
 
 TEST(Issue200, Test) {
   // Get rid of any state from an old run.
-  std::string dbpath = test::TmpDir() + "/leveldb_issue200_test";
+  System::String dbpath = test::TmpDir() + "/leveldb_issue200_test";
   DestroyDB(dbpath, Options());
 
   DB *db;

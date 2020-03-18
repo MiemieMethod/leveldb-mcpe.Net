@@ -7,7 +7,7 @@
 
 namespace LevelDB {
 
-class HASH { };
+ref class HASH { };
 
 TEST(HASH, SignedUnsignedIssue) {
   const unsigned char data1[1] = {0x62};

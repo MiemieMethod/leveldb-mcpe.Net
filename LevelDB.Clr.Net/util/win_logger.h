@@ -12,7 +12,7 @@
 
 namespace LevelDB {
 
-class WinLogger : public Logger {
+ref class WinLogger : public Logger {
  private:
   FILE* file_;
  public:

@@ -6,7 +6,7 @@
 #include <snappy/snappy.h>
 
 namespace LevelDB {
-	void SnappyCompressor::compressImpl(const char* input, size_t length, ::std::string& output) const
+	void SnappyCompressor::compressImpl(const char* input, size_t length, ::System::String& output) const
 	{
 		output.resize(snappy::MaxCompressedLength(length));
 		size_t outlen;
@@ -14,7 +14,7 @@ namespace LevelDB {
 		output.resize(outlen);
 	}
 
-	bool SnappyCompressor::decompress(const char* input, size_t length, std::string& output) const
+	bool SnappyCompressor::decompress(const char* input, size_t length, System::String& output) const
 	{
 		size_t ulength;
 		if (!snappy::GetUncompressedLength(input, length, &ulength))

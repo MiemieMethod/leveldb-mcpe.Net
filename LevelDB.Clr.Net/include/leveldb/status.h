@@ -18,7 +18,7 @@
 
 namespace LevelDB {
 
-class DLLX Status {
+public ref class Status {
  public:
 	 
   enum Code {
@@ -82,7 +82,7 @@ class DLLX Status {
 
   // Return a string representation of this status suitable for printing.
   // Returns the string "OK" for success.
-  std::string ToString() const;
+  System::String ToString() const;
 
  private:
   // OK status has a NULL state_.  Otherwise, state_ is a new[] array

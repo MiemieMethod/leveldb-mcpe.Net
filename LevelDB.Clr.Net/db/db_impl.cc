@@ -38,17 +38,17 @@ namespace LevelDB {
 const int kNumNonTableCacheFiles = 10;
 
 // Information kept for every waiting writer
-struct DBImpl::Writer {
+ref struct DBImpl::Writer {
   Status status;
   WriteBatch* batch;
   bool sync;
   bool done;
-  port::CondVar cv;
+  Port::CondVar cv;
 
-  explicit Writer(port::Mutex* mu) : cv(mu) { }
+  explicit Writer(Port::Mutex^ mu) : cv(mu) { }
 };
 
-struct DBImpl::CompactionState {
+ref struct DBImpl::CompactionState {
   Compaction* const compaction;
 
   // Sequence numbers < smallest_snapshot are not significant since we
@@ -58,7 +58,7 @@ struct DBImpl::CompactionState {
   SequenceNumber smallest_snapshot;
 
   // Files produced by compaction
-  struct Output {
+  ref struct Output {
     uint64_t number;
     uint64_t file_size;
     InternalKey smallest, largest;
@@ -82,13 +82,13 @@ struct DBImpl::CompactionState {
 };
 
 // Fix user-supplied options to be reasonable
-template <class T,class V>
+template <ref class T,ref class V>
 static void ClipToRange(T* ptr, V minvalue, V maxvalue) {
   if (static_cast<V>(*ptr) > maxvalue) *ptr = maxvalue;
   if (static_cast<V>(*ptr) < minvalue) *ptr = minvalue;
 }
-Options SanitizeOptions(const std::string& dbname,
-                        const InternalKeyComparator* icmp,
+Options SanitizeOptions(const System::String& dbname,
+                        const InternalKeyComparator^ icmp,
                         const InternalFilterPolicy* ipolicy,
                         const Options& src) {
   Options result = src;
@@ -114,7 +114,7 @@ Options SanitizeOptions(const std::string& dbname,
   return result;
 }
 
-DBImpl::DBImpl(const Options& raw_options, const std::string& dbname)
+DBImpl::DBImpl(const Options& raw_options, const System::String& dbname)
     : env_(raw_options.env),
       internal_comparator_(raw_options.comparator),
       internal_filter_policy_(raw_options.filter_policy),
@@ -183,7 +183,7 @@ Status DBImpl::NewDB() {
   new_db.SetNextFile(2);
   new_db.SetLastSequence(0);
 
-  const std::string manifest = DescriptorFileName(dbname_, 1);
+  const System::String manifest = DescriptorFileName(dbname_, 1);
   WritableFile* file;
   Status s = env_->NewWritableFile(manifest, &file);
   if (!s.ok()) {
@@ -191,7 +191,7 @@ Status DBImpl::NewDB() {
   }
   {
     log::Writer log(file);
-    std::string record;
+    System::String record;
     new_db.EncodeTo(&record);
     s = log.AddRecord(record);
     if (s.ok()) {
@@ -228,7 +228,7 @@ void DBImpl::DeleteObsoleteFiles() {
   std::set<uint64_t> live = pending_outputs_;
   versions_->AddLiveFiles(&live);
 
-  std::vector<std::string> filenames;
+  std::vector<System::String> filenames;
   env_->GetChildren(dbname_, &filenames); // Ignoring errors on purpose
   uint64_t number;
   FileType type;
@@ -318,7 +318,7 @@ Status DBImpl::Recover(VersionEdit* edit, bool *save_manifest) {
   // produced by an older version of leveldb.
   const uint64_t min_log = versions_->LogNumber();
   const uint64_t prev_log = versions_->PrevLogNumber();
-  std::vector<std::string> filenames;
+  std::vector<System::String> filenames;
   s = env_->GetChildren(dbname_, &filenames);
   if (!s.ok()) {
     return s;
@@ -367,7 +367,7 @@ Status DBImpl::Recover(VersionEdit* edit, bool *save_manifest) {
 Status DBImpl::RecoverLogFile(uint64_t log_number, bool last_log,
                               bool* save_manifest, VersionEdit* edit,
                               SequenceNumber* max_sequence) {
-  struct LogReporter : public log::Reader::Reporter {
+  ref struct LogReporter : public log::Reader::Reporter {
     Env* env;
     Logger* info_log;
     const char* fname;
@@ -383,7 +383,7 @@ Status DBImpl::RecoverLogFile(uint64_t log_number, bool last_log,
   mutex_.AssertHeld();
 
   // Open the log file
-  std::string fname = LogFileName(dbname_, log_number);
+  System::String fname = LogFileName(dbname_, log_number);
   SequentialFile* file;
   Status status = env_->NewSequentialFile(fname, &file);
   if (!status.ok()) {
@@ -407,7 +407,7 @@ Status DBImpl::RecoverLogFile(uint64_t log_number, bool last_log,
       (unsigned long long) log_number);
 
   // Read all the records and add to a memtable
-  std::string scratch;
+  System::String scratch;
   Slice record;
   WriteBatch batch;
   int compactions = 0;
@@ -827,7 +827,7 @@ Status DBImpl::OpenCompactionOutputFile(CompactionState* compact) {
   }
 
   // Make the output file
-  std::string fname = TableFileName(dbname_, file_number);
+  System::String fname = TableFileName(dbname_, file_number);
   Status s = env_->NewWritableFile(fname, &compact->outfile);
   if (s.ok()) {
     compact->builder = new TableBuilder(options_, compact->outfile);
@@ -935,7 +935,7 @@ Status DBImpl::DoCompactionWork(CompactionState* compact) {
   input->SeekToFirst();
   Status status;
   ParsedInternalKey ikey;
-  std::string current_user_key;
+  System::String current_user_key;
   bool has_current_user_key = false;
   SequenceNumber last_sequence_for_key = kMaxSequenceNumber;
   for (; input->Valid() && !shutting_down_.Acquire_Load(); ) {
@@ -1071,8 +1071,8 @@ Status DBImpl::DoCompactionWork(CompactionState* compact) {
 }
 
 namespace {
-struct IterState {
-  port::Mutex* mu;
+ref struct IterState {
+  Port::Mutex^ mu;
   Version* version;
   MemTable* mem;
   MemTable* imm;
@@ -1133,7 +1133,7 @@ int64_t DBImpl::TEST_MaxNextLevelOverlappingBytes() {
 
 Status DBImpl::Get(const ReadOptions& options,
                    const Slice& key,
-                   std::string* value) {
+                   System::String* value) {
   Status s;
   MutexLock l(&mutex_);
   SequenceNumber snapshot;
@@ -1408,7 +1408,7 @@ Status DBImpl::MakeRoomForWrite(bool force) {
   return s;
 }
 
-bool DBImpl::GetProperty(const Slice& property, std::string* value) {
+bool DBImpl::GetProperty(const Slice& property, System::String* value) {
   value->clear();
 
   MutexLock l(&mutex_);
@@ -1547,7 +1547,7 @@ void DBImpl::GetApproximateSizes(
   }
 }
 
-// Default implementations of convenience methods that subclasses of DB
+// Default implementations of convenience methods that subref classes of DB
 // can call if they wish
 Status DB::Put(const WriteOptions& opt, const Slice& key, const Slice& value) {
   WriteBatch batch;
@@ -1563,7 +1563,7 @@ Status DB::Delete(const WriteOptions& opt, const Slice& key) {
 
 DB::~DB() { }
 
-Status DB::Open(const Options& options, const std::string& dbname,
+Status DB::Open(const Options& options, const System::String& dbname,
                 DB** dbptr) {
   *dbptr = NULL;
 
@@ -1610,9 +1610,9 @@ Status DB::Open(const Options& options, const std::string& dbname,
 Snapshot::~Snapshot() {
 }
 
-DLLX Status DestroyDB(const std::string& dbname, const Options& options) {
+DLLX Status DestroyDB(const System::String& dbname, const Options& options) {
   Env* env = options.env;
-  std::vector<std::string> filenames;
+  std::vector<System::String> filenames;
   // Ignore error in case directory does not exist
   env->GetChildren(dbname, &filenames);
   if (filenames.empty()) {
@@ -1620,7 +1620,7 @@ DLLX Status DestroyDB(const std::string& dbname, const Options& options) {
   }
 
   FileLock* lock;
-  const std::string lockname = LockFileName(dbname);
+  const System::String lockname = LockFileName(dbname);
   Status result = env->LockFile(lockname, &lock);
   if (result.ok()) {
     uint64_t number;

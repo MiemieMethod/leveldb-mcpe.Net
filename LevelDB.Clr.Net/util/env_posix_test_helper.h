@@ -7,12 +7,12 @@
 
 namespace LevelDB {
 
-class EnvPosixTest;
+ref class EnvPosixTest;
 
 // A helper for the POSIX Env to facilitate testing.
-class EnvPosixTestHelper {
+ref class EnvPosixTestHelper {
  private:
-  friend class EnvPosixTest;
+  friend ref class EnvPosixTest;
 
   // Set the maximum number of read-only files that will be opened.
   // Must be called before creating an Env.

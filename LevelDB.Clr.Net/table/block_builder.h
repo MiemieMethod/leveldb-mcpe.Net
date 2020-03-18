@@ -12,9 +12,9 @@
 
 namespace LevelDB {
 
-struct Options;
+ref struct Options;
 
-class BlockBuilder {
+ref class BlockBuilder {
  public:
   explicit BlockBuilder(const Options* options);
 
@@ -41,11 +41,11 @@ class BlockBuilder {
 
  private:
   const Options*        options_;
-  std::string           buffer_;      // Destination buffer
+  System::String           buffer_;      // Destination buffer
   std::vector<uint32_t> restarts_;    // Restart points
   int                   counter_;     // Number of entries emitted since restart
   bool                  finished_;    // Has Finish() been called?
-  std::string           last_key_;
+  System::String           last_key_;
 
   // No copying allowed
   BlockBuilder(const BlockBuilder&);

@@ -38,7 +38,7 @@ void VersionEdit::Clear() {
   new_files_.clear();
 }
 
-void VersionEdit::EncodeTo(std::string* dst) const {
+void VersionEdit::EncodeTo(System::String* dst) const {
   if (has_comparator_) {
     PutVarint32(dst, kComparator);
     PutLengthPrefixedSlice(dst, comparator_);
@@ -209,8 +209,8 @@ Status VersionEdit::DecodeFrom(const Slice& src) {
   return result;
 }
 
-std::string VersionEdit::DebugString() const {
-  std::string r;
+System::String VersionEdit::DebugString() const {
+  System::String r;
   r.append("VersionEdit {");
   if (has_comparator_) {
     r.append("\n  Comparator: ");

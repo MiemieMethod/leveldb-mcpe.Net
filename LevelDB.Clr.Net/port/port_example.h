@@ -11,9 +11,9 @@
 #define STORAGE_LEVELDB_PORT_PORT_EXAMPLE_H_
 
 namespace LevelDB {
-namespace port {
+namespace Port {
 
-// TODO(jorlow): Many of these belong more in the environment class rather than
+// TODO(jorlow): Many of these belong more in the environment ref class rather than
 //               here. We should try moving them and see if it affects perf.
 
 // The following boolean constant must be true on a little-endian machine
@@ -23,7 +23,7 @@ static const bool kLittleEndian = true /* or some other expression */;
 // ------------------ Threading -------------------
 
 // A Mutex represents an exclusive lock.
-class Mutex {
+ref class Mutex {
  public:
   Mutex();
   ~Mutex();
@@ -42,9 +42,9 @@ class Mutex {
   void AssertHeld();
 };
 
-class CondVar {
+ref class CondVar {
  public:
-  explicit CondVar(Mutex* mu);
+  explicit CondVar(Mutex^ mu);
   ~CondVar();
 
   // Atomically release *mu and block on this condition variable until
@@ -62,17 +62,17 @@ class CondVar {
 
 // Thread-safe initialization.
 // Used as follows:
-//      static port::OnceType init_control = LEVELDB_ONCE_INIT;
+//      static Port::OnceType init_control = LEVELDB_ONCE_INIT;
 //      static void Initializer() { ... do something ...; }
 //      ...
-//      port::InitOnce(&init_control, &Initializer);
+//      Port::InitOnce(&init_control, &Initializer);
 typedef intptr_t OnceType;
 #define LEVELDB_ONCE_INIT 0
-extern void InitOnce(port::OnceType*, void (*initializer)());
+extern void InitOnce(Port::OnceType*, void (*initializer)());
 
 // A type that holds a pointer that can be read or written atomically
 // (i.e., without word-tearing.)
-class AtomicPointer {
+ref class AtomicPointer {
  private:
   intptr_t rep_;
  public:
@@ -104,7 +104,7 @@ class AtomicPointer {
 // Store the snappy compression of "input[0,input_length-1]" in *output.
 // Returns false if snappy is not supported by this port.
 extern bool Snappy_Compress(const char* input, size_t input_length,
-                            std::string* output);
+                            System::String* output);
 
 // If input[0,input_length-1] looks like a valid snappy compressed
 // buffer, store the size of the uncompressed data in *result and
@@ -135,7 +135,7 @@ extern bool GetHeapProfile(void (*func)(void*, const char*, int), void* arg);
 // the newly extended CRC value (which may also be zero).
 uint32_t AcceleratedCRC32C(uint32_t crc, const char* buf, size_t size);
 
-}  // namespace port
+}  // namespace Port
 }  // namespace LevelDB
 
 #endif  // STORAGE_LEVELDB_PORT_PORT_EXAMPLE_H_

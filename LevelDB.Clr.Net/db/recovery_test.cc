@@ -15,7 +15,7 @@
 
 namespace LevelDB {
 
-class RecoveryTest {
+ref class RecoveryTest {
  public:
   RecoveryTest() : env_(Env::Default()), db_(NULL) {
     dbname_ = test::TmpDir() + "/recovery_test";
@@ -67,12 +67,12 @@ class RecoveryTest {
     ASSERT_EQ(1, NumLogs());
   }
 
-  Status Put(const std::string& k, const std::string& v) {
+  Status Put(const System::String& k, const System::String& v) {
     return db_->Put(WriteOptions(), k, v);
   }
 
-  std::string Get(const std::string& k, const Snapshot* snapshot = NULL) {
-    std::string result;
+  System::String Get(const System::String& k, const Snapshot* snapshot = NULL) {
+    System::String result;
     Status s = db_->Get(ReadOptions(), k, &result);
     if (s.IsNotFound()) {
       result = "NOT_FOUND";
@@ -82,8 +82,8 @@ class RecoveryTest {
     return result;
   }
 
-  std::string ManifestFileName() {
-    std::string current;
+  System::String ManifestFileName() {
+    System::String current;
     ASSERT_OK(ReadFileToString(env_, CurrentFileName(dbname_), &current));
     size_t len = current.size();
     if (len > 0 && current[len-1] == '\n') {
@@ -92,7 +92,7 @@ class RecoveryTest {
     return dbname_ + "/" + current;
   }
 
-  std::string LogName(uint64_t number) {
+  System::String LogName(uint64_t number) {
     return LogFileName(dbname_, number);
   }
 
@@ -113,7 +113,7 @@ class RecoveryTest {
   }
 
   std::vector<uint64_t> GetFiles(FileType t) {
-    std::vector<std::string> filenames;
+    std::vector<System::String> filenames;
     ASSERT_OK(env_->GetChildren(dbname_, &filenames));
     std::vector<uint64_t> result;
     for (size_t i = 0; i < filenames.size(); i++) {
@@ -134,7 +134,7 @@ class RecoveryTest {
     return GetFiles(kTableFile).size();
   }
 
-  uint64_t FileSize(const std::string& fname) {
+  uint64_t FileSize(const System::String& fname) {
     uint64_t result;
     ASSERT_OK(env_->GetFileSize(fname, &result)) << fname;
     return result;
@@ -146,7 +146,7 @@ class RecoveryTest {
 
   // Directly construct a log file that sets key to val.
   void MakeLogFile(uint64_t lognum, SequenceNumber seq, Slice key, Slice val) {
-    std::string fname = LogFileName(dbname_, lognum);
+    System::String fname = LogFileName(dbname_, lognum);
     WritableFile* file;
     ASSERT_OK(env_->NewWritableFile(fname, &file));
     log::Writer writer(file);
@@ -159,7 +159,7 @@ class RecoveryTest {
   }
 
  private:
-  std::string dbname_;
+  System::String dbname_;
   Env* env_;
   DB* db_;
 };
@@ -171,7 +171,7 @@ TEST(RecoveryTest, ManifestReused) {
   }
   ASSERT_OK(Put("foo", "bar"));
   Close();
-  std::string old_manifest = ManifestFileName();
+  System::String old_manifest = ManifestFileName();
   Open();
   ASSERT_EQ(old_manifest, ManifestFileName());
   ASSERT_EQ("bar", Get("foo"));
@@ -187,21 +187,21 @@ TEST(RecoveryTest, LargeManifestCompacted) {
   }
   ASSERT_OK(Put("foo", "bar"));
   Close();
-  std::string old_manifest = ManifestFileName();
+  System::String old_manifest = ManifestFileName();
 
   // Pad with zeroes to make manifest file very big.
   {
     uint64_t len = FileSize(old_manifest);
     WritableFile* file;
     ASSERT_OK(env()->NewAppendableFile(old_manifest, &file));
-    std::string zeroes(3*1048576 - static_cast<size_t>(len), 0);
+    System::String zeroes(3*1048576 - static_cast<size_t>(len), 0);
     ASSERT_OK(file->Append(zeroes));
     ASSERT_OK(file->Flush());
     delete file;
   }
 
   Open();
-  std::string new_manifest = ManifestFileName();
+  System::String new_manifest = ManifestFileName();
   ASSERT_NE(old_manifest, new_manifest);
   ASSERT_GT(10000, FileSize(new_manifest));
   ASSERT_EQ("bar", Get("foo"));

@@ -14,7 +14,7 @@
 
 namespace LevelDB {
 
-Status BuildTable(const std::string& dbname,
+Status BuildTable(const System::String& dbname,
                   Env* env,
                   const Options& options,
                   TableCache* table_cache,
@@ -24,7 +24,7 @@ Status BuildTable(const std::string& dbname,
   meta->file_size = 0;
   iter->SeekToFirst();
 
-  std::string fname = TableFileName(dbname, meta->number);
+  System::String fname = TableFileName(dbname, meta->number);
   if (iter->Valid()) {
     WritableFile* file;
     s = env->NewWritableFile(fname, &file);

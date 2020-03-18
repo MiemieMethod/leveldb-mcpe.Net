@@ -15,8 +15,8 @@ namespace log {
 
 // Construct a string of the specified length made out of the supplied
 // partial string.
-static std::string BigString(const std::string& partial_string, size_t n) {
-  std::string result;
+static System::String BigString(const System::String& partial_string, size_t n) {
+  System::String result;
   while (result.size() < n) {
     result.append(partial_string);
   }
@@ -25,22 +25,22 @@ static std::string BigString(const std::string& partial_string, size_t n) {
 }
 
 // Construct a string from a number
-static std::string NumberString(int n) {
+static System::String NumberString(int n) {
   char buf[50];
   snprintf(buf, sizeof(buf), "%d.", n);
-  return std::string(buf);
+  return System::String(buf);
 }
 
 // Return a skewed potentially long string
-static std::string RandomSkewedString(int i, Random* rnd) {
+static System::String RandomSkewedString(int i, Random* rnd) {
   return BigString(NumberString(i), rnd->Skewed(17));
 }
 
-class LogTest {
+ref class LogTest {
  private:
-  class StringDest : public WritableFile {
+  ref class StringDest : public WritableFile {
    public:
-    std::string contents_;
+    System::String contents_;
 
     virtual Status Close() { return Status::OK(); }
     virtual Status Flush() { return Status::OK(); }
@@ -51,7 +51,7 @@ class LogTest {
     }
   };
 
-  class StringSource : public SequentialFile {
+  ref class StringSource : public SequentialFile {
    public:
     Slice contents_;
     bool force_error_;
@@ -88,10 +88,10 @@ class LogTest {
     }
   };
 
-  class ReportCollector : public Reader::Reporter {
+  ref class ReportCollector : public Reader::Reporter {
    public:
     size_t dropped_bytes_;
-    std::string message_;
+    System::String message_;
 
     ReportCollector() : dropped_bytes_(0) { }
     virtual void Corruption(size_t bytes, const Status& status) {
@@ -129,7 +129,7 @@ class LogTest {
     writer_ = new Writer(&dest_, dest_.contents_.size());
   }
 
-  void Write(const std::string& msg) {
+  void Write(const System::String& msg) {
     ASSERT_TRUE(!reading_) << "Write() after starting to read";
     writer_->AddRecord(Slice(msg));
   }
@@ -138,12 +138,12 @@ class LogTest {
     return dest_.contents_.size();
   }
 
-  std::string Read() {
+  System::String Read() {
     if (!reading_) {
       reading_ = true;
       source_.contents_ = Slice(dest_.contents_);
     }
-    std::string scratch;
+    System::String scratch;
     Slice record;
     if (reader_->ReadRecord(&record, &scratch)) {
       return record.ToString();
@@ -179,13 +179,13 @@ class LogTest {
     return report_.dropped_bytes_;
   }
 
-  std::string ReportMessage() const {
+  System::String ReportMessage() const {
     return report_.message_;
   }
 
   // Returns OK iff recorded error message contains "msg"
-  std::string MatchError(const std::string& msg) const {
-    if (report_.message_.find(msg) == std::string::npos) {
+  System::String MatchError(const System::String& msg) const {
+    if (report_.message_.find(msg) == System::String::npos) {
       return report_.message_;
     } else {
       return "OK";
@@ -194,7 +194,7 @@ class LogTest {
 
   void WriteInitialOffsetLog() {
     for (int i = 0; i < num_initial_offset_records_; i++) {
-      std::string record(initial_offset_record_sizes_[i],
+      System::String record(initial_offset_record_sizes_[i],
                          static_cast<char>('a' + i));
       Write(record);
     }
@@ -212,7 +212,7 @@ class LogTest {
     Reader* offset_reader = new Reader(&source_, &report_, true/*checksum*/,
                                        WrittenBytes() + offset_past_end);
     Slice record;
-    std::string scratch;
+    System::String scratch;
     ASSERT_TRUE(!offset_reader->ReadRecord(&record, &scratch));
     delete offset_reader;
   }
@@ -230,7 +230,7 @@ class LogTest {
     for (; expected_record_offset < num_initial_offset_records_;
          ++expected_record_offset) {
       Slice record;
-      std::string scratch;
+      System::String scratch;
       ASSERT_TRUE(offset_reader->ReadRecord(&record, &scratch));
       ASSERT_EQ(initial_offset_record_sizes_[expected_record_offset],
                 record.size());

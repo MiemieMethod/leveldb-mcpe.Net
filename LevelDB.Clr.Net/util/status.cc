@@ -33,7 +33,7 @@ Status::Status(Code code, const Slice& msg, const Slice& msg2) {
   state_ = result;
 }
 
-std::string Status::ToString() const {
+System::String Status::ToString() const {
   if (state_ == NULL) {
     return "OK";
   } else {
@@ -64,7 +64,7 @@ std::string Status::ToString() const {
         type = tmp;
         break;
     }
-    std::string result(type);
+    System::String result(type);
     uint32_t length;
     memcpy(&length, state_, sizeof(length));
     result.append(state_ + 5, length);

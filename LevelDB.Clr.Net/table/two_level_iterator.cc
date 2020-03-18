@@ -15,7 +15,7 @@ namespace {
 
 typedef Iterator* (*BlockFunction)(void*, const ReadOptions&, const Slice&);
 
-class TwoLevelIterator: public Iterator {
+ref class TwoLevelIterator: public Iterator {
  public:
   TwoLevelIterator(
     Iterator* index_iter,
@@ -70,7 +70,7 @@ class TwoLevelIterator: public Iterator {
   IteratorWrapper data_iter_; // May be NULL
   // If data_iter_ is non-NULL, then "data_block_handle_" holds the
   // "index_value" passed to block_function_ to create the data_iter_.
-  std::string data_block_handle_;
+  System::String data_block_handle_;
 };
 
 TwoLevelIterator::TwoLevelIterator(

@@ -44,32 +44,32 @@ namespace LevelDB {
 			return static_cast<uint32_t>(::GetCurrentProcessId());
 		}
 
-		class NoOpLogger : public Logger {
+		ref class NoOpLogger : public Logger {
 		public:
 			virtual void Logv(const char* format, va_list ap) { }
 		};
 
-		struct IOException : public std::exception
+		ref struct IOException : public std::exception
 		{
-			std::string s;
-			IOException(std::string ss) : s(ss) {}
+			System::String s;
+			IOException(System::String ss) : s(ss) {}
 			~IOException() throw () {} // Updated
 			const char* what() const throw() { return s.c_str(); }
 		};
 
-		static std::string ws2s(const std::wstring& ws)
+		static System::String ws2s(const std::wstring& ws)
 		{
 			int len;
 			int wslength = (int)ws.length() + 1;
 			len = WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), wslength, 0, 0, NULL, NULL);
 			char* buf = new char[len];
 			WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), wslength, buf, len, NULL, NULL);
-			std::string r(buf);
+			System::String r(buf);
 			delete[] buf;
 			return r;
 		}
 
-		static Status GetLastWindowsError(const std::string& name) {
+		static Status GetLastWindowsError(const System::String& name) {
 			WCHAR lpBuffer[256] = L"?";
 			FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM,                 // It's a system error
 				NULL,                                      // No string to be formatted needed
@@ -81,13 +81,13 @@ namespace LevelDB {
 			return Status::IOError(name, ws2s(lpBuffer).c_str());
 		}
 
-		static std::wstring GetFullPath(const std::string& fname) {
-			return ::port::toFilePath(fname);
+		static std::wstring GetFullPath(const System::String& fname) {
+			return ::Port::toFilePath(fname);
 		}
 
-		static void EnsureDirectory(const std::string& fname)
+		static void EnsureDirectory(const System::String& fname)
 		{
-			std::string dir = fname;
+			System::String dir = fname;
 			std::replace(dir.begin(), dir.end(), '/', '\\');
 			char tmpName[MAX_FILENAME];
 			strcpy_s(tmpName, dir.c_str());
@@ -100,7 +100,7 @@ namespace LevelDB {
 			}
 		}
 
-		static Status OpenFile(const std::string& fname, DWORD dwDesiredAccess, DWORD dwShareMode, DWORD dwCreationDisposition, HANDLE& file, DWORD dwFlags = 0)
+		static Status OpenFile(const System::String& fname, DWORD dwDesiredAccess, DWORD dwShareMode, DWORD dwCreationDisposition, HANDLE& file, DWORD dwFlags = 0)
 		{
 			EnsureDirectory(fname);
 			std::wstring path = GetFullPath(fname);
@@ -128,7 +128,7 @@ namespace LevelDB {
 			return (file == INVALID_HANDLE_VALUE ? GetLastWindowsError(fname) : Status::OK());
 		}
 
-		static Status CloseFile(const std::string& fname, HANDLE& file)
+		static Status CloseFile(const System::String& fname, HANDLE& file)
 		{
 			if (file != INVALID_HANDLE_VALUE)
 			{
@@ -140,14 +140,14 @@ namespace LevelDB {
 				return Status::OK();
 		}
 
-		class WinSequentialFile : public SequentialFile {
+		ref class WinSequentialFile : public SequentialFile {
 		private:
-			std::string _fname;
+			System::String _fname;
 			HANDLE _file;
 
 		public:
 
-			WinSequentialFile(const std::string& fname)
+			WinSequentialFile(const System::String& fname)
 				: _fname(fname) 
 			{
 				Status s = OpenFile(fname, GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, _file);
@@ -197,12 +197,12 @@ namespace LevelDB {
 			}
 		};
 
-		class WinRandomAccessFile : public RandomAccessFile {
+		ref class WinRandomAccessFile : public RandomAccessFile {
 		private:
-			std::string _fname;
+			System::String _fname;
 			HANDLE _file;
 		public:
-			WinRandomAccessFile(const std::string& fname)
+			WinRandomAccessFile(const System::String& fname)
 				: _fname(fname)
 			{
 				Status s = OpenFile(fname, GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, _file, FILE_FLAG_OVERLAPPED | FILE_FLAG_RANDOM_ACCESS);
@@ -261,14 +261,14 @@ namespace LevelDB {
 		// file before reading from it, or for log files, the reading code
 		// knows enough to skip zero suffixes.
 
-		class WinFile : public WritableFile {
+		ref class WinFile : public WritableFile {
 
 		private:
-			std::string _fname;
+			System::String _fname;
 			HANDLE _file;
 
 		public:
-			explicit WinFile(std::string fname) : _fname(fname) {
+			explicit WinFile(System::String fname) : _fname(fname) {
 				Status s = OpenFile(fname, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, CREATE_ALWAYS, _file);
 				if (!s.ok())
 					throw IOException(s.ToString().c_str());
@@ -303,21 +303,21 @@ namespace LevelDB {
 			}
 		};
 
-		class WinFileLock : public FileLock {
+		ref class WinFileLock : public FileLock {
 		private:
-			std::string _fname;
+			System::String _fname;
 			HANDLE _file;
 			DWORD _fileSizeHigh;
 			DWORD _fileSizeLow;
 		public:
-			WinFileLock(const std::string& fname) 
+			WinFileLock(const System::String& fname) 
 				: _fname(fname) 
 			{
 				FILE_STANDARD_INFO fi;
 				Status s = OpenFile(fname, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, OPEN_ALWAYS, _file);
 				if (!s.ok())
 					throw IOException(s.ToString().c_str());
-				if (_file != INVALID_HANDLE_VALUE && GetFileInformationByHandleEx(_file, FILE_INFO_BY_HANDLE_CLASS::FileStandardInfo, &fi, sizeof(fi)))
+				if (_file != INVALID_HANDLE_VALUE && GetFileInformationByHandleEx(_file, FILE_INFO_BY_HANDLE_ref class::FileStandardInfo, &fi, sizeof(fi)))
 				{
 					_fileSizeLow = fi.EndOfFile.LowPart;
 					_fileSizeHigh = fi.EndOfFile.HighPart;
@@ -352,7 +352,7 @@ namespace LevelDB {
 
 		};
 
-		class WinRTEnv : public Env {
+		ref class WinRTEnv : public Env {
 		public:
 			WinRTEnv();
 			
@@ -360,7 +360,7 @@ namespace LevelDB {
 				fprintf(stderr, "Destroying Env::Default()\n");
 			}
 
-			virtual Status NewSequentialFile(const std::string& fname, SequentialFile** result)
+			virtual Status NewSequentialFile(const System::String& fname, SequentialFile** result)
 			{
 				Status s;
 				try {
@@ -372,7 +372,7 @@ namespace LevelDB {
 				return s;
 			}
 
-			virtual Status NewRandomAccessFile(const std::string& fname, RandomAccessFile** result)
+			virtual Status NewRandomAccessFile(const System::String& fname, RandomAccessFile** result)
 			{
 				Status s;
 				try {
@@ -384,7 +384,7 @@ namespace LevelDB {
 				return s;
 			}
 
-			virtual Status NewWritableFile(const std::string& fname, WritableFile** result) {
+			virtual Status NewWritableFile(const System::String& fname, WritableFile** result) {
 				Status s;
 				try {
 					// will create a new empty file to write to
@@ -395,13 +395,13 @@ namespace LevelDB {
 				return s;
 			}
 
-			virtual bool FileExists(const std::string& fname) {
+			virtual bool FileExists(const System::String& fname) {
 				WIN32_FILE_ATTRIBUTE_DATA fi;
 				return (GetFileAttributesExW(GetFullPath(fname).c_str(), GET_FILEEX_INFO_LEVELS::GetFileExInfoStandard, &fi) ? true : false);
 			}
 
-			virtual Status GetChildren(const std::string& dir, std::vector<std::string>* result) {
-				std::string path = dir;
+			virtual Status GetChildren(const System::String& dir, std::vector<System::String>* result) {
+				System::String path = dir;
 				result->clear();
 
 				WIN32_FIND_DATAW ffd;
@@ -427,7 +427,7 @@ namespace LevelDB {
 #undef DeleteFile
 
 			// some actions
-			virtual Status DeleteFile(const std::string& fname) {
+			virtual Status DeleteFile(const System::String& fname) {
 				if (::DeleteFileW(GetFullPath(fname).c_str()) != 0) {
 					return Status::OK();
 				} else {
@@ -437,20 +437,20 @@ namespace LevelDB {
 
 #pragma pop_macro("DeleteFile")
 
-			virtual Status CreateDir(const std::string& name) {
+			virtual Status CreateDir(const System::String& name) {
 				EnsureDirectory(name);
 				::CreateDirectoryW(GetFullPath(name).c_str(), NULL);
 				return Status::OK();
 			};
 
-			virtual Status DeleteDir(const std::string& name) {
+			virtual Status DeleteDir(const System::String& name) {
 				BOOL ret = ::RemoveDirectoryW(GetFullPath(name).c_str());
 				if (!ret)
 					Status s = GetLastWindowsError(name);
 				return Status::OK();
 			};
 
-			virtual Status GetFileSize(const std::string& fname, uint64_t* size) {
+			virtual Status GetFileSize(const System::String& fname, uint64_t* size) {
 				WIN32_FILE_ATTRIBUTE_DATA fi;
 				BOOL ret = GetFileAttributesExW(GetFullPath(fname).c_str(), GET_FILEEX_INFO_LEVELS::GetFileExInfoStandard, &fi);
 				if (!ret)
@@ -459,7 +459,7 @@ namespace LevelDB {
 				return Status::OK();
 			}
 
-			virtual Status RenameFile(const std::string& src, const std::string& target) {
+			virtual Status RenameFile(const System::String& src, const System::String& target) {
 				std::wstring fullsrc = GetFullPath(src);
 				std::wstring fulltarget = GetFullPath(target);
 				::DeleteFileW(fulltarget.c_str());
@@ -470,7 +470,7 @@ namespace LevelDB {
 				}
 			}
 
-			virtual Status LockFile(const std::string& fname, FileLock** lock) {
+			virtual Status LockFile(const System::String& fname, FileLock** lock) {
 				*lock = NULL;
 				if (!FileExists(fname)) {
 					HANDLE file;
@@ -498,8 +498,8 @@ namespace LevelDB {
 
 			virtual void StartThread(void(*function)(void* arg), void* arg);
 
-			virtual Status GetTestDirectory(std::string* result) {
-				std::stringstream ss;
+			virtual Status GetTestDirectory(System::String* result) {
+				System::Stringstream ss;
 				ss << "tmp/leveldb_tests/" << current_process_id();
 
 				// Directory may already exist
@@ -519,7 +519,7 @@ namespace LevelDB {
 			}
 #endif
 
-			virtual Status NewLogger(const std::string& fname, Logger** result) {
+			virtual Status NewLogger(const System::String& fname, Logger** result) {
 				*result = new NoOpLogger();
 				return Status::OK();
 			}
@@ -549,7 +549,7 @@ namespace LevelDB {
 			std::unique_ptr<std::thread> bgthread_;
 
 			// Entry per Schedule() call
-			struct BGItem { void* arg; void(*function)(void*); };
+			ref struct BGItem { void* arg; void(*function)(void*); };
 			typedef std::deque<BGItem> BGQueue;
 			BGQueue queue_;
 		};
@@ -595,7 +595,7 @@ namespace LevelDB {
 		}
 
 		namespace {
-			struct StartThreadState {
+			ref struct StartThreadState {
 				void(*user_function)(void*);
 				void* arg;
 			};

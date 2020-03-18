@@ -8,7 +8,7 @@
 #include <algorithm>
 namespace LevelDB {
 
-	void ZopfliCompressor::compressImpl(const char* input, size_t length, ::std::string& output) const
+	void ZopfliCompressor::compressImpl(const char* input, size_t length, ::System::String& output) const
 	{
 		//extend the buffer to the worst case
 		auto originalSize = output.size();
@@ -26,7 +26,7 @@ namespace LevelDB {
 		free(buffer);
 	}
 
-	bool ZopfliCompressor::decompress(const char* input, size_t length, ::std::string &output) const {
+	bool ZopfliCompressor::decompress(const char* input, size_t length, ::System::String &output) const {
 		return ZlibCompressor::inflate(input, length, output) == Z_OK;
 	}
 		

@@ -13,13 +13,13 @@
 
 namespace LevelDB {
 
-class Block;
-class RandomAccessFile;
-struct ReadOptions;
+ref class Block;
+ref class RandomAccessFile;
+ref struct ReadOptions;
 
 // BlockHandle is a pointer to the extent of a file that stores a data
 // block or a meta block.
-class BlockHandle {
+ref class BlockHandle {
  public:
   BlockHandle();
 
@@ -31,7 +31,7 @@ class BlockHandle {
   uint64_t size() const { return size_; }
   void set_size(uint64_t size) { size_ = size; }
 
-  void EncodeTo(std::string* dst) const;
+  void EncodeTo(System::String* dst) const;
   Status DecodeFrom(Slice* input);
 
   // Maximum encoding length of a BlockHandle
@@ -44,7 +44,7 @@ class BlockHandle {
 
 // Footer encapsulates the fixed information stored at the tail
 // end of every table file.
-class Footer {
+ref class Footer {
  public:
   Footer() { }
 
@@ -60,7 +60,7 @@ class Footer {
     index_handle_ = h;
   }
 
-  void EncodeTo(std::string* dst) const;
+  void EncodeTo(System::String* dst) const;
   Status DecodeFrom(Slice* input);
 
   // Encoded length of a Footer.  Note that the serialization of a
@@ -83,7 +83,7 @@ static const uint64_t kTableMagicNumber = 0xdb4775248b80fb57ull;
 // 1-byte type + 32-bit crc
 static const size_t kBlockTrailerSize = 5;
 
-struct BlockContents {
+ref struct BlockContents {
   Slice data;           // Actual contents of data
   bool cachable;        // True iff data can be cached
   bool heap_allocated;  // True iff caller should delete[] data.data()

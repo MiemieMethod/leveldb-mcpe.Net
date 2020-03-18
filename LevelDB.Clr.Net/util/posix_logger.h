@@ -16,7 +16,7 @@
 
 namespace LevelDB {
 
-class PosixLogger : public Logger {
+ref class PosixLogger : public Logger {
  private:
   FILE* file_;
   uint64_t (*gettid_)();  // Return the thread id for the current thread
@@ -44,10 +44,10 @@ class PosixLogger : public Logger {
       char* p = base;
       char* limit = base + bufsize;
 
-      struct timeval now_tv;
+      ref struct timeval now_tv;
       gettimeofday(&now_tv, NULL);
       const time_t seconds = now_tv.tv_sec;
-      struct tm t;
+      ref struct tm t;
       localtime_r(&seconds, &t);
       p += snprintf(p, limit - p,
                     "%04d/%02d/%02d-%02d:%02d:%02d.%06d %llx ",

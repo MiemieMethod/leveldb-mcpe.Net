@@ -14,7 +14,7 @@ namespace LevelDB {
 Comparator::~Comparator() { }
 
 namespace {
-class BytewiseComparatorImpl : public Comparator {
+ref class BytewiseComparatorImpl : public Comparator {
  public:
   BytewiseComparatorImpl() { }
 
@@ -27,7 +27,7 @@ class BytewiseComparatorImpl : public Comparator {
   }
 
   virtual void FindShortestSeparator(
-      std::string* start,
+      System::String* start,
       const Slice& limit) const {
     // Find length of common prefix
     size_t min_length = std::min(start->size(), limit.size());
@@ -50,7 +50,7 @@ class BytewiseComparatorImpl : public Comparator {
     }
   }
 
-  virtual void FindShortSuccessor(std::string* key) const {
+  virtual void FindShortSuccessor(System::String* key) const {
     // Find first character that can be incremented
     size_t n = key->size();
     for (size_t i = 0; i < n; i++) {
@@ -66,15 +66,15 @@ class BytewiseComparatorImpl : public Comparator {
 };
 }  // namespace
 
-static port::OnceType once = LEVELDB_ONCE_INIT;
-static const Comparator* bytewise;
+static Port::OnceType once = LEVELDB_ONCE_INIT;
+static const Comparator^ bytewise;
 
 static void InitModule() {
   bytewise = new BytewiseComparatorImpl;
 }
 
-const Comparator* BytewiseComparator() {
-  port::InitOnce(&once, InitModule);
+const Comparator^ BytewiseComparator() {
+  Port::InitOnce(&once, InitModule);
   return bytewise;
 }
 

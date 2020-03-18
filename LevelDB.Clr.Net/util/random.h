@@ -12,7 +12,7 @@ namespace LevelDB {
 // A very simple random number generator.  Not especially good at
 // generating truly random bits, but good enough for our needs in this
 // package.
-class Random {
+ref class Random {
  private:
   uint32_t seed_;
  public:

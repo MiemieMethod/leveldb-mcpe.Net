@@ -25,7 +25,7 @@
 #endif  // defined(LEVELDB_PLATFORM_POSIX_SSE)
 
 namespace LevelDB {
-namespace port {
+namespace Port {
 
 #if defined(LEVELDB_PLATFORM_POSIX_SSE)
 
@@ -125,5 +125,5 @@ uint32_t AcceleratedCRC32C(uint32_t crc, const char* buf, size_t size) {
 #endif  // defined(LEVELDB_PLATFORM_POSIX_SSE)
 }
 
-}  // namespace port
+}  // namespace Port
 }  // namespace LevelDB

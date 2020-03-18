@@ -39,7 +39,7 @@ namespace {
 
 // An entry is a variable length heap-allocated structure.  Entries
 // are kept in a circular doubly linked list ordered by access time.
-struct LRUHandle {
+ref struct LRUHandle {
   void* value;
   void (*deleter)(const Slice&, void* value);
   LRUHandle* next_hash;
@@ -68,7 +68,7 @@ struct LRUHandle {
 // table implementations in some of the compiler/runtime combinations
 // we have tested.  E.g., readrandom speeds up by ~5% over the g++
 // 4.4.3's builtin hashtable.
-class HandleTable {
+ref class HandleTable {
  public:
   HandleTable() : length_(0), elems_(0), list_(NULL) { Resize(); }
   ~HandleTable() { delete[] list_; }
@@ -150,7 +150,7 @@ class HandleTable {
 };
 
 // A single shard of sharded cache.
-class LRUCache {
+ref class LRUCache {
  public:
   LRUCache();
   ~LRUCache();
@@ -182,7 +182,7 @@ class LRUCache {
   size_t capacity_;
 
   // mutex_ protects the following state.
-  mutable port::Mutex mutex_;
+  mutable Port::Mutex mutex_;
   size_t usage_;
 
   // Dummy head of LRU list.
@@ -335,10 +335,10 @@ void LRUCache::Prune() {
 static const int kNumShardBits = 4;
 static const int kNumShards = 1 << kNumShardBits;
 
-class ShardedLRUCache : public Cache {
+ref class ShardedLRUCache : public Cache {
  private:
   LRUCache shard_[kNumShards];
-  port::Mutex id_mutex_;
+  Port::Mutex id_mutex_;
   uint64_t last_id_;
 
   static inline uint32_t HashSlice(const Slice& s) {

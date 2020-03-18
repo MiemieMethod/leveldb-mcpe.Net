@@ -11,8 +11,8 @@
 namespace LevelDB {
 
 // Conversions between numeric keys/values and the types expected by Cache.
-static std::string EncodeKey(int k) {
-  std::string result;
+static System::String EncodeKey(int k) {
+  System::String result;
   PutFixed32(&result, k);
   return result;
 }
@@ -23,7 +23,7 @@ static int DecodeKey(const Slice& k) {
 static void* EncodeValue(uintptr_t v) { return reinterpret_cast<void*>(v); }
 static int DecodeValue(void* v) { return reinterpret_cast<uintptr_t>(v); }
 
-class CacheTest {
+ref class CacheTest {
  public:
   static CacheTest* current_;
 

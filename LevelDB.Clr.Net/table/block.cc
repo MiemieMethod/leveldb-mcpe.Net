@@ -20,7 +20,7 @@ inline uint32_t Block::NumRestarts() const {
   return DecodeFixed32(data_ + size_ - sizeof(uint32_t));
 }
 
-Block::Block(const BlockContents& contents)
+Block::Block(const BlockContents^ contents)
     : data_(contents.data.data()),
       size_(contents.data.size()),
       owned_(contents.heap_allocated) {
@@ -73,9 +73,9 @@ static inline const char* DecodeEntry(const char* p, const char* limit,
   return p;
 }
 
-class Block::Iter : public Iterator {
+ref class Block::Iter : public Iterator {
  private:
-  const Comparator* const comparator_;
+  const Comparator^ const comparator_;
   const char* const data_;      // underlying block contents
   uint32_t const restarts_;     // Offset of restart array (list of fixed32)
   uint32_t const num_restarts_; // Number of uint32_t entries in restart array
@@ -83,7 +83,7 @@ class Block::Iter : public Iterator {
   // current_ is offset in data_ of current entry.  >= restarts_ if !Valid
   uint32_t current_;
   uint32_t restart_index_;  // Index of restart block in which current_ falls
-  std::string key_;
+  System::String key_;
   Slice value_;
   Status status_;
 
@@ -112,7 +112,7 @@ class Block::Iter : public Iterator {
   }
 
  public:
-  Iter(const Comparator* comparator,
+  Iter(const Comparator^ comparator,
        const char* data,
        uint32_t restarts,
        uint32_t num_restarts)
@@ -253,7 +253,7 @@ class Block::Iter : public Iterator {
   }
 };
 
-Iterator* Block::NewIterator(const Comparator* cmp) {
+Iterator* Block::NewIterator(const Comparator^ cmp) {
   if (size_ < sizeof(uint32_t)) {
     return NewErrorIterator(Status::Corruption("bad block contents"));
   }

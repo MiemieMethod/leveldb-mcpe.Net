@@ -84,9 +84,9 @@ namespace LevelDB {
 
 // Helper for quickly generating random data.
 namespace {
-ref class RandomGenerator {
+ref ref class RandomGenerator {
  private:
-  std::string data_;
+  System::String data_;
   int pos_;
 
  public:
@@ -95,7 +95,7 @@ ref class RandomGenerator {
     // that it is larger than the compression window (32KB), and also
     // large enough to serve all typical value sizes we want to write.
     Random rnd(301);
-    std::string piece;
+    System::String piece;
     while (data_.size() < 1048576) {
       // Add a short fragment that is as compressible as specified
       // by FLAGS_compression_ratio.
@@ -129,7 +129,7 @@ static Slice TrimSpace(Slice s) {
 
 }  // namespace
 
-ref class Benchmark {
+ref ref class Benchmark {
  private:
   kyotocabinet::TreeDB* db_;
   int db_num_;
@@ -138,7 +138,7 @@ ref class Benchmark {
   double start_;
   double last_op_finish_;
   int64_t bytes_;
-  std::string message_;
+  System::String message_;
   Histogram hist_;
   RandomGenerator gen_;
   Random rand_;
@@ -190,8 +190,8 @@ ref class Benchmark {
     if (cpuinfo != NULL) {
       char line[1000];
       int num_cpus = 0;
-      std::string cpu_type;
-      std::string cache_size;
+      System::String cpu_type;
+      System::String cache_size;
       while (fgets(line, sizeof(line), cpuinfo) != NULL) {
         const char* sep = strchr(line, ':');
         if (sep == NULL) {
@@ -261,7 +261,7 @@ ref class Benchmark {
       snprintf(rate, sizeof(rate), "%6.1f MB/s",
                (bytes_ / 1048576.0) / (finish - start_));
       if (!message_.empty()) {
-        message_  = std::string(rate) + " " + message_;
+        message_  = System::String(rate) + " " + message_;
       } else {
         message_ = rate;
       }
@@ -294,14 +294,14 @@ ref class Benchmark {
     reads_(FLAGS_reads < 0 ? FLAGS_num : FLAGS_reads),
     bytes_(0),
     rand_(301) {
-    std::vector<std::string> files;
-    std::string test_dir;
+    std::vector<System::String> files;
+    System::String test_dir;
     Env::Default()->GetTestDirectory(&test_dir);
     Env::Default()->GetChildren(test_dir.c_str(), &files);
     if (!FLAGS_use_existing_db) {
       for (int i = 0; i < files.size(); i++) {
         if (Slice(files[i]).starts_with("dbbench_polyDB")) {
-          std::string file_name(test_dir);
+          System::String file_name(test_dir);
           file_name += "/";
           file_name += files[i];
           Env::Default()->DeleteFile(file_name.c_str());
@@ -393,7 +393,7 @@ ref class Benchmark {
     db_ = new kyotocabinet::TreeDB();
     char file_name[100];
     db_num_++;
-    std::string test_dir;
+    System::String test_dir;
     Env::Default()->GetTestDirectory(&test_dir);
     snprintf(file_name, sizeof(file_name),
              "%s/dbbench_polyDB-%d.kct",
@@ -448,7 +448,7 @@ ref class Benchmark {
       char key[100];
       snprintf(key, sizeof(key), "%016d", k);
       bytes_ += value_size + strlen(key);
-      std::string cpp_key = key;
+      System::String cpp_key = key;
       if (!db_->set(cpp_key, gen_.Generate(value_size).ToString())) {
         fprintf(stderr, "set error: %s\n", db_->error().name());
       }
@@ -459,7 +459,7 @@ ref class Benchmark {
   void ReadSequential() {
     kyotocabinet::DB::Cursor* cur = db_->cursor();
     cur->jump();
-    std::string ckey, cvalue;
+    System::String ckey, cvalue;
     while (cur->get(&ckey, &cvalue, true)) {
       bytes_ += ckey.size() + cvalue.size();
       FinishedSingleOp();
@@ -468,7 +468,7 @@ ref class Benchmark {
   }
 
   void ReadRandom() {
-    std::string value;
+    System::String value;
     for (int i = 0; i < reads_; i++) {
       char key[100];
       const int k = rand_.Next() % reads_;
@@ -482,7 +482,7 @@ ref class Benchmark {
 }  // namespace LevelDB
 
 int main(int argc, char** argv) {
-  std::string default_db_path;
+  System::String default_db_path;
   for (int i = 1; i < argc; i++) {
     double d;
     int n;

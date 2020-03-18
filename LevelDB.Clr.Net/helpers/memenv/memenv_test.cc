@@ -13,7 +13,7 @@
 
 namespace LevelDB {
 
-class MemEnvTest {
+ref class MemEnvTest {
  public:
   Env* env_;
 
@@ -28,7 +28,7 @@ class MemEnvTest {
 TEST(MemEnvTest, Basics) {
   uint64_t file_size;
   WritableFile* writable_file;
-  std::vector<std::string> children;
+  std::vector<System::String> children;
 
   ASSERT_OK(env_->CreateDir("/dir"));
 
@@ -144,7 +144,7 @@ TEST(MemEnvTest, Locks) {
 }
 
 TEST(MemEnvTest, Misc) {
-  std::string test_dir;
+  System::String test_dir;
   ASSERT_OK(env_->GetTestDirectory(&test_dir));
   ASSERT_TRUE(!test_dir.empty());
 
@@ -162,7 +162,7 @@ TEST(MemEnvTest, LargeWrite) {
   const size_t kWriteSize = 300 * 1024;
   char* scratch = new char[kWriteSize * 2];
 
-  std::string write_data;
+  System::String write_data;
   for (size_t i = 0; i < kWriteSize; ++i) {
     write_data.append(1, static_cast<char>(i));
   }
@@ -180,7 +180,7 @@ TEST(MemEnvTest, LargeWrite) {
   ASSERT_EQ(0, result.compare("foo"));
 
   size_t read = 0;
-  std::string read_data;
+  System::String read_data;
   while (read < kWriteSize) {
     ASSERT_OK(seq_file->Read(kWriteSize - read, &result, scratch));
     read_data.append(result.data(), result.size());
@@ -206,7 +206,7 @@ TEST(MemEnvTest, DBTest) {
   }
 
   for (size_t i = 0; i < 3; ++i) {
-    std::string res;
+    System::String res;
     ASSERT_OK(db->Get(ReadOptions(), keys[i], &res));
     ASSERT_TRUE(res == vals[i]);
   }
@@ -226,7 +226,7 @@ TEST(MemEnvTest, DBTest) {
   ASSERT_OK(dbi->TEST_CompactMemTable());
 
   for (size_t i = 0; i < 3; ++i) {
-    std::string res;
+    System::String res;
     ASSERT_OK(db->Get(ReadOptions(), keys[i], &res));
     ASSERT_TRUE(res == vals[i]);
   }

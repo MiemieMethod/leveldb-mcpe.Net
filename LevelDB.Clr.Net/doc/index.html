@@ -64,7 +64,7 @@ The database provides <code>Put</code>, <code>Delete</code>, and <code>Get</code
 modify/query the database.  For example, the following code
 moves the value stored under key1 to key2.
 <pre>
-  std::string value;
+  System::String value;
   leveldb::Status s = db-&gt;Get(leveldb::ReadOptions(), key1, &amp;value);
   if (s.ok()) s = db-&gt;Put(leveldb::WriteOptions(), key2, value);
   if (s.ok()) s = db-&gt;Delete(leveldb::WriteOptions(), key1);
@@ -74,13 +74,13 @@ moves the value stored under key1 to key2.
 <p>
 Note that if the process dies after the Put of key2 but before the
 delete of key1, the same value may be left stored under multiple keys.
-Such problems can be avoided by using the <code>WriteBatch</code> ref class to
+Such problems can be avoided by using the <code>WriteBatch</code> ref ref class to
 atomically apply a set of updates:
 <p>
 <pre>
   #include "include/leveldb/write_batch.h"
   ...
-  std::string value;
+  System::String value;
   leveldb::Status s = db-&gt;Get(leveldb::ReadOptions(), key1, &amp;value);
   if (s.ok()) {
     leveldb::WriteBatch batch;
@@ -214,7 +214,7 @@ The return value of the <code>it->key()</code> and <code>it->value()</code> call
 are instances of the <code>leveldb::Slice</code> type.  <code>Slice</code> is a simple
 structure that contains a length and a pointer to an external byte
 array.  Returning a <code>Slice</code> is a cheaper alternative to returning a
-<code>std::string</code> since we do not need to copy potentially large keys and
+<code>System::String</code> since we do not need to copy potentially large keys and
 values.  In addition, <code>leveldb</code> methods do not return null-terminated
 C-style strings since <code>leveldb</code> keys and values are allowed to
 contain '\0' bytes.
@@ -225,13 +225,13 @@ to a Slice:
 <pre>
    leveldb::Slice s1 = "hello";
 
-   std::string str("world");
+   System::String str("world");
    leveldb::Slice s2 = str;
 </pre>
 A Slice can be easily converted back to a C++ string:
 <pre>
-   std::string str = s1.ToString();
-   assert(str == std::string("hello"));
+   System::String str = s1.ToString();
+   assert(str == System::String("hello"));
 </pre>
 Be careful when using Slices since it is up to the caller to ensure that
 the external byte array into which the Slice points remains live while
@@ -240,7 +240,7 @@ the Slice is in use.  For example, the following is buggy:
 <pre>
    leveldb::Slice slice;
    if (...) {
-     std::string str = ...;
+     System::String str = ...;
      slice = str;
    }
    Use(slice);
@@ -255,10 +255,10 @@ which orders bytes lexicographically.  You can however supply a custom
 comparator when opening a database.  For example, suppose each
 database key consists of two numbers and we should sort by the first
 number, breaking ties by the second number.  First, define a proper
-subref class of <code>leveldb::Comparator</code> that expresses these rules:
+subref ref class of <code>leveldb::Comparator</code> that expresses these rules:
 <p>
 <pre>
-  ref class TwoPartComparator : public leveldb::Comparator {
+  ref ref class TwoPartComparator : public leveldb::Comparator {
    public:
     // Three-way comparison function:
     //   if a &lt; b: negative result
@@ -277,8 +277,8 @@ subref class of <code>leveldb::Comparator</code> that expresses these rules:
 
     // Ignore the following methods for now:
     const char* Name() const { return "TwoPartComparator"; }
-    void FindShortestSeparator(std::string*, const leveldb::Slice&amp;) const { }
-    void FindShortSuccessor(std::string*) const { }
+    void FindShortestSeparator(System::String*, const leveldb::Slice&amp;) const { }
+    void FindShortSuccessor(System::String*) const { }
   };
 </pre>
 Now create a database using this custom comparator:
@@ -434,7 +434,7 @@ consider a comparator that ignores trailing spaces when comparing keys.
 Instead, the application should provide a custom filter policy that
 also ignores trailing spaces.  For example:
 <pre>
-  ref class CustomFilterPolicy : public leveldb::FilterPolicy {
+  ref ref class CustomFilterPolicy : public leveldb::FilterPolicy {
    private:
     FilterPolicy* builtin_policy_;
    public:
@@ -443,7 +443,7 @@ also ignores trailing spaces.  For example:
 
     const char* Name() const { return "IgnoreTrailingSpacesFilter"; }
 
-    void CreateFilter(const Slice* keys, int n, std::string* dst) const {
+    void CreateFilter(const Slice* keys, int n, System::String* dst) const {
       // Use builtin bloom filter code after removing trailing spaces
       std::vector&lt;Slice&gt; trimmed(n);
       for (int i = 0; i &lt; n; i++) {
@@ -515,7 +515,7 @@ introduce artificial delays in the file IO paths to limit the impact
 of <code>leveldb</code> on other activities in the system.
 <p>
 <pre>
-  ref class SlowEnv : public leveldb::Env {
+  ref ref class SlowEnv : public leveldb::Env {
     .. implementation of the Env interface ...
   };
 

@@ -13,14 +13,14 @@
 
 namespace LevelDB {
 
-class SequentialFile;
+ref class SequentialFile;
 
 namespace log {
 
-class Reader {
+ref class Reader {
  public:
   // Interface for reporting errors.
-  class Reporter {
+  ref class Reporter {
    public:
     virtual ~Reporter();
 
@@ -50,7 +50,7 @@ class Reader {
   // "*scratch" as temporary storage.  The contents filled in *record
   // will only be valid until the next mutating operation on this
   // reader or the next mutation to *scratch.
-  bool ReadRecord(Slice* record, std::string* scratch);
+  bool ReadRecord(Slice* record, System::String* scratch);
 
   // Returns the physical offset of the last record returned by ReadRecord.
   //

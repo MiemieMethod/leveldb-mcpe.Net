@@ -93,13 +93,13 @@ static boost::uint32_t current_thread_id(void) {
 
 static char global_read_only_buf[0x8000];
 
-class PosixSequentialFile: public SequentialFile {
+ref class PosixSequentialFile: public SequentialFile {
  private:
-  std::string filename_;
+  System::String filename_;
   FILE* file_;
 
  public:
-  PosixSequentialFile(const std::string& fname, FILE* f)
+  PosixSequentialFile(const System::String& fname, FILE* f)
     : filename_(fname), file_(f) { }
   virtual ~PosixSequentialFile() { fclose(file_); }
 
@@ -131,14 +131,14 @@ class PosixSequentialFile: public SequentialFile {
   }
 };
 
-class PosixRandomAccessFile: public RandomAccessFile {
+ref class PosixRandomAccessFile: public RandomAccessFile {
  private:
-  std::string filename_;
+  System::String filename_;
   int fd_;
   mutable boost::mutex mu_;
 
  public:
-  PosixRandomAccessFile(const std::string& fname, int fd)
+  PosixRandomAccessFile(const System::String& fname, int fd)
     : filename_(fname), fd_(fd) { }
   virtual ~PosixRandomAccessFile() { close(fd_); }
 
@@ -173,10 +173,10 @@ class PosixRandomAccessFile: public RandomAccessFile {
 // file before reading from it, or for log files, the reading code
 // knows enough to skip zero suffixes.
 
-class BoostFile : public WritableFile {
+ref class BoostFile : public WritableFile {
 
 public:
-  explicit BoostFile(std::string path) : path_(path), written_(0) {
+  explicit BoostFile(System::String path) : path_(path), written_(0) {
     Open();
   }
 
@@ -242,19 +242,19 @@ private:
 
 
 
-class BoostFileLock : public FileLock {
+ref class BoostFileLock : public FileLock {
  public:
   boost::interprocess::file_lock fl_;
 };
 
-class BoostEnv : public Env {
+ref class BoostEnv : public Env {
  public:
   BoostEnv();
   virtual ~BoostEnv() {
 	  fprintf(stderr, "Destroying Env::Default()\n");
   }
 
-  virtual Status NewSequentialFile(const std::string& fname,
+  virtual Status NewSequentialFile(const System::String& fname,
                    SequentialFile** result) {
     FILE* f = fopen(fname.c_str(), "rb");
     if (f == NULL) {
@@ -266,7 +266,7 @@ class BoostEnv : public Env {
     }
   }
 
-  virtual Status NewRandomAccessFile(const std::string& fname,
+  virtual Status NewRandomAccessFile(const System::String& fname,
                    RandomAccessFile** result) {
 #ifdef WIN32
     int fd = _open(fname.c_str(), _O_RDONLY | _O_RANDOM | _O_BINARY);
@@ -281,7 +281,7 @@ class BoostEnv : public Env {
     return Status::OK();
   }
 
-  virtual Status NewWritableFile(const std::string& fname,
+  virtual Status NewWritableFile(const System::String& fname,
                  WritableFile** result) {
     Status s;
     try {
@@ -295,12 +295,12 @@ class BoostEnv : public Env {
     return s;
   }
 
-  virtual bool FileExists(const std::string& fname) {
+  virtual bool FileExists(const System::String& fname) {
     return boost::filesystem::exists(fname);
   }
 
-  virtual Status GetChildren(const std::string& dir,
-               std::vector<std::string>* result) {
+  virtual Status GetChildren(const System::String& dir,
+               std::vector<System::String>* result) {
     result->clear();
 
     boost::system::error_code ec;
@@ -318,7 +318,7 @@ class BoostEnv : public Env {
     return Status::OK();
   }
 
-  virtual Status DeleteFile(const std::string& fname) {
+  virtual Status DeleteFile(const System::String& fname) {
     boost::system::error_code ec;
 
     boost::filesystem::remove(fname, ec);
@@ -332,7 +332,7 @@ class BoostEnv : public Env {
     return result;
   }
 
-  virtual Status CreateDir(const std::string& name) {
+  virtual Status CreateDir(const System::String& name) {
       Status result;
 
       if (boost::filesystem::exists(name) &&
@@ -349,7 +349,7 @@ class BoostEnv : public Env {
       return result;
     };
 
-    virtual Status DeleteDir(const std::string& name) {
+    virtual Status DeleteDir(const System::String& name) {
     Status result;
 
     boost::system::error_code ec;
@@ -360,7 +360,7 @@ class BoostEnv : public Env {
     return result;
   };
 
-  virtual Status GetFileSize(const std::string& fname, uint64_t* size) {
+  virtual Status GetFileSize(const System::String& fname, uint64_t* size) {
     boost::system::error_code ec;
 
     Status result;
@@ -374,7 +374,7 @@ class BoostEnv : public Env {
     return result;
   }
 
-  virtual Status RenameFile(const std::string& src, const std::string& target) {
+  virtual Status RenameFile(const System::String& src, const System::String& target) {
     boost::system::error_code ec;
 
     boost::filesystem::rename(src, target, ec);
@@ -388,7 +388,7 @@ class BoostEnv : public Env {
     return result;
   }
 
-  virtual Status LockFile(const std::string& fname, FileLock** lock) {
+  virtual Status LockFile(const System::String& fname, FileLock** lock) {
     *lock = NULL;
 
 	Status status;
@@ -431,7 +431,7 @@ class BoostEnv : public Env {
 
   virtual void StartThread(void (*function)(void* arg), void* arg);
 
-  virtual Status GetTestDirectory(std::string* result) {
+  virtual Status GetTestDirectory(System::String* result) {
     boost::system::error_code ec;
     boost::filesystem::path temp_dir = 
         boost::filesystem::temp_directory_path(ec);
@@ -440,7 +440,7 @@ class BoostEnv : public Env {
     }
 
     temp_dir /= "leveldb_tests";
-    temp_dir /= boost::lexical_cast<std::string>(current_process_id());
+    temp_dir /= boost::lexical_cast<System::String>(current_process_id());
 
     // Directory may already exist
     CreateDir(temp_dir.generic_string());
@@ -459,7 +459,7 @@ class BoostEnv : public Env {
   }
 #endif
 
-  virtual Status NewLogger(const std::string& fname, Logger** result) {
+  virtual Status NewLogger(const System::String& fname, Logger** result) {
   FILE* f = fopen(fname.c_str(), "wt");
   if (f == NULL) {
     *result = NULL;
@@ -505,7 +505,7 @@ class BoostEnv : public Env {
   boost::scoped_ptr<boost::thread> bgthread_;
 
   // Entry per Schedule() call
-  struct BGItem { void* arg; void (*function)(void*); };
+  ref struct BGItem { void* arg; void (*function)(void*); };
   typedef std::deque<BGItem> BGQueue;
   BGQueue queue_;
 };
@@ -551,7 +551,7 @@ void BoostEnv::BGThread() {
 }
 
 namespace {
-struct StartThreadState {
+ref struct StartThreadState {
   void (*user_function)(void*);
   void* arg;
 };

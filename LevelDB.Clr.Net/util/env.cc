@@ -9,7 +9,7 @@ namespace LevelDB {
     Env::~Env() {
     }
 
-    Status Env::NewAppendableFile(const std::string& fname, WritableFile** result) {
+    Status Env::NewAppendableFile(const System::String& fname, WritableFile** result) {
         return Status::NotSupported("NewAppendableFile", fname);
     }
 
@@ -38,7 +38,7 @@ namespace LevelDB {
     }
 
     static Status DoWriteStringToFile(Env* env, const Slice& data,
-        const std::string& fname,
+        const System::String& fname,
         bool should_sync) {
         WritableFile* file;
         Status s = env->NewWritableFile(fname, &file);
@@ -60,16 +60,16 @@ namespace LevelDB {
     }
 
     Status WriteStringToFile(Env* env, const Slice& data,
-        const std::string& fname) {
+        const System::String& fname) {
         return DoWriteStringToFile(env, data, fname, false);
     }
 
     Status WriteStringToFileSync(Env* env, const Slice& data,
-        const std::string& fname) {
+        const System::String& fname) {
         return DoWriteStringToFile(env, data, fname, true);
     }
 
-    Status ReadFileToString(Env* env, const std::string& fname, std::string* data) {
+    Status ReadFileToString(Env* env, const System::String& fname, System::String* data) {
         data->clear();
         SequentialFile* file;
         Status s = env->NewSequentialFile(fname, &file);
