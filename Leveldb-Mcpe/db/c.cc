@@ -468,6 +468,7 @@ extern "C" {
 #endif
 		case leveldb_zlib_compression:
 			opt->rep.compressors[0] = new leveldb::ZlibCompressor();
+			opt->rep.compressors[1] = new leveldb::ZlibCompressorRaw();
 			break;
 		case leveldb_zlib_raw_compression:
 			opt->rep.compressors[0] = new leveldb::ZlibCompressorRaw();
